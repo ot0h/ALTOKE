@@ -1,11 +1,11 @@
-import { createStackNavigator } from '@react-navigation/stack'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { Home } from '@screens'
 
 export type RootStackParamList = {
   Home: undefined
 }
 
-const Stack = createStackNavigator<RootStackParamList>()
+const Stack = createNativeStackNavigator<RootStackParamList>()
 
 export const StackNavigator = () => {
   return (
