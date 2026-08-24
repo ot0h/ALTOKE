@@ -1,29 +1,14 @@
 import { MontserratAlternates_400Regular } from '@expo-google-fonts/montserrat-alternates'
+import { StackNavigator } from '@navigation/StackNavigator'
+import { NavigationContainer } from '@react-navigation/native'
 import { useFonts } from 'expo-font'
-import { StatusBar } from 'expo-status-bar'
-import { StyleSheet, Text, View } from 'react-native'
+import { JSX } from 'react'
 
-export default function App() {
+export default function App(): JSX.Element {
   useFonts({ MontserratAlternates_400Regular })
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>El dizque font</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <StackNavigator />
+    </NavigationContainer>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    fontFamily: 'MontserratAlternates_400Regular',
-    fontWeight: '700',
-    fontStyle: 'normal',
-    fontSize: 30,
-  },
-})
