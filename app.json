@@ -4,7 +4,7 @@
     "slug": "ALTOKE",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/altoke_icon.svg",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
@@ -26,9 +26,6 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-font",
-      "expo-asset"
-    ]
+    "plugins": ["expo-font", "expo-asset"]
   }
 }
