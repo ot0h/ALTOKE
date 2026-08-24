@@ -1,10 +1,17 @@
 import { JSX } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import IconFixy from '@assets/ICON FIXY.svg'
+import IconFixy from '@assets/ICON_FIXY.svg'
 import Wave from '@assets/wave_home.svg'
 import { CustomButton } from '@components'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { RootStackParamList } from '@navigation/StackNavigator'
 
-export const Home = (): JSX.Element => {
+type Props = NativeStackScreenProps<RootStackParamList, 'Home'>
+
+export const Home = ({ navigation }: Props): JSX.Element => {
+  const handleLogin = () => navigation.navigate('Login')
+  const handleRegister = () => navigation.navigate('Register')
+
   return (
     <View style={styles.container}>
       {/* START */}
@@ -55,12 +62,12 @@ export const Home = (): JSX.Element => {
           <CustomButton
             text="Crear Cuenta"
             variant="primary"
-            onPress={() => console.log('Crear cuenta')}
+            onPress={handleRegister}
           />
           <CustomButton
             text="Iniciar Sesion"
             variant="default"
-            onPress={() => console.log('Crear cuenta')}
+            onPress={handleLogin}
           />
         </View>
       </View>

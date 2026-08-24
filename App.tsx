@@ -8,6 +8,8 @@ import { useFonts } from 'expo-font'
 import { JSX, useEffect } from 'react'
 import * as SplashScreen from 'expo-splash-screen'
 
+SplashScreen.preventAutoHideAsync()
+
 export default function App(): JSX.Element | null {
   const [loaded, error] = useFonts({
     MontserratAlternates_400Regular,
