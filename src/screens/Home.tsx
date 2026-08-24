@@ -1,6 +1,7 @@
 import { JSX } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import IconFixy from '@assets/ICON FIXY.svg'
+import Wave from '@assets/wave_home.svg'
 import { CustomButton } from '@components'
 
 export const Home = (): JSX.Element => {
@@ -63,6 +64,7 @@ export const Home = (): JSX.Element => {
           />
         </View>
       </View>
+      <Wave width={'100%'} height={'25%'} />
     </View>
   )
 }
@@ -80,7 +82,7 @@ const styles = StyleSheet.create({
   },
 
   textFont: {
-    fontFamily: 'MontserratAlternates_400Regular',
+    fontFamily: 'MontserratAlternates_600SemiBold',
   },
 
   start: {
@@ -92,7 +94,6 @@ const styles = StyleSheet.create({
   },
 
   end: {
-    paddingBottom: 200,
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',

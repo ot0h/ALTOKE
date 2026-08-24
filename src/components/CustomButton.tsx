@@ -42,8 +42,9 @@ const getStyles = (variant: Variants) =>
     },
     text: {
       fontSize: 14,
-      fontFamily: 'MontserratAlternates_400Regular',
+      fontFamily: 'MontserratAlternates_600SemiBold',
       fontWeight: 'semibold',
       color: variant === 'default' ? '#0145ea' : '#FFFFFF',
+      textAlign: 'center',
     },
   })
