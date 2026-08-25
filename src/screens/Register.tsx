@@ -87,7 +87,6 @@ const styles = StyleSheet.create({
     gap: 20,
     width: 352,
     height: 390,
-    marginTop: +40,
     borderRadius: 35,
     backgroundColor: '#FFFFFF',
     shadowColor: '#000000',
@@ -107,8 +106,8 @@ const styles = StyleSheet.create({
   },
 
   fixy: {
-    position: 'absolute',
-    top: 28,
+    position: 'relative',
+    top: 32,
     alignSelf: 'center',
     zIndex: 20,
     margin: 0,

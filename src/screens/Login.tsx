@@ -102,8 +102,8 @@ const styles = StyleSheet.create({
   },
 
   fixy: {
-    position: 'absolute',
-    top: 28,
+    position: 'relative',
+    top: 32,
     alignSelf: 'center',
     zIndex: 20,
     margin: 0,
