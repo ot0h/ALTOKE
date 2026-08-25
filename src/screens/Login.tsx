@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 18,
     elevation: 8,
+    marginBottom: '25%',
   },
 
   containerInputs: {
