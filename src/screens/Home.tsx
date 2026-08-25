@@ -14,7 +14,6 @@ export const Home = ({ navigation }: Props): JSX.Element => {
   const handleRegister = () => navigation.navigate('Register')
   return (
     <View style={styles.container}>
-
       {/* START */}
       <View style={styles.start}>
         <IconFixy width={130} height={118} />
@@ -87,7 +86,6 @@ const styles = StyleSheet.create({
     margin: 0,
     alignItems: 'center',
     gap: 20,
-
   },
 
   textFont: {
@@ -108,7 +106,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
   },
-
 
   botones: {
     display: 'flex',

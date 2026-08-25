@@ -1,18 +1,18 @@
-  import { CustomButton, CustomInput } from '@components'
-  import { RootStackParamList } from '@navigation/StackNavigator'
-  import { NativeStackScreenProps } from '@react-navigation/native-stack'
-  import { JSX, useState } from 'react'
-  import { View, Text, StyleSheet } from 'react-native'
-  import FixyLogin from '@assets/FIXYLOGIN.svg'
+import { CustomButton, CustomInput } from '@components'
+import { RootStackParamList } from '@navigation/StackNavigator'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { JSX, useState } from 'react'
+import { View, Text, StyleSheet } from 'react-native'
+import FixyLogin from '@assets/FIXYLOGIN.svg'
 
-  type Props = NativeStackScreenProps<RootStackParamList, 'Register'>
+type Props = NativeStackScreenProps<RootStackParamList, 'Register'>
 
-  export const Register = ({navigation}: Props): JSX.Element => {
+export const Register = ({ navigation }: Props): JSX.Element => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [name, setName] = useState ('')
+  const [name, setName] = useState('')
   const handleRegister = () => navigation.navigate('Login')
-  
+
   return (
     <View style={styles.container}>
       <FixyLogin style={styles.fixy} width={248} height={248} />
@@ -28,14 +28,14 @@
             },
           ]}
         >
-        Registrarse
+          Registrarse
         </Text>
 
         <View style={styles.containerInputs}>
           <CustomInput
-            placeholder='Nombre'
-            value = {name}
-            onChangeText= {setName}          
+            placeholder="Nombre"
+            value={name}
+            onChangeText={setName}
           />
           <CustomInput
             placeholder="Email"
@@ -63,8 +63,7 @@
               fontFamily: 'MontserratAlternates_400Regular',
             },
           ]}
-        >
-        </Text>
+        ></Text>
       </View>
     </View>
   )
@@ -101,12 +100,10 @@ const styles = StyleSheet.create({
   containerInputs: {
     display: 'flex',
     gap: 25,
-    
   },
 
   textFont: {
     fontFamily: 'MontserratAlternates_600SemiBold',
-    
   },
 
   fixy: {
