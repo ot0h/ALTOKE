@@ -1,6 +1,7 @@
 import {
   MontserratAlternates_400Regular,
   MontserratAlternates_600SemiBold,
+  MontserratAlternates_800ExtraBold,
 } from '@expo-google-fonts/montserrat-alternates'
 import { StackNavigator } from '@navigation/StackNavigator'
 import { NavigationContainer } from '@react-navigation/native'
@@ -14,6 +15,7 @@ export default function App(): JSX.Element | null {
   const [loaded, error] = useFonts({
     MontserratAlternates_400Regular,
     MontserratAlternates_600SemiBold,
+    MontserratAlternates_800ExtraBold,
   })
 
   useEffect(() => {
