@@ -11,11 +11,12 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Home'>
 export const Home = ({ navigation }: Props): JSX.Element => {
   const handleLogin = () => navigation.navigate('Login')
   const handleRegister = () => navigation.navigate('Register')
-
   return (
     <View style={styles.container}>
+
       {/* START */}
       <View style={styles.start}>
+
         <IconFixy width={130} height={118} />
         <Text
           style={[
