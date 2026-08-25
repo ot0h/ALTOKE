@@ -71,7 +71,7 @@ export const Home = ({ navigation }: Props): JSX.Element => {
           />
         </View>
       </View>
-      <Wave width={'100%'} height={'25%'} />
+      <Wave width={'100%'} height={'25%'} preserveAspectRatio="none" />
     </View>
   )
 }
@@ -86,6 +86,7 @@ const styles = StyleSheet.create({
     margin: 0,
     alignItems: 'center',
     gap: 20,
+
   },
 
   textFont: {
@@ -106,6 +107,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 10,
   },
+
 
   botones: {
     display: 'flex',
