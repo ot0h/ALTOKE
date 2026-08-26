@@ -6,6 +6,7 @@ import { CustomButton } from '@components'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '@navigation/StackNavigator'
 
+
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>
 
 export const Home = ({ navigation }: Props): JSX.Element => {
@@ -16,7 +17,6 @@ export const Home = ({ navigation }: Props): JSX.Element => {
 
       {/* START */}
       <View style={styles.start}>
-
         <IconFixy width={130} height={118} />
         <Text
           style={[
