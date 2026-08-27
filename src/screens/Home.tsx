@@ -6,12 +6,12 @@ import { CustomButton } from '@components'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '@navigation/StackNavigator'
 
+
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>
 
 export const Home = ({ navigation }: Props): JSX.Element => {
   const handleLogin = () => navigation.navigate('Login')
   const handleRegister = () => navigation.navigate('Register')
-
   return (
     <View style={styles.container}>
       {/* START */}
@@ -71,7 +71,7 @@ export const Home = ({ navigation }: Props): JSX.Element => {
           />
         </View>
       </View>
-      <Wave width={'100%'} height={'25%'} />
+      <Wave width={'100%'} height={'25%'} preserveAspectRatio="none" />
     </View>
   )
 }

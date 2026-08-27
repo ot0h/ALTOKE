@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 18,
     elevation: 8,
+    marginBottom: '25%',
   },
 
   containerInputs: {
@@ -102,8 +103,8 @@ const styles = StyleSheet.create({
   },
 
   fixy: {
-    position: 'absolute',
-    top: 28,
+    position: 'relative',
+    top: 32,
     alignSelf: 'center',
     zIndex: 20,
     margin: 0,

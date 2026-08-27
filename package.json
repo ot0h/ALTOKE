@@ -9,6 +9,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@expo-google-fonts/inter": "^0.4.2",
     "@expo-google-fonts/montserrat-alternates": "^0.4.1",
     "@expo/metro-config": "~54.0.14",
     "@react-navigation/bottom-tabs": "^7.18.17",
