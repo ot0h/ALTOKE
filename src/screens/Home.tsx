@@ -5,6 +5,7 @@ import Wave from '@assets/wave_home.svg'
 import { CustomButton } from '@components'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '@navigation/StackNavigator'
+import ReportCard from '../components/ReportCard'
 
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>
@@ -16,6 +17,7 @@ export const Home = ({ navigation }: Props): JSX.Element => {
     <View style={styles.container}>
       {/* START */}
       <View style={styles.start}>
+        
         <IconFixy width={130} height={118} />
         <Text
           style={[
