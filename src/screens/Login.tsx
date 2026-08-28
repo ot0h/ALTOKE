@@ -11,7 +11,7 @@ export const Login = ({ navigation }: Props): JSX.Element => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  const handleLogin = () => navigation.navigate('Home')
+  const handleLogin = () => navigation.navigate('MainTabs', { email })
 
   return (
     <View style={styles.container}>
