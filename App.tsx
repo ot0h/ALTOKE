@@ -2,8 +2,6 @@ import {
   MontserratAlternates_400Regular,
   MontserratAlternates_600SemiBold,
   MontserratAlternates_800ExtraBold,
-  
-  
 } from '@expo-google-fonts/montserrat-alternates'
 import { StackNavigator } from '@navigation/StackNavigator'
 import { NavigationContainer } from '@react-navigation/native'
@@ -23,6 +21,15 @@ export default function App(): JSX.Element | null {
     Inter_400Regular,
     Inter_700Bold,
   })
+
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      NavigationBar.setVisibilityAsync('hidden')
+      NavigationBar.setBehaviorAsync('overlay-swipe')
+      NavigationBar.setBackgroundColorAsync('none')
+      NavigationBar.setButtonStyleAsync('dark')
+    }
+  }, [])
 
   useEffect(() => {
     if (loaded || error) {
