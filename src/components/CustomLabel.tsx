@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 
 type StatusProps = {
-    status?: "revision" | "resuelto" | "pendiente" | "proceso" |"mantenimiento" | "avisos" | "eventos" ;
+    status?: "revision" | "resuelto" | "pendiente" | "proceso" |"mantenimiento" | "avisos" | "eventos" |"publicada" | "borrador" ;
 
 }
 
@@ -42,6 +42,17 @@ const statusconfig ={
             label: "Eventos",
             backgroundColor: '#BEC9EF',
             color: "#3E6CB0"
+        },
+        publicada:{
+            label: "Publicada",
+            backgroundColor: '#D1FAE5',
+            color: "#10B981"
+        },
+        borrador:{
+            label: "Borrador",
+            backgroundColor: "#E2E8F0",
+            color: "#64748B"
+
         },
         
     }
