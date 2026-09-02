@@ -6,7 +6,7 @@ import { CustomButton } from '@components'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '@navigation/StackNavigator'
 import ManageNoticeCard from '../components/ManageNoticeCard'
-import Patronato from "@assets/patronato.png"
+import Patronato from '@assets/patronato.png'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>
 
@@ -17,7 +17,6 @@ export const Home = ({ navigation }: Props): JSX.Element => {
     <View style={styles.container}>
       {/* START */}
       <View style={styles.start}>
-        
         <IconFixy width={130} height={118} />
         <Text
           style={[
