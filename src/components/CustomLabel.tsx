@@ -2,7 +2,8 @@ import { StyleSheet, Text, View } from "react-native";
 
 
 type StatusProps = {
-    status?: "revision" | "resuelto" | "pendiente" | "proceso";
+    status?: "revision" | "resuelto" | "pendiente" | "proceso" |"mantenimiento" | "avisos" | "eventos" ;
+
 }
 
 //Aqui a;adir los de mantenimiento despues  para reutilizar la etiqueta
@@ -27,11 +28,27 @@ const statusconfig ={
             backgroundColor: '#BEC9EF',
             color: "#3E6CB0"
         },
+        mantenimiento:{
+            label: "Mantenimiento",
+            backgroundColor: '#FEF3C7',
+            color: "#F59E0B"
+        },
+        avisos:{
+            label: "Avisos",
+            backgroundColor: '#D1FAE5',
+            color: "#10B981"
+        },
+        eventos:{
+            label: "Eventos",
+            backgroundColor: '#BEC9EF',
+            color: "#3E6CB0"
+        },
         
     }
 
     export default function CustomLabel({status = 'pendiente'} :StatusProps){
         const config = statusconfig[status];
+        
         
         return(
             <View style = {[styles.status,{backgroundColor: config.backgroundColor}]}>
