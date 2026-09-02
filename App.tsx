@@ -14,6 +14,7 @@ import {
   Inter_400Regular,
   Inter_600SemiBold,
   Inter_700Bold,
+  Inter_800ExtraBold,
 } from '@expo-google-fonts/inter'
 
 SplashScreen.preventAutoHideAsync()
@@ -26,6 +27,7 @@ export default function App(): JSX.Element | null {
     Inter_600SemiBold,
     Inter_400Regular,
     Inter_700Bold,
+    Inter_800ExtraBold,
   })
 
   useEffect(() => {
