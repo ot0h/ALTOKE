@@ -22,8 +22,9 @@ export const ReportBarChart = ({ data }: Props): JSX.Element => {
           barWidth={22}
           spacing={24}
           initialSpacing={12}
+          endSpacing={12}
           height={130}
-          frontColor="#0052FF"
+          frontColor="#0145EA"
           barBorderTopLeftRadius={8}
           barBorderTopRightRadius={8}
           hideRules
@@ -46,17 +47,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E2E8F0',
     marginTop: 8,
+    alignItems: 'center',
+    display: 'flex',
   },
   chartTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Inter_700Bold',
-    color: '#1E293B',
+    color: '#1E2744',
     marginBottom: 20,
   },
-  chartWrapper: {
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
+  chartWrapper: {},
   labelEjeX: {
     color: '#64748B',
     fontSize: 13,
