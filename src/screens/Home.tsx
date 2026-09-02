@@ -5,8 +5,8 @@ import Wave from '@assets/wave_home.svg'
 import { CustomButton } from '@components'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '@navigation/StackNavigator'
-import ReportCard from '../components/ReportCard'
-
+import ManageNoticeCard from '../components/ManageNoticeCard'
+import Patronato from "@assets/patronato.png"
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>
 

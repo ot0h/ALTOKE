@@ -1,4 +1,5 @@
 import { Image, ImageSourcePropType, Pressable, StyleSheet, View, Text } from 'react-native'
+import CustomLabel from './CustomLabel'
 
 type Props = {
   title: string
@@ -6,8 +7,12 @@ type Props = {
   image: ImageSourcePropType
   time?: string
   author?: string
+  //PARA LA BADGE
+  category?: "avisos" | "mantenimiento"
+
   onPress: () => void
-  variant?: 'compact' | 'extended'
+
+  variant?: 'compact' | 'extended' | 'notices'
 }
 
 export default function CommunityCard({
@@ -18,25 +23,97 @@ export default function CommunityCard({
   time,
   author,
   variant = 'compact',
+  category
 }: Props) {
+
+  const isCompact = variant === 'compact'
+  const isExtended = variant === 'extended'
+  const isNotice = variant === 'notices'
+
   return (
     <Pressable
       style={[
         styles.card,
-        variant === 'compact' ? [styles.compactmode, styles.compact] : [styles.extendedmode, styles.extend],
+
+        isCompact && styles.compactmode,
+        isCompact && styles.compact,
+
+        isExtended && styles.extendedmode,
+        isExtended && styles.extend,
+
+        isNotice && styles.noticeMode,
+        isNotice && styles.notice,
       ]}
       onPress={onPress}
     >
       <Image
-        style={variant === 'compact' ? styles.imagecompact : styles.imageextended}
+        style={[
+          styles.image,
+
+          isCompact && styles.imagecompact,
+
+          isExtended && styles.imageextended,
+
+          isNotice && styles.imagenotice,
+        ]}
         source={image}
       />
-      <View style={variant === 'compact' ? styles.textcontainer : styles.extendtextcontainer}>
-        <Text style={variant === 'compact' ? styles.titlecompact : styles.textextend}>{title}</Text>
-        <Text style={variant === 'compact' ? styles.subtitle : styles.extendsubtitle}>
-          {time && author ? `${time} • ${author}` : time || author}{description}
-        </Text>
-      </View>
+      {isCompact && (
+        <View style={styles.textcontainer}>
+          <Text style={styles.titlecompact}>
+            {title}
+          </Text>
+
+          <Text style={styles.subtitle}>
+            {time && author
+              ? `${time} • ${author}`
+              : time || author}
+          </Text>
+        </View>
+      )}
+
+      {isExtended && (
+        <View style={styles.extendtextcontainer}>
+
+          <Text style={styles.textextend}>
+            {title}
+          </Text>
+
+          <Text style={styles.extendsubtitle}>
+            {description}
+          </Text>
+
+        </View>
+      )}
+
+      {isNotice && (
+        <View style={styles.noticecontainer}>
+
+          <View style={styles.noticeHeader}>
+
+            <Text style={styles.noticeTime}>
+              {time}
+            </Text>
+
+            {category && (
+              <CustomLabel status={category} />
+            )}
+
+          </View>
+
+          <Text style={styles.noticeTitle}>
+            {title}
+          </Text>
+
+          {description && (
+            <Text style={styles.noticeDescription}
+              numberOfLines={2}>
+              {description}
+            </Text>
+          )}
+
+        </View>
+      )}
     </Pressable>
   )
 }
@@ -61,12 +138,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     elevation: 4,
   },
-  imagecompact: {
-    width: 64,
-    height: 64,
-    objectFit: 'fill',
-    borderRadius: 12,
-  },
+
   extendsubtitle: {
     fontFamily: 'Inter_400Regular',
     color: '#64748B',
@@ -99,12 +171,7 @@ const styles = StyleSheet.create({
   extendedmode: {
     flexDirection: 'column',
   },
-  imageextended: {
-    width: 362,
-    height: 140,
-    objectFit: 'fill',
-    borderTopStartRadius: 12,
-  },
+
   extendtextcontainer: {
     gap: 4,
     marginLeft: 16,
@@ -115,5 +182,62 @@ const styles = StyleSheet.create({
     fontWeight: 'semibold',
     fontSize: 18,
     color: '#1E2744',
+  },
+
+  image: {
+    objectFit: 'cover',
+  },
+
+  imagecompact: {
+    width: 64,
+    height: 64,
+    borderRadius: 12,
+  },
+
+  imageextended: {
+    width: '100%',
+    height: 140,
+  },
+
+  noticeMode: {
+    flexDirection: 'column',
+  },
+
+  notice: {
+    // altura según contenido o Figma
+  },
+
+  noticecontainer: {
+    padding: 14,
+    gap: 8,
+  },
+
+  noticeHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
+  noticeTime: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 12,
+    color: '#64748B',
+  },
+
+  noticeTitle: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 18,
+    color: '#1E2744',
+  },
+
+  noticeDescription: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 14,
+    color: '#64748B',
+  },
+
+  imagenotice: {
+    width: '100%',
+    height: 130,
   },
 })
