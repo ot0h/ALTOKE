@@ -21,7 +21,8 @@ export const StackNavigator = () => {
           headerShown: false,
         }}
       >
-        <Stack.Screen name="Home" component={Home} />
+        {/* <Stack.Screen name="Home" component={Home} /> */}
+        <Stack.Screen name="Home" component={DashboardStats} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="MainTabs" component={TabNavigator} />
