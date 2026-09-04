@@ -8,8 +8,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { useFonts } from 'expo-font'
 import { JSX, useEffect } from 'react'
 import * as SplashScreen from 'expo-splash-screen'
-import { Platform } from 'react-native'
-import * as NavigationBar from 'expo-navigation-bar'
+import { setVisibilityAsync } from 'expo-navigation-bar'
 import {
   Inter_400Regular,
   Inter_600SemiBold,
@@ -31,18 +30,10 @@ export default function App(): JSX.Element | null {
   })
 
   useEffect(() => {
-    if (Platform.OS === 'android') {
-      NavigationBar.setVisibilityAsync('hidden')
-      NavigationBar.setBehaviorAsync('overlay-swipe')
-      NavigationBar.setBackgroundColorAsync('none')
-      NavigationBar.setButtonStyleAsync('dark')
-    }
-  }, [])
-
-  useEffect(() => {
     if (loaded || error) {
       SplashScreen.hideAsync()
     }
+    setVisibilityAsync('hidden')
   }, [loaded, error])
 
   if (!loaded && !error) {

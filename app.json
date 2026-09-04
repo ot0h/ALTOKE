@@ -4,28 +4,35 @@
     "slug": "ALTOKE",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/altoke_icon.svg",
+    "icon": "./assets/icon_1024x1024.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/FIXY.svg",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.ALTOKE"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/FIXY.svg",
+        "foregroundImage": "./assets/adaptive_foreground.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.anonymous.ALTOKE"
     },
     "web": {
       "favicon": "./assets/altoke_icon.svg"
     },
-    "plugins": ["expo-font", "expo-asset"]
+    "plugins": [
+      "expo-font",
+      "expo-asset",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ]
+    ]
   }
 }
