@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { Home, Login, Register } from '@screens'
 import { TabNavigator } from './TabsNavigator'
+import { DashboardStats } from '../components/dashboard/DashboardStats'
 
 export type RootStackParamList = {
   Home: undefined

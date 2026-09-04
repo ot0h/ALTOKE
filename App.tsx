@@ -8,7 +8,14 @@ import { NavigationContainer } from '@react-navigation/native'
 import { useFonts } from 'expo-font'
 import { JSX, useEffect } from 'react'
 import * as SplashScreen from 'expo-splash-screen'
-import { Inter_400Regular, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter'
+import { Platform } from 'react-native'
+import * as NavigationBar from 'expo-navigation-bar'
+import {
+  Inter_400Regular,
+  Inter_600SemiBold,
+  Inter_700Bold,
+  Inter_800ExtraBold,
+} from '@expo-google-fonts/inter'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -20,6 +27,7 @@ export default function App(): JSX.Element | null {
     Inter_600SemiBold,
     Inter_400Regular,
     Inter_700Bold,
+    Inter_800ExtraBold,
   })
 
   useEffect(() => {

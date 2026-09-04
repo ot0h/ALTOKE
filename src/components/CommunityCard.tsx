@@ -1,4 +1,11 @@
-import { Image, ImageSourcePropType, Pressable, StyleSheet, View, Text } from 'react-native'
+import {
+  Image,
+  ImageSourcePropType,
+  Pressable,
+  StyleSheet,
+  View,
+  Text,
+} from 'react-native'
 import CustomLabel from './CustomLabel'
 
 type Props = {
@@ -8,7 +15,7 @@ type Props = {
   time?: string
   author?: string
   //PARA LA BADGE
-  category?: "avisos" | "mantenimiento"
+  category?: 'avisos' | 'mantenimiento'
 
   onPress: () => void
 
@@ -23,9 +30,8 @@ export default function CommunityCard({
   time,
   author,
   variant = 'compact',
-  category
+  category,
 }: Props) {
-
   const isCompact = variant === 'compact'
   const isExtended = variant === 'extended'
   const isNotice = variant === 'notices'
@@ -60,58 +66,37 @@ export default function CommunityCard({
       />
       {isCompact && (
         <View style={styles.textcontainer}>
-          <Text style={styles.titlecompact}>
-            {title}
-          </Text>
+          <Text style={styles.titlecompact}>{title}</Text>
 
           <Text style={styles.subtitle}>
-            {time && author
-              ? `${time} • ${author}`
-              : time || author}
+            {time && author ? `${time} • ${author}` : time || author}
           </Text>
         </View>
       )}
 
       {isExtended && (
         <View style={styles.extendtextcontainer}>
+          <Text style={styles.textextend}>{title}</Text>
 
-          <Text style={styles.textextend}>
-            {title}
-          </Text>
-
-          <Text style={styles.extendsubtitle}>
-            {description}
-          </Text>
-
+          <Text style={styles.extendsubtitle}>{description}</Text>
         </View>
       )}
 
       {isNotice && (
         <View style={styles.noticecontainer}>
-
           <View style={styles.noticeHeader}>
+            <Text style={styles.noticeTime}>{time}</Text>
 
-            <Text style={styles.noticeTime}>
-              {time}
-            </Text>
-
-            {category && (
-              <CustomLabel status={category} />
-            )}
-
+            {category && <CustomLabel status={category} />}
           </View>
 
-          <Text style={styles.noticeTitle}>
-            {title}
-          </Text>
+          <Text style={styles.noticeTitle}>{title}</Text>
 
           {description && (
-            <Text style={styles.noticeDescription}
-              numberOfLines={2}>
+            <Text style={styles.noticeDescription} numberOfLines={2}>
               {description}
             </Text>
           )}
-
         </View>
       )}
     </Pressable>

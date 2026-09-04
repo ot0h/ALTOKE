@@ -62,8 +62,8 @@ export const TabNavigator = () => {
         },
         tabBarLabelStyle: {
           fontSize: 9,
-          fontFamily: 'Inter_500Medium',
-          fontWeight: '500',
+          fontFamily: 'Inter_600SemiBold',
+          fontWeight: '600',
           textAlign: 'center',
         },
         tabBarItemStyle: {
