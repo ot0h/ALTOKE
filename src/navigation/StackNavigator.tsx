@@ -2,6 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { Home, Login, Register } from '@screens'
 import { TabNavigator } from './TabsNavigator'
 import { DashboardStats } from '../components/dashboard/DashboardStats'
+import { ReportProblem } from '../screens/tabs/Reportar_Problema'
 
 export type RootStackParamList = {
   Home: undefined
@@ -21,8 +22,7 @@ export const StackNavigator = () => {
           headerShown: false,
         }}
       >
-        {/* <Stack.Screen name="Home" component={Home} /> */}
-        <Stack.Screen name="Home" component={DashboardStats} />
+        <Stack.Screen name="Home" component={ReportProblem} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="MainTabs" component={TabNavigator} />
