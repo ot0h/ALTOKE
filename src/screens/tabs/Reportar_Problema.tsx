@@ -11,13 +11,7 @@ import {
 } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import * as Location from 'expo-location'
-import {
-  Camera,
-  MapPin,
-  ArrowLeft,
-  ImagePlus,
-  X,
-} from 'lucide-react-native'
+import { Camera, MapPin, ArrowLeft, ImagePlus, X } from 'lucide-react-native'
 
 type CategoriasType =
   | 'alumbrado'
@@ -37,7 +31,9 @@ export const ReportProblem = (): JSX.Element => {
   const [titulo, setTitulo] = useState('')
   const [detalles, setDetalles] = useState('')
   const [ubicacion, setUbicacion] = useState<string>('')
-  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null)
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
+    null,
+  )
   const [locationLoading, setLocationLoading] = useState(false)
   const [fotos, setFotos] = useState<string[]>([])
 
@@ -87,7 +83,7 @@ export const ReportProblem = (): JSX.Element => {
         setUbicacion(partes.join(', '))
       } else {
         setUbicacion(
-          `${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`
+          `${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`,
         )
       }
     } catch {
@@ -124,10 +120,7 @@ export const ReportProblem = (): JSX.Element => {
       selectionLimit: 4,
     })
     if (!result.canceled) {
-      setFotos((prev) => [
-        ...prev,
-        ...result.assets.map((asset) => asset.uri),
-      ])
+      setFotos((prev) => [...prev, ...result.assets.map((asset) => asset.uri)])
     }
   }
 
@@ -240,7 +233,10 @@ export const ReportProblem = (): JSX.Element => {
               {fotos.map((uri) => (
                 <View key={uri} style={styles.photoPreview}>
                   <Image source={{ uri }} style={styles.photoPreviewImg} />
-                  <Pressable style={styles.removePhoto} onPress={() => quitarFoto(uri)}>
+                  <Pressable
+                    style={styles.removePhoto}
+                    onPress={() => quitarFoto(uri)}
+                  >
                     <X size={14} color="#FFFFFF" />
                   </Pressable>
                 </View>
@@ -248,11 +244,17 @@ export const ReportProblem = (): JSX.Element => {
             </View>
           )}
           <View style={styles.photoActions}>
-            <Pressable style={[styles.photoBox, styles.photoAction]} onPress={tomarFoto}>
+            <Pressable
+              style={[styles.photoBox, styles.photoAction]}
+              onPress={tomarFoto}
+            >
               <Camera size={20} color="#0145EA" />
               <Text style={styles.photoText}>Cámara</Text>
             </Pressable>
-            <Pressable style={[styles.photoBox, styles.photoAction]} onPress={elegirDeGaleria}>
+            <Pressable
+              style={[styles.photoBox, styles.photoAction]}
+              onPress={elegirDeGaleria}
+            >
               <ImagePlus size={20} color="#0145EA" />
               <Text style={styles.photoText}>Galería</Text>
             </Pressable>

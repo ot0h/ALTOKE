@@ -22,7 +22,7 @@ export const StackNavigator = () => {
           headerShown: false,
         }}
       >
-        <Stack.Screen name="Home" component={ReportProblem} />
+        <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="MainTabs" component={TabNavigator} />
