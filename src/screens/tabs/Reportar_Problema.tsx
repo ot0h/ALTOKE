@@ -1,5 +1,7 @@
 import { JSX, useState } from 'react'
 import {
+  ActivityIndicator,
+  Image,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -7,7 +9,15 @@ import {
   TextInput,
   View,
 } from 'react-native'
-import { Camera, MapPin, ArrowLeft } from 'lucide-react-native' // o tus iconos actuales
+import * as ImagePicker from 'expo-image-picker'
+import * as Location from 'expo-location'
+import {
+  Camera,
+  MapPin,
+  ArrowLeft,
+  ImagePlus,
+  X,
+} from 'lucide-react-native'
 
 type CategoriasType =
   | 'alumbrado'
@@ -26,6 +36,10 @@ export const ReportProblem = (): JSX.Element => {
   const [prioridad, setPrioridad] = useState<PrioridadType>('media')
   const [titulo, setTitulo] = useState('')
   const [detalles, setDetalles] = useState('')
+  const [ubicacion, setUbicacion] = useState<string>('')
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null)
+  const [locationLoading, setLocationLoading] = useState(false)
+  const [fotos, setFotos] = useState<string[]>([])
 
   const CATEGORIAS: Record<CategoriasType, string> = {
     agua: 'Agua',
@@ -42,6 +56,83 @@ export const ReportProblem = (): JSX.Element => {
     baja: 'Baja',
     media: 'Media',
     alta: 'Alta',
+  }
+
+  const obtenerUbicacion = async () => {
+    setLocationLoading(true)
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync()
+      if (status !== 'granted') {
+        setUbicacion('Permiso de ubicación denegado')
+        return
+      }
+      const pos = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      })
+      setCoords({
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude,
+      })
+      const [place] = await Location.reverseGeocodeAsync({
+        latitude: pos.coords.latitude,
+        longitude: pos.coords.longitude,
+      })
+      if (place) {
+        const partes = [
+          place.street,
+          place.district,
+          place.city,
+          place.region,
+        ].filter(Boolean)
+        setUbicacion(partes.join(', '))
+      } else {
+        setUbicacion(
+          `${pos.coords.latitude.toFixed(5)}, ${pos.coords.longitude.toFixed(5)}`
+        )
+      }
+    } catch {
+      setUbicacion('No se pudo obtener tu ubicación')
+    } finally {
+      setLocationLoading(false)
+    }
+  }
+
+  const pedirPermisoCamara = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync()
+    return status === 'granted'
+  }
+
+  const tomarFoto = async () => {
+    const ok = await pedirPermisoCamara()
+    if (!ok) return
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.7,
+    })
+    if (!result.canceled) {
+      setFotos((prev) => [...prev, result.assets[0].uri])
+    }
+  }
+
+  const elegirDeGaleria = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 0.7,
+      allowsMultipleSelection: true,
+      selectionLimit: 4,
+    })
+    if (!result.canceled) {
+      setFotos((prev) => [
+        ...prev,
+        ...result.assets.map((asset) => asset.uri),
+      ])
+    }
+  }
+
+  const quitarFoto = (uri: string) => {
+    setFotos((prev) => prev.filter((f) => f !== uri))
   }
 
   return (
@@ -109,18 +200,64 @@ export const ReportProblem = (): JSX.Element => {
         </Text>
         <View style={styles.locationBox}>
           <MapPin size={16} color="#0145EA" />
-          <Text style={styles.locationText}>
-            Área verde principal (junto a canchas)
-          </Text>
+          {locationLoading ? (
+            <View style={styles.locationLoading}>
+              <ActivityIndicator size="small" color="#0145EA" />
+              <Text style={styles.locationText}>Obteniendo ubicación...</Text>
+            </View>
+          ) : (
+            <Text style={styles.locationText} numberOfLines={2}>
+              {ubicacion || 'Toca para usar tu ubicación actual'}
+            </Text>
+          )}
+          {coords && (
+            <Text style={styles.coordsText}>
+              {coords.lat.toFixed(5)}, {coords.lng.toFixed(5)}
+            </Text>
+          )}
+          <Pressable
+            style={styles.locationButton}
+            onPress={obtenerUbicacion}
+            disabled={locationLoading}
+          >
+            {locationLoading ? (
+              <ActivityIndicator size="small" color="#0145EA" />
+            ) : (
+              <MapPin size={16} color="#0145EA" />
+            )}
+            <Text style={styles.locationButtonText}>
+              {coords ? 'Actualizar' : 'Usar mi ubicación'}
+            </Text>
+          </Pressable>
         </View>
 
         <Text style={[styles.label, styles.spacedLabel]}>
           Evidencia fotográfica
         </Text>
-        <Pressable style={styles.photoBox}>
-          <Camera size={20} color="#0145EA" />
-          <Text style={styles.photoText}>Tomar o subir foto</Text>
-        </Pressable>
+        <View style={styles.photoWrap}>
+          {fotos.length > 0 && (
+            <View style={styles.photoPreviewRow}>
+              {fotos.map((uri) => (
+                <View key={uri} style={styles.photoPreview}>
+                  <Image source={{ uri }} style={styles.photoPreviewImg} />
+                  <Pressable style={styles.removePhoto} onPress={() => quitarFoto(uri)}>
+                    <X size={14} color="#FFFFFF" />
+                  </Pressable>
+                </View>
+              ))}
+            </View>
+          )}
+          <View style={styles.photoActions}>
+            <Pressable style={[styles.photoBox, styles.photoAction]} onPress={tomarFoto}>
+              <Camera size={20} color="#0145EA" />
+              <Text style={styles.photoText}>Cámara</Text>
+            </Pressable>
+            <Pressable style={[styles.photoBox, styles.photoAction]} onPress={elegirDeGaleria}>
+              <ImagePlus size={20} color="#0145EA" />
+              <Text style={styles.photoText}>Galería</Text>
+            </Pressable>
+          </View>
+        </View>
 
         <Text style={[styles.label, styles.spacedLabel]}>Prioridad</Text>
         <View style={styles.priorityRow}>
@@ -241,7 +378,6 @@ const styles = StyleSheet.create({
     minHeight: 90,
   },
   locationBox: {
-    flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
     backgroundColor: '#F8FAFC',
@@ -251,17 +387,75 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 10,
   },
+  locationLoading: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    flexShrink: 1,
+  },
   locationText: {
     fontSize: 13,
     color: '#0F172A',
     flexShrink: 1,
+  },
+  coordsText: {
+    fontSize: 11,
+    color: '#64748B',
+    fontFamily: 'Inter_600SemiBold',
+  },
+  locationButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#EEF2FF',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  locationButtonText: {
+    fontFamily: 'Inter_600SemiBold',
+    fontSize: 12,
+    color: '#0145EA',
+  },
+  photoWrap: {
+    gap: 10,
+  },
+  photoPreviewRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  photoPreview: {
+    width: 96,
+    height: 96,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  photoPreviewImg: {
+    width: '100%',
+    height: '100%',
+  },
+  removePhoto: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    backgroundColor: 'rgba(15, 23, 42, 0.7)',
+    borderRadius: 12,
+    padding: 3,
+  },
+  photoActions: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  photoAction: {
+    flex: 1,
+    paddingVertical: 18,
   },
   photoBox: {
     borderWidth: 1,
     borderStyle: 'dashed',
     borderColor: '#93C5FD',
     borderRadius: 12,
-    paddingVertical: 24,
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,

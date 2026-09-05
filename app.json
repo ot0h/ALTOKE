@@ -32,6 +32,18 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Permite que ALTOKE acceda a tu ubicación para reportar problemas con precisión."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "ALTOKE necesita acceso a tus fotos para adjuntar evidencia de un problema."
+        }
       ]
     ]
   }
