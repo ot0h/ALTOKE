@@ -18,6 +18,8 @@ import {
   Inter_800ExtraBold,
 } from '@expo-google-fonts/inter'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { Provider } from 'react-redux'
+import { store } from './src/store'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -53,10 +55,12 @@ export default function App(): JSX.Element | null {
   }
 
   return (
+    <Provider store = {store}>
     <SafeAreaProvider>
     <NavigationContainer>
       <StackNavigator />
     </NavigationContainer>
     </SafeAreaProvider>
+    </Provider>
   )
 }
