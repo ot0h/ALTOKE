@@ -35,7 +35,7 @@ const getStyles = (variant: Variants) =>
       borderColor: variant === 'primary' ? '#1E2744' : '#0145ea',
       borderWidth: 1,
       borderRadius: 17,
-      width: 272,
+      width: "100%",
       height: 54,
       alignItems: 'center',
       justifyContent: 'center',
