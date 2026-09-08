@@ -1,14 +1,12 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { Home, Login, Noticia, Register } from '@screens'
+import { Home, Login, Noticia, NuevaNoticia, Register } from '@screens'
 import { TabNavigator } from './TabsNavigator'
-import { DashboardStats } from '../components/dashboard/DashboardStats'
-import { MyCommunity } from '../screens/MyCommunity'
-import { ManageCommunity } from '../screens/ManageCommunity'
 
 export type RootStackParamList = {
   Home: undefined
   Login: undefined
   Noticia: undefined
+  NuevaNoticia: undefined
   Register: undefined
   MainTabs: { email: string }
 }
@@ -24,10 +22,11 @@ export const StackNavigator = () => {
           headerShown: false,
         }}
       >
-        <Stack.Screen name="Home" component={Noticia} />
+        <Stack.Screen name="Home" component={NuevaNoticia} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="Noticia" component={Noticia} />
+        <Stack.Screen name="NuevaNoticia" component={NuevaNoticia} />
         <Stack.Screen name="MainTabs" component={TabNavigator} />
       </Stack.Navigator>
     </>

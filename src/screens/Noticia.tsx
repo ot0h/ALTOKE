@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontFamily: 'MontserratAlternates_700Bold',
     fontSize: 24,
-    color: '#34405A',
+    color: '#1E2744',
   },
 
   /* IMAGEN */
