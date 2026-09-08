@@ -1,6 +1,9 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { Home, Login, Noticia, Register } from '@screens'
 import { TabNavigator } from './TabsNavigator'
+import { DashboardStats } from '../components/dashboard/DashboardStats'
+import { MyCommunity } from '../screens/MyCommunity'
+import { ManageCommunity } from '../screens/ManageCommunity'
 
 export type RootStackParamList = {
   Home: undefined
