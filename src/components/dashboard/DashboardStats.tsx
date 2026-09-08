@@ -1,8 +1,9 @@
 import React, { JSX } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { MetricsGrid } from './MetricsGrid'
 import { ReportBarChart } from './ReportBarChart'
 import { Metric } from './types'
+import ReportCard from '../ReportCard'
 
 interface ReporteMes {
   mes: string
@@ -38,6 +39,24 @@ export const DashboardStats = (): JSX.Element => {
       <MetricsGrid data={datos} />
 
       <ReportBarChart data={datosGrafico} />
+
+      <View>
+        <Text>Incidencias Recientes</Text>
+        <ReportCard
+          title="Fuga de agua en área común"
+          status={'revision'}
+          report={'#RPT-0847'}
+          category={'Fontanería'}
+          onPress={() => {}}
+        />
+        <ReportCard
+          title="Luminaria fundida pasillo 3"
+          status={'resuelto'}
+          report={'#RPT-0839'}
+          category={'Electricidad'}
+          onPress={() => {}}
+        />
+      </View>
     </View>
   )
 }
