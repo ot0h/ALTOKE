@@ -2,6 +2,7 @@ import {
   MontserratAlternates_400Regular,
   MontserratAlternates_600SemiBold,
   MontserratAlternates_800ExtraBold,
+  MontserratAlternates_700Bold,
 } from '@expo-google-fonts/montserrat-alternates'
 import { StackNavigator } from '@navigation/StackNavigator'
 import { NavigationContainer } from '@react-navigation/native'
@@ -23,6 +24,7 @@ export default function App(): JSX.Element | null {
     MontserratAlternates_400Regular,
     MontserratAlternates_600SemiBold,
     MontserratAlternates_800ExtraBold,
+    MontserratAlternates_700Bold,
     Inter_600SemiBold,
     Inter_400Regular,
     Inter_700Bold,
