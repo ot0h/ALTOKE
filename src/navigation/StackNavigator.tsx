@@ -5,6 +5,7 @@ import { DashboardStats } from '../components/dashboard/DashboardStats'
 import { MyCommunity } from '../screens/MyCommunity'
 import { ManageCommunity } from '../screens/ManageCommunity'
 import { MyProfile } from '../screens/MyProfile'
+import { VerNoticias } from '../screens/VerNoticias'
 
 export type RootStackParamList = {
   Home: undefined

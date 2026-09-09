@@ -15,7 +15,7 @@ type Props = {
   time?: string
   author?: string
   //PARA LA BADGE
-  category?: 'avisos' | 'mantenimiento'
+  category?: 'avisos' | 'mantenimiento' | 'eventos'
 
   onPress: () => void
 
