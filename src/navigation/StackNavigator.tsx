@@ -5,7 +5,7 @@ import { DashboardStats } from '../components/dashboard/DashboardStats'
 import { MyCommunity } from '../screens/MyCommunity'
 import { ManageCommunity } from '../screens/ManageCommunity'
 import { MyProfile } from '../screens/MyProfile'
-import { VerNoticias } from '../screens/VerNoticias'
+import { ReportProblem } from '../screens/tabs/Reportar_Problema'
 
 export type RootStackParamList = {
   Home: undefined
@@ -27,7 +27,7 @@ export const StackNavigator = () => {
           headerShown: false,
         }}
       >
-        <Stack.Screen name="Home" component={NuevaNoticia} />
+        <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Register" component={Register} />
         <Stack.Screen name="Noticia" component={Noticia} />
