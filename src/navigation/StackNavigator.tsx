@@ -1,6 +1,11 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { Home, Login, Noticia, NuevaNoticia, Register } from '@screens'
 import { TabNavigator } from './TabsNavigator'
+import { DashboardStats } from '../components/dashboard/DashboardStats'
+import { MyCommunity } from '../screens/MyCommunity'
+import { ManageCommunity } from '../screens/ManageCommunity'
+import { MyProfile } from '../screens/MyProfile'
+import { VerNoticias } from '../screens/VerNoticias'
 
 export type RootStackParamList = {
   Home: undefined

@@ -110,5 +110,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     gap: 20,
+    width:272
   },
 })
