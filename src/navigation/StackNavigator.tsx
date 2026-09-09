@@ -4,6 +4,7 @@ import { TabNavigator } from './TabsNavigator'
 import { DashboardStats } from '../components/dashboard/DashboardStats'
 import { MyCommunity } from '../screens/MyCommunity'
 import { ManageCommunity } from '../screens/ManageCommunity'
+import { MyProfile } from '../screens/MyProfile'
 
 export type RootStackParamList = {
   Home: undefined
