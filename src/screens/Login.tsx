@@ -42,12 +42,13 @@ export const Login = ({ navigation }: Props): JSX.Element => {
             onChangeText={setPassword}
           />
         </View>
-
+        <View style = {{width:272}}>
         <CustomButton
           text="Iniciar Sesión"
           onPress={handleLogin}
           variant="primary"
         />
+        </View>
 
         <Text
           style={[

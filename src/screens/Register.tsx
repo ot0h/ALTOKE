@@ -48,12 +48,14 @@ export const Register = ({ navigation }: Props): JSX.Element => {
             onChangeText={setPassword}
           />
         </View>
-
+        
+        <View style = {{width:272}}>
         <CustomButton
           text="Registrarse"
           onPress={handleRegister}
           variant="primary"
         />
+        </View>
 
         <Text
           style={[

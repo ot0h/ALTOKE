@@ -1,17 +1,10 @@
 import { JSX, useState } from 'react'
-import {
-  ActivityIndicator,
-  Image,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native'
+import {ActivityIndicator, Image,Pressable,ScrollView,StyleSheet,Text, TextInput, View,} from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import * as Location from 'expo-location'
 import { Camera, MapPin, ArrowLeft, ImagePlus, X } from 'lucide-react-native'
+import { CategoryTag } from '../../components/CategoryTag'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 type CategoriasType =
   | 'alumbrado'
@@ -26,6 +19,7 @@ type CategoriasType =
 type PrioridadType = 'baja' | 'media' | 'alta'
 
 export const ReportProblem = (): JSX.Element => {
+  const insets = useSafeAreaInsets()
   const [selected, setSelected] = useState<CategoriasType | null>('agua')
   const [prioridad, setPrioridad] = useState<PrioridadType>('media')
   const [titulo, setTitulo] = useState('')
@@ -34,19 +28,45 @@ export const ReportProblem = (): JSX.Element => {
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
     null,
   )
+   const [selectedCategory, setSelectedCategory] =
+      useState<CategoriasType>('otros')
   const [locationLoading, setLocationLoading] = useState(false)
   const [fotos, setFotos] = useState<string[]>([])
 
-  const CATEGORIAS: Record<CategoriasType, string> = {
-    agua: 'Agua',
-    alumbrado: 'Alumbrado',
-    bache: 'Bache',
-    basura: 'Basura',
-    mantenimiento: 'Mantenimiento',
-    infraestructura: 'Infraestructura',
-    seguridad: 'Seguridad',
-    otros: 'Otros',
-  }
+    const categories: {
+    text: string
+    value: CategoriasType
+  }[] = [
+      {
+        text: 'Agua',
+        value: 'agua',
+      },
+      {
+        text: 'Bache',
+        value: 'bache',
+      },
+      {
+        text: 'Basura',
+        value: 'basura',
+      },
+      {
+        text: 'Mantenimiento',
+        value: 'mantenimiento',
+      },
+      {
+        text: 'Infraestructura',
+        value:'infraestructura'
+      },
+      {
+        text:'Seguridad',
+        value:'seguridad'
+      },
+      {
+        text:'Otros',
+        value:'otros'
+      },
+    ]
+
 
   const PRIORIDADES: Record<PrioridadType, string> = {
     baja: 'Baja',
@@ -129,7 +149,7 @@ export const ReportProblem = (): JSX.Element => {
   }
 
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={styles.container}>
+    <ScrollView style={styles.screen} contentContainerStyle={[styles.container, {paddingTop: insets.top}]}>
       {/* Header */}
       <View style={styles.header}>
         <Pressable style={styles.backButton}>
@@ -138,31 +158,22 @@ export const ReportProblem = (): JSX.Element => {
         <Text style={styles.headerTitle}>Reportar problema</Text>
       </View>
 
-      {/* Categorías */}
-      <View style={styles.section}>
-        <Text style={styles.label}>Selecciona la categoría</Text>
-        <View style={styles.chipsWrap}>
-          {Object.entries(CATEGORIAS).map(([categoria, label]) => {
-            const isSelected = selected === categoria
-            return (
-              <Pressable
-                key={categoria}
-                style={[styles.chip, isSelected && styles.chipSelected]}
-                onPress={() => setSelected(categoria as CategoriasType)}
-              >
-                <Text
-                  style={[
-                    styles.chipText,
-                    isSelected && styles.chipTextSelected,
-                  ]}
-                >
-                  {label}
-                </Text>
-              </Pressable>
-            )
-          })}
-        </View>
-      </View>
+           {/* CATEGORÍAS */}
+           <View style={styles.categories}>
+             {categories.map(category => (
+               <CategoryTag
+                 key={category.value}
+                 text={category.text}
+                 selected={
+                   selectedCategory === category.value
+                 }
+                 onPress={() =>
+                   setSelectedCategory(category.value)
+                 }
+               />
+             ))}
+           </View>
+
 
       {/* Card principal */}
       <View style={styles.card}>
@@ -286,11 +297,12 @@ export const ReportProblem = (): JSX.Element => {
             )
           })}
         </View>
-      </View>
-
-      <Pressable style={styles.submitButton}>
+             <Pressable style={styles.submitButton}>
         <Text style={styles.submitText}>Enviar reporte</Text>
       </Pressable>
+      </View>
+
+ 
     </ScrollView>
   )
 }
@@ -300,6 +312,14 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F1F5F9',
   },
+
+    categories: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 12,
+  },
+
   container: {
     padding: 16,
     paddingBottom: 32,
@@ -323,9 +343,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#0F172A',
   },
-  section: {
-    marginBottom: 16,
-  },
   label: {
     fontFamily: 'Inter_600SemiBold',
     fontSize: 13,
@@ -334,32 +351,6 @@ const styles = StyleSheet.create({
   },
   spacedLabel: {
     marginTop: 16,
-  },
-  chipsWrap: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  chip: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 20,
-    paddingVertical: 8,
-    paddingHorizontal: 14,
-  },
-  chipSelected: {
-    backgroundColor: '#0145EA',
-    borderColor: '#0145EA',
-  },
-  chipText: {
-    fontFamily: 'Inter_600SemiBold',
-    fontWeight: '600',
-    fontSize: 12,
-    color: '#0F172A',
-  },
-  chipTextSelected: {
-    color: '#FFFFFF',
   },
   card: {
     backgroundColor: '#FFFFFF',
