@@ -44,7 +44,8 @@
         {
           "photosPermission": "ALTOKE necesita acceso a tus fotos para adjuntar evidencia de un problema."
         }
-      ]
+      ],
+      "expo-status-bar"
     ]
   }
 }
