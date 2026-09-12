@@ -2,7 +2,7 @@ import { CustomButton, CustomInput } from '@components'
 import { RootStackParamList } from '@navigation/StackNavigator'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { JSX, useState } from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native'
 import FixyLogin from '@assets/FIXYLOGIN.svg'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Register'>
@@ -14,60 +14,67 @@ export const Register = ({ navigation }: Props): JSX.Element => {
   const handleRegister = () => navigation.navigate('Login')
 
   return (
-    <View style={styles.container}>
-      <FixyLogin style={styles.fixy} width={248} height={248} />
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <View style={styles.container}>
+        <FixyLogin style={styles.fixy} width={248} height={248} />
 
-      <View style={styles.card}>
-        <Text
-          style={[
-            {
-              fontFamily: 'MontserratAlternates_800ExtraBold',
-              fontSize: 32,
-              color: '#1E2744',
-              paddingTop: 25,
-            },
-          ]}
-        >
-          Registrarse
-        </Text>
+        <View style={styles.card}>
+          <Text
+            style={[
+              {
+                fontFamily: 'MontserratAlternates_800ExtraBold',
+                fontSize: 32,
+                color: '#1E2744',
+                paddingTop: 25,
+              },
+            ]}
+          >
+            Registrarse
+          </Text>
 
-        <View style={styles.containerInputs}>
-          <CustomInput
-            placeholder="Nombre"
-            value={name}
-            onChangeText={setName}
-          />
-          <CustomInput
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-          />
-          <CustomInput
-            placeholder="Contraseña"
-            value={password}
-            onChangeText={setPassword}
-          />
+          <View style={styles.containerInputs}>
+            <CustomInput
+              placeholder="Nombre"
+              value={name}
+              onChangeText={setName}
+            />
+            <CustomInput
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              variant='email'
+            />
+            <CustomInput
+              placeholder="Contraseña"
+              value={password}
+              onChangeText={setPassword}
+              variant='password'
+            />
+          </View>
+
+          <View style={{ width: 272 }}>
+            <CustomButton
+              text="Registrarse"
+              onPress={handleRegister}
+              variant="primary"
+            />
+          </View>
+
+          <Text
+            style={[
+              {
+                color: '#0145EA',
+                fontSize: 11,
+                fontFamily: 'MontserratAlternates_400Regular',
+              },
+            ]}
+          ></Text>
         </View>
-        
-        <View style = {{width:272}}>
-        <CustomButton
-          text="Registrarse"
-          onPress={handleRegister}
-          variant="primary"
-        />
-        </View>
-
-        <Text
-          style={[
-            {
-              color: '#0145EA',
-              fontSize: 11,
-              fontFamily: 'MontserratAlternates_400Regular',
-            },
-          ]}
-        ></Text>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   )
 }
 
