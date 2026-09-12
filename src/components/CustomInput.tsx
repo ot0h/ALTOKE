@@ -4,15 +4,18 @@ type Props = {
   placeholder: string
   value: string
   onChangeText: (text: string) => void
+  variant?: 'code' | 'password' | 'primary'
 }
-export const CustomInput = ({ placeholder, value, onChangeText }: Props) => {
+export const CustomInput = ({ placeholder, value, onChangeText, variant = 'primary' }: Props) => {
   return (
     <>
       <TextInput
-        style={styles.input}
+        style={[styles.input , variant === 'code'? {textTransform: 'uppercase'}: null]}
         value={value}
         placeholder={placeholder}
         onChangeText={onChangeText}
+        maxLength={variant=== 'code'? 8 : undefined} 
+        
       />
     </>
   )

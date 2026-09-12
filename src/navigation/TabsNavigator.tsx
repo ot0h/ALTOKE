@@ -3,10 +3,12 @@ import { useRoute, RouteProp } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import { RootStackParamList } from './StackNavigator'
 import { Inicio, Notificaciones, Perfil, Reportes } from '@tabs'
+import { MyProfile } from '../screens/tabs/MyProfile'
+import { VerNoticias } from '../screens/tabs/VerNoticias'
 
 export type TabsParamList = {
   Inicio: { email: string }
-  Notificasiones: undefined
+  Noticia: undefined
   Reportes: undefined
   Perfil: undefined
 }
@@ -29,7 +31,7 @@ export const TabNavigator = () => {
             case 'Inicio':
               iconName = focused ? 'home' : 'home-outline'
               break
-            case 'Notificasiones':
+            case 'Noticia':
               iconName = focused ? 'notifications' : 'notifications-outline'
               break
             case 'Reportes':
@@ -46,37 +48,37 @@ export const TabNavigator = () => {
         tabBarInactiveTintColor: '#94A3B8',
         tabBarPosition: 'bottom',
         tabBarStyle: {
-          display: 'flex',
-          alignSelf: 'center',
-          flexDirection: 'row',
-          alignItems: 'center',
-          alignContent: 'center',
-          borderRadius: 24,
-          width: 344,
-          height: 72,
-          marginBottom: 20,
-          backgroundColor: '#F8FAFC',
-          borderColor: '#0145EA',
+          position: 'absolute',
+          left: 0,
+          right: 0,
+          bottom: 28,
+          marginHorizontal: 20,
+          height: 64,
+
+          borderRadius: 26,
           borderWidth: 1,
-          justifyContent: 'space-between',
-        },
-        tabBarLabelStyle: {
-          fontSize: 9,
-          fontFamily: 'Inter_600SemiBold',
-          fontWeight: '600',
-          textAlign: 'center',
+          borderColor: '#0145EA',
+          backgroundColor: '#F8FAFC',
+
+          shadowColor: '#000000',
+          shadowOffset: { width: 0, height: 6 },
+          shadowOpacity: 0.15,
+          shadowRadius: 10,
+          elevation: 8,
         },
         tabBarItemStyle: {
+          height: 64,
+          paddingVertical: 0,
           justifyContent: 'center',
           alignItems: 'center',
-          height: '50%',
         },
       })}
     >
       <Tab.Screen name="Inicio" component={Inicio} initialParams={{ email }} />
-      <Tab.Screen name="Notificasiones" component={Notificaciones} />
+      <Tab.Screen name="Noticia" component={VerNoticias} />
       <Tab.Screen name="Reportes" component={Reportes} />
-      <Tab.Screen name="Perfil" component={Perfil} />
+      <Tab.Screen name="Perfil" component={MyProfile} />
     </Tab.Navigator>
   )
 }
+

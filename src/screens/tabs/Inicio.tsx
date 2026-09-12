@@ -1,4 +1,4 @@
-import { JSX } from 'react'
+import { JSX, useState } from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
 import FixyIcon from '@assets/FIXY.svg'
 import { CustomButton } from '@components'
@@ -6,10 +6,16 @@ import CommunityCard from '../../components/CommunityCard'
 import Comunidad from '@assets/patronato.png'
 import CondominioCentral from '@assets/patronato.png'
 import ReportCard from '../../components/ReportCard'
+import JoinCommunityModal from '../modals/JoinCommunityModal'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export const Inicio = (): JSX.Element => {
+
+  // POP UP
+  const [joinModalVisible, setJoinModalVisible] = useState(false)
+  const insets = useSafeAreaInsets()
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView style={[styles.container, {paddingTop: insets.top}]} contentContainerStyle={styles.content}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.greeting}>¡Hola, Carlos! 👋</Text>
@@ -24,7 +30,7 @@ export const Inicio = (): JSX.Element => {
           <CustomButton
             variant="secondary"
             text={'CLICK AQUI'}
-            onPress={() => {}}
+            onPress={() => setJoinModalVisible(true)}
           />
         </View>
       </View>
@@ -39,13 +45,13 @@ export const Inicio = (): JSX.Element => {
         title={'Condominio Central'}
         description={'Hace 2 horas • Admin'}
         image={CondominioCentral}
-        onPress={() => {}}
+        onPress={() => { }}
       />
       <CommunityCard
         title={'Patronato Los Castanos'}
         description={'Ayer • Comité'}
         image={Comunidad}
-        onPress={() => {}}
+        onPress={() => { }}
       />
 
       {/* Reportes Recientes */}
@@ -58,16 +64,21 @@ export const Inicio = (): JSX.Element => {
         status={'revision'}
         report={'#RPT-0847'}
         category={'Fontanería'}
-        onPress={() => {}}
+        onPress={() => { }}
       />
       <ReportCard
         title="Luminaria fundida pasillo 3"
         status={'resuelto'}
         report={'#RPT-0839'}
         category={'Electricidad'}
-        onPress={() => {}}
+        onPress={() => { }}
+      />
+      <JoinCommunityModal
+        visible={joinModalVisible}
+        onClose={() => setJoinModalVisible(false)}
       />
     </ScrollView>
+
   )
 }
 
