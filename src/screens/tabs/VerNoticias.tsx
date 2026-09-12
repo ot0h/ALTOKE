@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { FlatList, StyleSheet, Text, View, } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import CommunityCard from '../components/CommunityCard'
-import { CategoryTag } from '../components/CategoryTag'
+import CommunityCard from '../../components/CommunityCard'
+import { CategoryTag } from '../../components/CategoryTag'
 
 import Patronato from '@assets/patronato.png'
-import SearchBar from '../components/SearchBar'
+import SearchBar from '../../components/SearchBar'
 
 type Category = 'todos' | 'avisos' | 'eventos' | 'mantenimiento'
 

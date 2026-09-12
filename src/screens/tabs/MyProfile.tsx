@@ -1,7 +1,7 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
 import Patronato from "@assets/patronato.png"
 import { CustomButton } from "@components"
-import ProfileAvatar from "../components/ProfileAvatar"
+import ProfileAvatar from "../../components/ProfileAvatar"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 
 export const MyProfile = () => {
