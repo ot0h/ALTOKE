@@ -16,6 +16,7 @@ type Report = {
     userId: string
     communityId: string
     createdAt: string
+    fotos?: string[]
 }
 
 type ReportsState = {

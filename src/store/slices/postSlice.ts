@@ -15,6 +15,9 @@ type Post = {
   content: string
   comments: Comment[]
   likes: number
+  image?: string
+  category?: 'avisos' | 'eventos' | 'mantenimiento'
+  createdAt?: string
 }
 
 
@@ -122,6 +125,8 @@ export const{
     likePost,
     addPost,
     removePost,
+    addComment,
+    removeComment,
 } = postsSlice.actions
 
 export default postsSlice.reducer
