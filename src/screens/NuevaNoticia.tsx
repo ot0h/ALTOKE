@@ -12,12 +12,47 @@ import * as ImagePicker from 'expo-image-picker'
 import { ArrowLeft, Camera } from 'lucide-react-native'
 import { CustomButton, CustomSwitch } from '@components'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useAppDispatch, useAppSelector } from '../store/hook'
+import { store } from '../store'
+import { addPost } from '../store/slices/postSlice'
 
 export const NuevaNoticia = (): JSX.Element => {
   const [foto, setFoto] = useState<string>('')
   const [title, setTitle] = useState<string>('')
   const [detail, setDetail] = useState<string>('')
   const [isPublish, setIsPublish] = useState<boolean>(true)
+  const dispatch = useAppDispatch()
+  const userId = useAppSelector(state => state.userProfile.id)
+  const communityId = useAppSelector(state => state.community.id)
+
+  const publicarNoticia = () => {
+    if (!title.trim()) return
+
+    const post = {
+      id: Date.now().toString(),
+      userId,
+      communityId,
+      title: title.trim(),
+      content: detail.trim(),
+      comments: [],
+      likes: 0,
+      category: 'avisos' as const,
+      createdAt: new Date().toISOString(),
+      image: foto || undefined,
+    }
+
+    dispatch(addPost(post))
+
+    console.log('[Redux] useDispatch(addPost) -> payload:', post)
+    console.log(
+      '[Redux] Nuevo estado de posts:',
+      store.getState().post.posts,
+    )
+
+    setTitle('')
+    setDetail('')
+    setFoto('')
+  }
 
   const elegirDeGaleria = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -121,7 +156,7 @@ export const NuevaNoticia = (): JSX.Element => {
           <CustomButton
             variant="secondary"
             text="Publicar Noticia"
-            onPress={() => {}}
+            onPress={publicarNoticia}
           />
         </View>
       </ScrollView>

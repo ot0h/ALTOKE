@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { FlatList, StyleSheet, Text, View, } from 'react-native'
+import { FlatList, Image, StyleSheet, Text, View, } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import CommunityCard from '../../components/CommunityCard'
 import { CategoryTag } from '../../components/CategoryTag'
 
 import Patronato from '@assets/patronato.png'
 import SearchBar from '../../components/SearchBar'
+import { useAppSelector } from '../../store/hook'
 
 type Category = 'todos' | 'avisos' | 'eventos' | 'mantenimiento'
 
@@ -16,37 +17,7 @@ export const VerNoticias = () => {
     useState<Category>('todos')
   const [search, setSearch] = useState('')
 
-  const notices = [
-    // las 3 que ya tienes...
-
-    {
-      id: '4',
-      title: 'Mantenimiento de áreas comunes',
-      description:
-        'Se realizará mantenimiento general durante el fin de semana.',
-      time: '06 Oct 2024',
-      category: 'mantenimiento' as const,
-      image: Patronato,
-    },
-    {
-      id: '5',
-      title: 'Nueva reunión comunitaria',
-      description:
-        'Los vecinos están invitados a la próxima reunión mensual.',
-      time: '04 Oct 2024',
-      category: 'eventos' as const,
-      image: Patronato,
-    },
-    {
-      id: '6',
-      title: 'Aviso importante para residentes',
-      description:
-        'Recuerda mantener actualizados tus datos de contacto.',
-      time: '01 Oct 2024',
-      category: 'avisos' as const,
-      image: Patronato,
-    },
-  ]
+  const notices = useAppSelector(state => state.post.posts)
 
   const categories: {
     text: string
@@ -78,7 +49,7 @@ export const VerNoticias = () => {
       //FILTRADO POR BUSQUEDA
     const matchesSearch =
       notice.title.toLowerCase().includes(search.toLowerCase()) ||
-      notice.description.toLowerCase().includes(search.toLowerCase())
+      (notice.content ?? '').toLowerCase().includes(search.toLowerCase())
 
     return matchesCategory && matchesSearch
   })
@@ -124,24 +95,34 @@ export const VerNoticias = () => {
       </View>
 
       {/* NOTICIAS */}
-      <FlatList
-        data={filteredNotices}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <CommunityCard
-            title={item.title}
-            description={item.description}
-            image={item.image}
-            time={item.time}
-            category={item.category}
-            variant="notices"
-            onPress={() => { }}
-          />
-        )}
-        contentContainerStyle={styles.list}
-        showsVerticalScrollIndicator={false}
-        style={{ flex: 1 }}
-      />
+      {notices.length === 0 ? (
+        <View style={styles.empty}>
+          <Text style={styles.emptyText}>
+            Aún no hay noticias. Publica la primera desde «Nueva Noticia».
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={filteredNotices}
+          keyExtractor={item => item.id}
+          renderItem={({ item }) => (
+            <CommunityCard
+              title={item.title}
+              description={item.content}
+              image={item.image ? { uri: item.image } : Patronato}
+              time={item.createdAt
+                ? new Date(item.createdAt).toLocaleDateString()
+                : undefined}
+              category={item.category}
+              variant="notices"
+              onPress={() => { }}
+            />
+          )}
+          contentContainerStyle={styles.list}
+          showsVerticalScrollIndicator={false}
+          style={{ flex: 1 }}
+        />
+      )}
     </View>
 
   )
@@ -182,5 +163,17 @@ const styles = StyleSheet.create({
   list: {
     gap: 14,
     paddingBottom: 20,
+  },
+  empty: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 40,
+  },
+  emptyText: {
+    fontFamily: 'Inter_400Regular',
+    fontSize: 14,
+    color: '#64748B',
+    textAlign: 'center',
   },
 })
