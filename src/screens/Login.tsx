@@ -4,20 +4,46 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { JSX, useState } from 'react'
 import { View, Text, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native'
 import FixyLogin from '@assets/FIXYLOGIN.svg'
+import { useAppDispatch, useAppSelector } from '../store/hook'
+import { store } from '../store'
+import { updateProfile } from '../store/slices/userProfileSlice'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>
 
 export const Login = ({ navigation }: Props): JSX.Element => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const dispatch = useAppDispatch()
+  const storedName = useAppSelector(state => state.userProfile.name)
 
-  const handleLogin = () => navigation.navigate('MainTabs', { email })
+  const handleLogin = () => {
+    const userId = Date.now().toString()
+
+    dispatch(updateProfile({ id: userId, name: storedName, email }))
+
+    console.log('[Redux] useDispatch(updateProfile) -> payload:', {
+      id: userId,
+      name: storedName,
+      email,
+    })
+    console.log(
+      '[Redux] Nuevo estado de userProfile:',
+      store.getState().userProfile,
+    )
+
+    navigation.navigate('MainTabs', { email })
+  }
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    <SafeAreaView
+      edges={['top', 'bottom']}
+      style={styles.safeArea}
     >
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
       <View style={styles.container}>
         <FixyLogin style={styles.fixy} width={248} height={248} />
 
@@ -70,10 +96,16 @@ export const Login = ({ navigation }: Props): JSX.Element => {
         </View>
       </View>
     </KeyboardAvoidingView>
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#0145EA',
+  },
+
   container: {
     display: 'flex',
     flex: 1,
