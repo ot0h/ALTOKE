@@ -22,8 +22,8 @@ export const NuevaNoticia = (): JSX.Element => {
   const [detail, setDetail] = useState<string>('')
   const [isPublish, setIsPublish] = useState<boolean>(true)
   const dispatch = useAppDispatch()
-  const userId = useAppSelector(state => state.userProfile.id)
-  const communityId = useAppSelector(state => state.community.id)
+  const userId = useAppSelector((state) => state.userProfile.id)
+  const communityId = useAppSelector((state) => state.community.id)
 
   const publicarNoticia = () => {
     if (!title.trim()) return
@@ -44,10 +44,7 @@ export const NuevaNoticia = (): JSX.Element => {
     dispatch(addPost(post))
 
     console.log('[Redux] useDispatch(addPost) -> payload:', post)
-    console.log(
-      '[Redux] Nuevo estado de posts:',
-      store.getState().post.posts,
-    )
+    console.log('[Redux] Nuevo estado de posts:', store.getState().post.posts)
 
     setTitle('')
     setDetail('')

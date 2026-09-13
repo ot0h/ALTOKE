@@ -14,17 +14,9 @@ type Props = {
   onClose: () => void
 }
 
-type JoinState =
-  | 'idle'
-  | 'found'
-  | 'joining'
-  | 'success'
-  | 'error'
+type JoinState = 'idle' | 'found' | 'joining' | 'success' | 'error'
 
-export default function JoinCommunityModal({
-  visible,
-  onClose,
-}: Props) {
+export default function JoinCommunityModal({ visible, onClose }: Props) {
   const [code, setCode] = useState('')
   const [state, setState] = useState<JoinState>('idle')
   const [communityName, setCommunityName] = useState('')
@@ -63,32 +55,25 @@ export default function JoinCommunityModal({
     >
       <View style={styles.overlay}>
         <View style={styles.modal}>
-
           {/* CERRAR */}
-          <Pressable
-            style={styles.closeButton}
-            onPress={cerrar}
-          >
+          <Pressable style={styles.closeButton} onPress={cerrar}>
             <Text style={styles.closeText}>×</Text>
           </Pressable>
 
           {/* INGRESAR CÓDIGO */}
           {state === 'idle' && (
             <>
-              <Text style={styles.title}>
-                Unirse a una comunidad
-              </Text>
+              <Text style={styles.title}>Unirse a una comunidad</Text>
 
               <Text style={styles.description}>
-                Ingresa el código que te proporcionó tu
-                comunidad.
+                Ingresa el código que te proporcionó tu comunidad.
               </Text>
 
               <CustomInput
                 value={code}
                 onChangeText={setCode}
                 placeholder="Ej. ABC123"
-                variant = "code"
+                variant="code"
               />
 
               <View style={styles.singleButton}>
@@ -104,18 +89,12 @@ export default function JoinCommunityModal({
           {/* COMUNIDAD ENCONTRADA */}
           {state === 'found' && (
             <>
-              <Text style={styles.title}>
-                Comunidad encontrada
-              </Text>
+              <Text style={styles.title}>Comunidad encontrada</Text>
 
               <View style={styles.communityBox}>
-                <Text style={styles.communityName}>
-                  {communityName}
-                </Text>
+                <Text style={styles.communityName}>{communityName}</Text>
 
-                <Text style={styles.communityCode}>
-                  Código: {code}
-                </Text>
+                <Text style={styles.communityCode}>Código: {code}</Text>
               </View>
 
               <Text style={styles.description}>
@@ -145,18 +124,12 @@ export default function JoinCommunityModal({
           {/* UNIÉNDOSE */}
           {state === 'joining' && (
             <View style={styles.centerContent}>
-              <ActivityIndicator
-                size="large"
-                color="#0145EA"
-              />
+              <ActivityIndicator size="large" color="#0145EA" />
 
-              <Text style={styles.title}>
-                Uniéndote...
-              </Text>
+              <Text style={styles.title}>Uniéndote...</Text>
 
               <Text style={styles.description}>
-                Estamos agregándote a{' '}
-                {communityName}
+                Estamos agregándote a {communityName}
               </Text>
             </View>
           )}
@@ -164,17 +137,12 @@ export default function JoinCommunityModal({
           {/* ÉXITO */}
           {state === 'success' && (
             <View style={styles.centerContent}>
-              <Text style={styles.successIcon}>
-                ✓
-              </Text>
+              <Text style={styles.successIcon}>✓</Text>
 
-              <Text style={styles.title}>
-                ¡Te has unido!
-              </Text>
+              <Text style={styles.title}>¡Te has unido!</Text>
 
               <Text style={styles.description}>
-                Ahora formas parte de{' '}
-                {communityName}.
+                Ahora formas parte de {communityName}.
               </Text>
 
               <View style={styles.singleButton}>
@@ -186,7 +154,6 @@ export default function JoinCommunityModal({
               </View>
             </View>
           )}
-
         </View>
       </View>
     </Modal>

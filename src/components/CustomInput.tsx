@@ -8,31 +8,41 @@ type Props = {
   onChangeText: (text: string) => void
   variant?: 'code' | 'password' | 'primary' | 'email'
 }
-export const CustomInput = ({ placeholder, value, onChangeText, variant = 'primary' }: Props) => {
-  const [isSecureText , setisSecureText] = useState(true)
+export const CustomInput = ({
+  placeholder,
+  value,
+  onChangeText,
+  variant = 'primary',
+}: Props) => {
+  const [isSecureText, setisSecureText] = useState(true)
 
   return (
-    <View style= {styles.inputContainer}>
+    <View style={styles.inputContainer}>
       <TextInput
-        style={[styles.input , variant === 'code'? {textTransform: 'uppercase'}: null]}
+        style={[
+          styles.input,
+          variant === 'code' ? { textTransform: 'uppercase' } : null,
+        ]}
         value={value}
         placeholder={placeholder}
         onChangeText={onChangeText}
-        maxLength={variant=== 'code'? 8 : undefined} 
-        keyboardType={variant==='email'? 'email-address': 'default'}
-        secureTextEntry = {variant === 'password' && isSecureText}
-
+        maxLength={variant === 'code' ? 8 : undefined}
+        keyboardType={variant === 'email' ? 'email-address' : 'default'}
+        secureTextEntry={variant === 'password' && isSecureText}
       />
       {variant === 'password' && (
-    <Pressable style = {styles.eyeButton} onPress={() => setisSecureText(!isSecureText)}>
-      <Ionicons
-        name={isSecureText ? 'eye-off' : 'eye'}
-        size={20}
-        color="#919191"
-      />
-    </Pressable>
-  )}
-   </View>
+        <Pressable
+          style={styles.eyeButton}
+          onPress={() => setisSecureText(!isSecureText)}
+        >
+          <Ionicons
+            name={isSecureText ? 'eye-off' : 'eye'}
+            size={20}
+            color="#919191"
+          />
+        </Pressable>
+      )}
+    </View>
   )
 }
 
@@ -56,13 +66,13 @@ const styles = StyleSheet.create({
   },
 
   inputContainer: {
-  width: 266,
-  position: 'relative',
-  justifyContent: 'center',
-},
-eyeButton: {
-  position: 'absolute',
-  right: 12,
-  zIndex: 1,
-},
+    width: 266,
+    position: 'relative',
+    justifyContent: 'center',
+  },
+  eyeButton: {
+    position: 'absolute',
+    right: 12,
+    zIndex: 1,
+  },
 })

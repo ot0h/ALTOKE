@@ -6,7 +6,7 @@ import ReportCard from '../../components/ReportCard'
 
 export const Reportes = () => {
   const insets = useSafeAreaInsets()
-  const reports = useAppSelector(state => state.report.reports)
+  const reports = useAppSelector((state) => state.report.reports)
 
   useEffect(() => {
     console.log('[Redux] useSelector(state => state.report.reports):', reports)
@@ -30,7 +30,7 @@ export const Reportes = () => {
       ) : (
         <FlatList
           data={reports}
-          keyExtractor={item => item.id}
+          keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
           renderItem={({ item }) => (
             <ReportCard

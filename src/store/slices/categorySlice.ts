@@ -24,26 +24,17 @@ const categorySlice = createSlice({
   initialState,
 
   reducers: {
-    setCategories: (
-      state,
-      action: PayloadAction<Category[]>
-    ) => {
+    setCategories: (state, action: PayloadAction<Category[]>) => {
       state.categories = action.payload
     },
 
-    addCategory: (
-      state,
-      action: PayloadAction<Category>
-    ) => {
+    addCategory: (state, action: PayloadAction<Category>) => {
       state.categories.push(action.payload)
     },
 
-    updateCategory: (
-      state,
-      action: PayloadAction<Category>
-    ) => {
+    updateCategory: (state, action: PayloadAction<Category>) => {
       const index = state.categories.findIndex(
-        category => category.id === action.payload.id
+        (category) => category.id === action.payload.id,
       )
 
       if (index !== -1) {
@@ -51,19 +42,13 @@ const categorySlice = createSlice({
       }
     },
 
-    removeCategory: (
-      state,
-      action: PayloadAction<string>
-    ) => {
+    removeCategory: (state, action: PayloadAction<string>) => {
       state.categories = state.categories.filter(
-        category => category.id !== action.payload
+        (category) => category.id !== action.payload,
       )
     },
 
-    setLoading: (
-      state,
-      action: PayloadAction<boolean>
-    ) => {
+    setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload
     },
   },

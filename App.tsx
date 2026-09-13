@@ -48,12 +48,12 @@ export default function App(): JSX.Element | null {
   }
 
   return (
-    <Provider store = {store}>
-    <SafeAreaProvider>
-    <NavigationContainer>
-      <StackNavigator />
-    </NavigationContainer>
-    </SafeAreaProvider>
+    <Provider store={store}>
+      <SafeAreaProvider>
+        <NavigationContainer>
+          <StackNavigator />
+        </NavigationContainer>
+      </SafeAreaProvider>
     </Provider>
   )
 }

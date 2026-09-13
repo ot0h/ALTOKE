@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FlatList, Image, StyleSheet, Text, View, } from 'react-native'
+import { FlatList, Image, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import CommunityCard from '../../components/CommunityCard'
 import { CategoryTag } from '../../components/CategoryTag'
@@ -13,40 +13,38 @@ type Category = 'todos' | 'avisos' | 'eventos' | 'mantenimiento'
 export const VerNoticias = () => {
   const insets = useSafeAreaInsets()
 
-  const [selectedCategory, setSelectedCategory] =
-    useState<Category>('todos')
+  const [selectedCategory, setSelectedCategory] = useState<Category>('todos')
   const [search, setSearch] = useState('')
 
-  const notices = useAppSelector(state => state.post.posts)
+  const notices = useAppSelector((state) => state.post.posts)
 
   const categories: {
     text: string
     value: Category
   }[] = [
-      {
-        text: 'Todos',
-        value: 'todos',
-      },
-      {
-        text: 'Avisos',
-        value: 'avisos',
-      },
-      {
-        text: 'Eventos',
-        value: 'eventos',
-      },
-      {
-        text: 'Mantenimiento',
-        value: 'mantenimiento',
-      },
-    ]
+    {
+      text: 'Todos',
+      value: 'todos',
+    },
+    {
+      text: 'Avisos',
+      value: 'avisos',
+    },
+    {
+      text: 'Eventos',
+      value: 'eventos',
+    },
+    {
+      text: 'Mantenimiento',
+      value: 'mantenimiento',
+    },
+  ]
   //FILTRADO POR ETIQUETA
-  const filteredNotices = notices.filter(notice => {
+  const filteredNotices = notices.filter((notice) => {
     const matchesCategory =
-      selectedCategory === 'todos' ||
-      notice.category === selectedCategory
+      selectedCategory === 'todos' || notice.category === selectedCategory
 
-      //FILTRADO POR BUSQUEDA
+    //FILTRADO POR BUSQUEDA
     const matchesSearch =
       notice.title.toLowerCase().includes(search.toLowerCase()) ||
       (notice.content ?? '').toLowerCase().includes(search.toLowerCase())
@@ -72,24 +70,17 @@ export const VerNoticias = () => {
           Infórmate sobre lo que pasa en tu comunidad
         </Text>
 
-        <SearchBar
-          value={search}
-          onChangeText={setSearch}
-        />
+        <SearchBar value={search} onChangeText={setSearch} />
       </View>
 
       {/* CATEGORÍAS */}
       <View style={styles.categories}>
-        {categories.map(category => (
+        {categories.map((category) => (
           <CategoryTag
             key={category.value}
             text={category.text}
-            selected={
-              selectedCategory === category.value
-            }
-            onPress={() =>
-              setSelectedCategory(category.value)
-            }
+            selected={selectedCategory === category.value}
+            onPress={() => setSelectedCategory(category.value)}
           />
         ))}
       </View>
@@ -104,18 +95,20 @@ export const VerNoticias = () => {
       ) : (
         <FlatList
           data={filteredNotices}
-          keyExtractor={item => item.id}
+          keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <CommunityCard
               title={item.title}
               description={item.content}
               image={item.image ? { uri: item.image } : Patronato}
-              time={item.createdAt
-                ? new Date(item.createdAt).toLocaleDateString()
-                : undefined}
+              time={
+                item.createdAt
+                  ? new Date(item.createdAt).toLocaleDateString()
+                  : undefined
+              }
               category={item.category}
               variant="notices"
-              onPress={() => { }}
+              onPress={() => {}}
             />
           )}
           contentContainerStyle={styles.list}
@@ -124,7 +117,6 @@ export const VerNoticias = () => {
         />
       )}
     </View>
-
   )
 }
 

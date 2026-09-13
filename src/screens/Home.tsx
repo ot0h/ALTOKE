@@ -13,69 +13,66 @@ export const Home = ({ navigation }: Props): JSX.Element => {
   const handleLogin = () => navigation.navigate('Login')
   const handleRegister = () => navigation.navigate('Register')
   return (
-    <SafeAreaView
-      edges={['top', 'left', 'right']}
-      style={styles.safeArea}
-    >
+    <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
       <View style={styles.container}>
-      {/* START */}
-      <View style={styles.start}>
-        <IconFixy width={130} height={118} />
-        <Text
-          style={[
-            styles.textFont,
-            {
-              color: '#1E2744',
-              fontSize: 24,
-              fontWeight: 600,
-            },
-          ]}
-        >
-          Gestiona tu comunidad
-        </Text>
-        <Text
-          style={[
-            styles.textFont,
-            {
-              color: '#3E6CB0',
-              fontSize: 16,
-              fontWeight: 600,
-            },
-          ]}
-        >
-          Reporta. Comunica. Resuelva al Toke.
-        </Text>
-      </View>
-
-      {/* END */}
-      <View style={styles.end}>
-        <Text
-          style={[
-            styles.textFont,
-            {
-              color: '#1E2744',
-              fontSize: 15,
-              fontWeight: 600,
-            },
-          ]}
-        >
-          Tu comunidad a un toque de distancia:
-        </Text>
-
-        <View style={styles.botones}>
-          <CustomButton
-            text="Crear Cuenta"
-            variant="primary"
-            onPress={handleRegister}
-          />
-          <CustomButton
-            text="Iniciar Sesion"
-            variant="default"
-            onPress={handleLogin}
-          />
+        {/* START */}
+        <View style={styles.start}>
+          <IconFixy width={130} height={118} />
+          <Text
+            style={[
+              styles.textFont,
+              {
+                color: '#1E2744',
+                fontSize: 24,
+                fontWeight: 600,
+              },
+            ]}
+          >
+            Gestiona tu comunidad
+          </Text>
+          <Text
+            style={[
+              styles.textFont,
+              {
+                color: '#3E6CB0',
+                fontSize: 16,
+                fontWeight: 600,
+              },
+            ]}
+          >
+            Reporta. Comunica. Resuelva al Toke.
+          </Text>
         </View>
-      </View>
-      <Wave width={'100%'} height={'25%'} preserveAspectRatio="none" />
+
+        {/* END */}
+        <View style={styles.end}>
+          <Text
+            style={[
+              styles.textFont,
+              {
+                color: '#1E2744',
+                fontSize: 15,
+                fontWeight: 600,
+              },
+            ]}
+          >
+            Tu comunidad a un toque de distancia:
+          </Text>
+
+          <View style={styles.botones}>
+            <CustomButton
+              text="Crear Cuenta"
+              variant="primary"
+              onPress={handleRegister}
+            />
+            <CustomButton
+              text="Iniciar Sesion"
+              variant="default"
+              onPress={handleLogin}
+            />
+          </View>
+        </View>
+        <Wave width={'100%'} height={'25%'} preserveAspectRatio="none" />
       </View>
     </SafeAreaView>
   )
@@ -121,6 +118,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     gap: 20,
-    width:272
+    width: 272,
   },
 })

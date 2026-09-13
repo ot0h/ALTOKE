@@ -81,4 +81,3 @@ export const TabNavigator = () => {
     </Tab.Navigator>
   )
 }
-

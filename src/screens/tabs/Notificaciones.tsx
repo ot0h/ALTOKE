@@ -4,10 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 export const Notificaciones = (): JSX.Element => {
   return (
-    <SafeAreaView
-      edges={['top', 'bottom']}
-      style={styles.safeArea}
-    >
+    <SafeAreaView edges={['top', 'bottom']} style={styles.safeArea}>
       <View style={styles.center}>
         <Text>Este seria el de Notificaciones</Text>
       </View>

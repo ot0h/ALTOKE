@@ -1,9 +1,4 @@
-import {
-  FlatList,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+import { FlatList, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { CustomButton } from '@components'
@@ -48,9 +43,7 @@ export const ManageNotices = () => {
       ]}
     >
       <View style={styles.header}>
-        <Text style={styles.title}>
-          Gestión noticias
-        </Text>
+        <Text style={styles.title}>Gestión noticias</Text>
 
         <View style={styles.createButton}>
           <CustomButton

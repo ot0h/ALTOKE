@@ -11,13 +11,15 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAppSelector } from '../../store/hook'
 
 export const Inicio = (): JSX.Element => {
-
   // POP UP
   const [joinModalVisible, setJoinModalVisible] = useState(false)
   const insets = useSafeAreaInsets()
-  const userName = useAppSelector(state => state.userProfile.name)
+  const userName = useAppSelector((state) => state.userProfile.name)
   return (
-    <ScrollView style={[styles.container, {paddingTop: insets.top}]} contentContainerStyle={styles.content}>
+    <ScrollView
+      style={[styles.container, { paddingTop: insets.top }]}
+      contentContainerStyle={styles.content}
+    >
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.greeting}>¡Hola, {userName || 'vecino'}! 👋</Text>
@@ -47,13 +49,13 @@ export const Inicio = (): JSX.Element => {
         title={'Condominio Central'}
         description={'Hace 2 horas • Admin'}
         image={CondominioCentral}
-        onPress={() => { }}
+        onPress={() => {}}
       />
       <CommunityCard
         title={'Patronato Los Castanos'}
         description={'Ayer • Comité'}
         image={Comunidad}
-        onPress={() => { }}
+        onPress={() => {}}
       />
 
       {/* Reportes Recientes */}
@@ -66,21 +68,20 @@ export const Inicio = (): JSX.Element => {
         status={'revision'}
         report={'#RPT-0847'}
         category={'Fontanería'}
-        onPress={() => { }}
+        onPress={() => {}}
       />
       <ReportCard
         title="Luminaria fundida pasillo 3"
         status={'resuelto'}
         report={'#RPT-0839'}
         category={'Electricidad'}
-        onPress={() => { }}
+        onPress={() => {}}
       />
       <JoinCommunityModal
         visible={joinModalVisible}
         onClose={() => setJoinModalVisible(false)}
       />
     </ScrollView>
-
   )
 }
 

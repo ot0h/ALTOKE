@@ -4,10 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 export const Perfil = (): JSX.Element => {
   return (
-    <SafeAreaView
-      edges={['top', 'bottom']}
-      style={styles.safeArea}
-    >
+    <SafeAreaView edges={['top', 'bottom']} style={styles.safeArea}>
       <View style={styles.center}>
         <Text>Este seria el de Perfil</Text>
       </View>

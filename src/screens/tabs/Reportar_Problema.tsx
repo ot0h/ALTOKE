@@ -1,5 +1,14 @@
 import { JSX, useState } from 'react'
-import {ActivityIndicator, Image,Pressable,ScrollView,StyleSheet,Text, TextInput, View,} from 'react-native'
+import {
+  ActivityIndicator,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import * as Location from 'expo-location'
 import { Camera, MapPin, ArrowLeft, ImagePlus, X } from 'lucide-react-native'
@@ -24,8 +33,8 @@ type PrioridadType = 'baja' | 'media' | 'alta'
 export const ReportProblem = (): JSX.Element => {
   const insets = useSafeAreaInsets()
   const dispatch = useAppDispatch()
-  const userId = useAppSelector(state => state.userProfile.id)
-  const communityId = useAppSelector(state => state.community.id)
+  const userId = useAppSelector((state) => state.userProfile.id)
+  const communityId = useAppSelector((state) => state.community.id)
   const [selected, setSelected] = useState<CategoriasType | null>('agua')
   const [prioridad, setPrioridad] = useState<PrioridadType>('media')
   const [titulo, setTitulo] = useState('')
@@ -34,45 +43,44 @@ export const ReportProblem = (): JSX.Element => {
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(
     null,
   )
-   const [selectedCategory, setSelectedCategory] =
-      useState<CategoriasType>('otros')
+  const [selectedCategory, setSelectedCategory] =
+    useState<CategoriasType>('otros')
   const [locationLoading, setLocationLoading] = useState(false)
   const [fotos, setFotos] = useState<string[]>([])
 
-    const categories: {
+  const categories: {
     text: string
     value: CategoriasType
   }[] = [
-      {
-        text: 'Agua',
-        value: 'agua',
-      },
-      {
-        text: 'Bache',
-        value: 'bache',
-      },
-      {
-        text: 'Basura',
-        value: 'basura',
-      },
-      {
-        text: 'Mantenimiento',
-        value: 'mantenimiento',
-      },
-      {
-        text: 'Infraestructura',
-        value:'infraestructura'
-      },
-      {
-        text:'Seguridad',
-        value:'seguridad'
-      },
-      {
-        text:'Otros',
-        value:'otros'
-      },
-    ]
-
+    {
+      text: 'Agua',
+      value: 'agua',
+    },
+    {
+      text: 'Bache',
+      value: 'bache',
+    },
+    {
+      text: 'Basura',
+      value: 'basura',
+    },
+    {
+      text: 'Mantenimiento',
+      value: 'mantenimiento',
+    },
+    {
+      text: 'Infraestructura',
+      value: 'infraestructura',
+    },
+    {
+      text: 'Seguridad',
+      value: 'seguridad',
+    },
+    {
+      text: 'Otros',
+      value: 'otros',
+    },
+  ]
 
   const PRIORIDADES: Record<PrioridadType, string> = {
     baja: 'Baja',
@@ -184,7 +192,10 @@ export const ReportProblem = (): JSX.Element => {
   }
 
   return (
-    <ScrollView style={styles.screen} contentContainerStyle={[styles.container, {paddingTop: insets.top}]}>
+    <ScrollView
+      style={styles.screen}
+      contentContainerStyle={[styles.container, { paddingTop: insets.top }]}
+    >
       {/* Header */}
       <View style={styles.header}>
         <Pressable style={styles.backButton}>
@@ -193,22 +204,17 @@ export const ReportProblem = (): JSX.Element => {
         <Text style={styles.headerTitle}>Reportar problema</Text>
       </View>
 
-           {/* CATEGORÍAS */}
-           <View style={styles.categories}>
-             {categories.map(category => (
-               <CategoryTag
-                 key={category.value}
-                 text={category.text}
-                 selected={
-                   selectedCategory === category.value
-                 }
-                 onPress={() =>
-                   setSelectedCategory(category.value)
-                 }
-               />
-             ))}
-           </View>
-
+      {/* CATEGORÍAS */}
+      <View style={styles.categories}>
+        {categories.map((category) => (
+          <CategoryTag
+            key={category.value}
+            text={category.text}
+            selected={selectedCategory === category.value}
+            onPress={() => setSelectedCategory(category.value)}
+          />
+        ))}
+      </View>
 
       {/* Card principal */}
       <View style={styles.card}>
@@ -332,12 +338,10 @@ export const ReportProblem = (): JSX.Element => {
             )
           })}
         </View>
-             <Pressable style={styles.submitButton} onPress={enviarReporte}>
-        <Text style={styles.submitText}>Enviar reporte</Text>
-      </Pressable>
+        <Pressable style={styles.submitButton} onPress={enviarReporte}>
+          <Text style={styles.submitText}>Enviar reporte</Text>
+        </Pressable>
       </View>
-
- 
     </ScrollView>
   )
 }
@@ -348,7 +352,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F1F5F9',
   },
 
-    categories: {
+  categories: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
