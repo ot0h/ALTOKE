@@ -8,17 +8,19 @@ import CondominioCentral from '@assets/patronato.png'
 import ReportCard from '../../components/ReportCard'
 import JoinCommunityModal from '../modals/JoinCommunityModal'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useAppSelector } from '../../store/hook'
 
 export const Inicio = (): JSX.Element => {
 
   // POP UP
   const [joinModalVisible, setJoinModalVisible] = useState(false)
   const insets = useSafeAreaInsets()
+  const userName = useAppSelector(state => state.userProfile.name)
   return (
     <ScrollView style={[styles.container, {paddingTop: insets.top}]} contentContainerStyle={styles.content}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.greeting}>¡Hola, Carlos! 👋</Text>
+        <Text style={styles.greeting}>¡Hola, {userName || 'vecino'}! 👋</Text>
         <FixyIcon height={48} width={48} />
       </View>
 

@@ -3,6 +3,7 @@ import Patronato from "@assets/patronato.png"
 import { CustomButton } from "@components"
 import ProfileAvatar from "../../components/ProfileAvatar"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { useAppSelector } from "../../store/hook"
 
 export const MyProfile = () => {
 
@@ -18,7 +19,11 @@ export const MyProfile = () => {
             role: "Miembro",
         },
     ]
+
     const insets = useSafeAreaInsets()
+
+    const userName = useAppSelector(state => state.userProfile.name)
+    const userEmail = useAppSelector(state => state.userProfile.email)
 
     return (
 
@@ -42,11 +47,11 @@ export const MyProfile = () => {
                 />
 
                 <Text style={styles.name}>
-                    David
+                    {userName || 'Invitado'}
                 </Text>
 
                 <Text style={styles.email}>
-                    david@email.com
+                    {userEmail || 'Sin sesión iniciada'}
                 </Text>
             </View>
 
