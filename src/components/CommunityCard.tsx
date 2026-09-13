@@ -15,7 +15,7 @@ type Props = {
   time?: string
   author?: string
   //PARA LA BADGE
-  category?: 'avisos' | 'mantenimiento'
+  category?: 'avisos' | 'mantenimiento' | 'eventos'
 
   onPress: () => void
 
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   card: {
     overflow: 'hidden',
     backgroundColor: '#FFFF',
-    width: 362,
+    width: '100%',
     borderColor: '#E2E8F0',
     borderWidth: 1,
     borderRadius: 12,

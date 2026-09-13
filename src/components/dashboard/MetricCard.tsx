@@ -7,7 +7,10 @@ interface Props {
   quantity: number
 }
 
-export const MetricCard = ({ type = 'residentes', quantity }: Props): JSX.Element => {
+export const MetricCard = ({
+  type = 'residentes',
+  quantity,
+}: Props): JSX.Element => {
   const styles = getStyles(type)
 
   const labels: Record<MetricType, string> = {
