@@ -5,6 +5,7 @@ import Wave from '@assets/wave_home.svg'
 import { CustomButton } from '@components'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '@navigation/StackNavigator'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>
 
@@ -12,7 +13,11 @@ export const Home = ({ navigation }: Props): JSX.Element => {
   const handleLogin = () => navigation.navigate('Login')
   const handleRegister = () => navigation.navigate('Register')
   return (
-    <View style={styles.container}>
+    <SafeAreaView
+      edges={['top', 'left', 'right']}
+      style={styles.safeArea}
+    >
+      <View style={styles.container}>
       {/* START */}
       <View style={styles.start}>
         <IconFixy width={130} height={118} />
@@ -71,11 +76,17 @@ export const Home = ({ navigation }: Props): JSX.Element => {
         </View>
       </View>
       <Wave width={'100%'} height={'25%'} preserveAspectRatio="none" />
-    </View>
+      </View>
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+
   container: {
     display: 'flex',
     flex: 1,
