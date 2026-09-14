@@ -4,6 +4,7 @@ import { MetricsGrid } from './MetricsGrid'
 import { ReportBarChart } from './ReportBarChart'
 import { Metric } from './types'
 import ReportCard from '../ReportCard'
+import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 interface ReporteMes {
   mes: string
@@ -11,6 +12,8 @@ interface ReporteMes {
 }
 
 export const DashboardStats = (): JSX.Element => {
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
   const datos: Metric[] = [
     { type: 'residentes', quantity: 342 },
     { type: 'active_alerts', quantity: 12 },
@@ -42,7 +45,7 @@ export const DashboardStats = (): JSX.Element => {
         <ReportBarChart data={datosGrafico} />
 
         <View>
-          <Text>Incidencias Recientes</Text>
+          <Text style={styles.sectionTitle}>Incidencias Recientes</Text>
           <ReportCard
             title="Fuga de agua en área común"
             status={'revision'}
@@ -63,9 +66,17 @@ export const DashboardStats = (): JSX.Element => {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    gap: 16,
-  },
-})
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    container: {
+      padding: 16,
+      gap: 16,
+      backgroundColor: colors.background,
+    },
+    sectionTitle: {
+      fontSize: 16,
+      fontFamily: 'Inter_700Bold',
+      color: colors.text,
+      marginBottom: 12,
+    },
+  })

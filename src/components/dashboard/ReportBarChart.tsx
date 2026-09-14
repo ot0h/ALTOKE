@@ -1,6 +1,7 @@
 import React, { JSX } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { BarChart } from 'react-native-gifted-charts'
+import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 export interface BarData {
   value: number
@@ -12,6 +13,8 @@ interface Props {
 }
 
 export const ReportBarChart = ({ data }: Props): JSX.Element => {
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
   return (
     <View style={styles.chartCard}>
       <Text style={styles.chartTitle}>Reportes Recibidos Mensuales</Text>
@@ -24,7 +27,7 @@ export const ReportBarChart = ({ data }: Props): JSX.Element => {
           initialSpacing={12}
           endSpacing={12}
           height={130}
-          frontColor="#0145EA"
+          frontColor={colors.primary}
           barBorderTopLeftRadius={8}
           barBorderTopRightRadius={8}
           hideRules
@@ -39,27 +42,28 @@ export const ReportBarChart = ({ data }: Props): JSX.Element => {
   )
 }
 
-const styles = StyleSheet.create({
-  chartCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 20,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    marginTop: 8,
-    alignItems: 'center',
-    display: 'flex',
-  },
-  chartTitle: {
-    fontSize: 14,
-    fontFamily: 'Inter_700Bold',
-    color: '#1E2744',
-    marginBottom: 20,
-  },
-  chartWrapper: {},
-  labelEjeX: {
-    color: '#64748B',
-    fontSize: 13,
-    fontFamily: 'Inter_600SemiBold',
-  },
-})
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    chartCard: {
+      backgroundColor: colors.surface,
+      borderRadius: 20,
+      padding: 20,
+      borderWidth: 1,
+      borderColor: colors.border,
+      marginTop: 8,
+      alignItems: 'center',
+      display: 'flex',
+    },
+    chartTitle: {
+      fontSize: 14,
+      fontFamily: 'Inter_700Bold',
+      color: colors.text,
+      marginBottom: 20,
+    },
+    chartWrapper: {},
+    labelEjeX: {
+      color: colors.textSecondary,
+      fontSize: 13,
+      fontFamily: 'Inter_600SemiBold',
+    },
+  })

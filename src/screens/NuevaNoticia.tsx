@@ -15,8 +15,11 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { useAppDispatch, useAppSelector } from '../store/hook'
 import { store } from '../store'
 import { addPost } from '../store/slices/postSlice'
+import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 export const NuevaNoticia = (): JSX.Element => {
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
   const [foto, setFoto] = useState<string>('')
   const [title, setTitle] = useState<string>('')
   const [detail, setDetail] = useState<string>('')
@@ -76,7 +79,7 @@ export const NuevaNoticia = (): JSX.Element => {
           {/* HEADER */}
           <View style={styles.header}>
             <Pressable style={styles.backButton}>
-              <ArrowLeft size={20} color="#0F172A" />
+              <ArrowLeft size={20} color={colors.text} />
             </Pressable>
             <Text style={styles.headerTitle}>Nueva Noticia</Text>
           </View>
@@ -95,7 +98,7 @@ export const NuevaNoticia = (): JSX.Element => {
                 value={title}
                 onChangeText={setTitle}
                 placeholder="Escribe un título descriptivo"
-                placeholderTextColor="#64748B"
+                placeholderTextColor={colors.textSecondary}
               />
             </View>
 
@@ -107,7 +110,7 @@ export const NuevaNoticia = (): JSX.Element => {
                   <Image source={{ uri: foto }} style={styles.photoPreview} />
                 ) : (
                   <>
-                    <Camera size={20} color={'#0145EA'} />
+                    <Camera size={20} color={colors.primary} />
                     <Text style={styles.photoTitle}>
                       Subir imagen de portada
                     </Text>
@@ -131,7 +134,7 @@ export const NuevaNoticia = (): JSX.Element => {
                 value={detail}
                 onChangeText={setDetail}
                 placeholder="Redacta el mensaje o anuncio aquí de forma clara para toda la comunidad..."
-                placeholderTextColor="#64748B"
+                placeholderTextColor={colors.textSecondary}
                 multiline={true}
                 textAlignVertical="top"
               />
@@ -161,120 +164,121 @@ export const NuevaNoticia = (): JSX.Element => {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-    backgroundColor: '#F8FAFC',
-    gap: 10,
-    justifyContent: 'center',
-    alignContent: 'center',
-  },
-  scrollContent: { paddingBottom: 100 },
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      paddingHorizontal: 20,
+      backgroundColor: colors.background,
+      gap: 10,
+      justifyContent: 'center',
+      alignContent: 'center',
+    },
+    scrollContent: { paddingBottom: 100 },
 
-  // HEADER
-  header: {
-    paddingVertical: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    width: 402,
-    height: 132,
-  },
-  backButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#E8EDF3',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerTitle: {
-    fontFamily: 'MontserratAlternates_700Bold',
-    fontSize: 24,
-    color: '#1E2744',
-  },
+    // HEADER
+    header: {
+      paddingVertical: 20,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      width: 402,
+      height: 132,
+    },
+    backButton: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: colors.border,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    headerTitle: {
+      fontFamily: 'MontserratAlternates_700Bold',
+      fontSize: 24,
+      color: colors.text,
+    },
 
-  // CARD
-  card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 16,
-    gap: 16,
-    marginBottom: 10,
-  },
-  field: {
-    gap: 8,
-  },
-  label: {
-    fontFamily: 'Inter_600SemiBold',
-    fontSize: 14,
-    color: '#1E2744',
-  },
+    // CARD
+    card: {
+      backgroundColor: colors.surface,
+      borderRadius: 20,
+      padding: 16,
+      gap: 16,
+      marginBottom: 10,
+    },
+    field: {
+      gap: 8,
+    },
+    label: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 14,
+      color: colors.text,
+    },
 
-  // FOTOS
-  photoBox: {
-    borderWidth: 1.5,
-    borderStyle: 'dashed',
-    borderColor: '#3E6CB0',
-    borderRadius: 16,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 4,
-    height: 130,
-    width: '100%',
-    overflow: 'hidden',
-  },
-  photoPreview: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 14,
-  },
-  photoTitle: {
-    fontFamily: 'Inter_600SemiBold',
-    fontWeight: '600',
-    fontSize: 12,
-    color: '#0145EA',
-  },
-  photoDetail: {
-    fontFamily: 'Inter_400Regular',
-    fontSize: 10,
-    fontWeight: '400',
-    color: '#64748B',
-  },
+    // FOTOS
+    photoBox: {
+      borderWidth: 1.5,
+      borderStyle: 'dashed',
+      borderColor: colors.primary,
+      borderRadius: 16,
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 4,
+      height: 130,
+      width: '100%',
+      overflow: 'hidden',
+    },
+    photoPreview: {
+      width: '100%',
+      height: '100%',
+      borderRadius: 14,
+    },
+    photoTitle: {
+      fontFamily: 'Inter_600SemiBold',
+      fontWeight: '600',
+      fontSize: 12,
+      color: colors.primary,
+    },
+    photoDetail: {
+      fontFamily: 'Inter_400Regular',
+      fontSize: 10,
+      fontWeight: '400',
+      color: colors.textSecondary,
+    },
 
-  // TOGGLE
-  toggleRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  toggleTextWrap: {
-    flex: 1,
-    paddingRight: 12,
-    gap: 2,
-  },
-  toggleTitle: {
-    fontFamily: 'Inter_600SemiBold',
-    fontSize: 14,
-    color: '#1E2744',
-  },
-  toggleSubtitle: {
-    fontFamily: 'Inter_400Regular',
-    fontSize: 12,
-    color: '#64748B',
-  },
+    // TOGGLE
+    toggleRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    toggleTextWrap: {
+      flex: 1,
+      paddingRight: 12,
+      gap: 2,
+    },
+    toggleTitle: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 14,
+      color: colors.text,
+    },
+    toggleSubtitle: {
+      fontFamily: 'Inter_400Regular',
+      fontSize: 12,
+      color: colors.textSecondary,
+    },
 
-  input: {
-    fontFamily: 'Inter_400Regular',
-    fontSize: 14,
-    fontWeight: '400',
-    color: '#1E2744',
-  },
-  textArea: {
-    backgroundColor: '#F8FAFC',
-    borderColor: '#E2E8F0',
-    borderWidth: 1,
-    borderRadius: 12,
-  },
-})
+    input: {
+      fontFamily: 'Inter_400Regular',
+      fontSize: 14,
+      fontWeight: '400',
+      color: colors.text,
+    },
+    textArea: {
+      backgroundColor: colors.background,
+      borderColor: colors.border,
+      borderWidth: 1,
+      borderRadius: 12,
+    },
+  })

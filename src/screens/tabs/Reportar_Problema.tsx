@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAppDispatch, useAppSelector } from '../../store/hook'
 import { store } from '../../store'
 import { addReport } from '../../store/slices/reportSlice'
+import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 type CategoriasType =
   | 'alumbrado'
@@ -31,6 +32,8 @@ type CategoriasType =
 type PrioridadType = 'baja' | 'media' | 'alta'
 
 export const ReportProblem = (): JSX.Element => {
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
   const insets = useSafeAreaInsets()
   const dispatch = useAppDispatch()
   const userId = useAppSelector((state) => state.userProfile.id)
@@ -199,7 +202,7 @@ export const ReportProblem = (): JSX.Element => {
       {/* Header */}
       <View style={styles.header}>
         <Pressable style={styles.backButton}>
-          <ArrowLeft size={20} color="#0F172A" />
+          <ArrowLeft size={20} color={colors.text} />
         </Pressable>
         <Text style={styles.headerTitle}>Reportar problema</Text>
       </View>
@@ -222,7 +225,7 @@ export const ReportProblem = (): JSX.Element => {
         <TextInput
           style={styles.input}
           placeholder="Ej. Tubo roto frente a casa 14"
-          placeholderTextColor="#94A3B8"
+          placeholderTextColor={colors.placeholder}
           value={titulo}
           onChangeText={setTitulo}
         />
@@ -233,7 +236,7 @@ export const ReportProblem = (): JSX.Element => {
         <TextInput
           style={[styles.input, styles.textarea]}
           placeholder="Describe lo que ocurre para que el personal correspondiente pueda solucionarlo..."
-          placeholderTextColor="#94A3B8"
+          placeholderTextColor={colors.placeholder}
           value={detalles}
           onChangeText={setDetalles}
           multiline
@@ -244,10 +247,10 @@ export const ReportProblem = (): JSX.Element => {
           Ubicación aproximada
         </Text>
         <View style={styles.locationBox}>
-          <MapPin size={16} color="#0145EA" />
+          <MapPin size={16} color={colors.primary} />
           {locationLoading ? (
             <View style={styles.locationLoading}>
-              <ActivityIndicator size="small" color="#0145EA" />
+              <ActivityIndicator size="small" color={colors.primary} />
               <Text style={styles.locationText}>Obteniendo ubicación...</Text>
             </View>
           ) : (
@@ -266,9 +269,9 @@ export const ReportProblem = (): JSX.Element => {
             disabled={locationLoading}
           >
             {locationLoading ? (
-              <ActivityIndicator size="small" color="#0145EA" />
+              <ActivityIndicator size="small" color={colors.primary} />
             ) : (
-              <MapPin size={16} color="#0145EA" />
+              <MapPin size={16} color={colors.primary} />
             )}
             <Text style={styles.locationButtonText}>
               {coords ? 'Actualizar' : 'Usar mi ubicación'}
@@ -289,7 +292,7 @@ export const ReportProblem = (): JSX.Element => {
                     style={styles.removePhoto}
                     onPress={() => quitarFoto(uri)}
                   >
-                    <X size={14} color="#FFFFFF" />
+                    <X size={14} color={colors.surface} />
                   </Pressable>
                 </View>
               ))}
@@ -300,14 +303,14 @@ export const ReportProblem = (): JSX.Element => {
               style={[styles.photoBox, styles.photoAction]}
               onPress={tomarFoto}
             >
-              <Camera size={20} color="#0145EA" />
+              <Camera size={20} color={colors.primary} />
               <Text style={styles.photoText}>Cámara</Text>
             </Pressable>
             <Pressable
               style={[styles.photoBox, styles.photoAction]}
               onPress={elegirDeGaleria}
             >
-              <ImagePlus size={20} color="#0145EA" />
+              <ImagePlus size={20} color={colors.primary} />
               <Text style={styles.photoText}>Galería</Text>
             </Pressable>
           </View>
@@ -346,192 +349,193 @@ export const ReportProblem = (): JSX.Element => {
   )
 }
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: '#F1F5F9',
-  },
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
 
-  categories: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 12,
-  },
+    categories: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+      marginBottom: 12,
+    },
 
-  container: {
-    padding: 16,
-    paddingBottom: 32,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginBottom: 20,
-  },
-  backButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#E2E8F0',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 18,
-    color: '#0F172A',
-  },
-  label: {
-    fontFamily: 'Inter_600SemiBold',
-    fontSize: 13,
-    color: '#0F172A',
-    marginBottom: 8,
-  },
-  spacedLabel: {
-    marginTop: 16,
-  },
-  card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 20,
-    padding: 16,
-  },
-  input: {
-    backgroundColor: '#F8FAFC',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 13,
-    color: '#0F172A',
-  },
-  textarea: {
-    minHeight: 90,
-  },
-  locationBox: {
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: '#F8FAFC',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  locationLoading: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    flexShrink: 1,
-  },
-  locationText: {
-    fontSize: 13,
-    color: '#0F172A',
-    flexShrink: 1,
-  },
-  coordsText: {
-    fontSize: 11,
-    color: '#64748B',
-    fontFamily: 'Inter_600SemiBold',
-  },
-  locationButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: '#EEF2FF',
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-  },
-  locationButtonText: {
-    fontFamily: 'Inter_600SemiBold',
-    fontSize: 12,
-    color: '#0145EA',
-  },
-  photoWrap: {
-    gap: 10,
-  },
-  photoPreviewRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-  },
-  photoPreview: {
-    width: 96,
-    height: 96,
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  photoPreviewImg: {
-    width: '100%',
-    height: '100%',
-  },
-  removePhoto: {
-    position: 'absolute',
-    top: 4,
-    right: 4,
-    backgroundColor: 'rgba(15, 23, 42, 0.7)',
-    borderRadius: 12,
-    padding: 3,
-  },
-  photoActions: {
-    flexDirection: 'row',
-    gap: 10,
-  },
-  photoAction: {
-    flex: 1,
-    paddingVertical: 18,
-  },
-  photoBox: {
-    borderWidth: 1,
-    borderStyle: 'dashed',
-    borderColor: '#93C5FD',
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    backgroundColor: '#F8FAFF',
-  },
-  photoText: {
-    fontFamily: 'Inter_600SemiBold',
-    fontSize: 13,
-    color: '#0145EA',
-  },
-  priorityRow: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  priorityChip: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 12,
-    paddingVertical: 10,
-    alignItems: 'center',
-  },
-  priorityChipSelected: {
-    backgroundColor: '#FEF3C7',
-    borderColor: '#FBBF24',
-  },
-  priorityText: {
-    fontFamily: 'Inter_600SemiBold',
-    fontSize: 13,
-    color: '#0F172A',
-  },
-  priorityTextSelected: {
-    color: '#B45309',
-  },
-  submitButton: {
-    backgroundColor: '#0145EA',
-    borderRadius: 16,
-    paddingVertical: 16,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  submitText: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 15,
-    color: '#FFFFFF',
-  },
-})
+    container: {
+      padding: 16,
+      paddingBottom: 32,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      marginBottom: 20,
+    },
+    backButton: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: colors.border,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    headerTitle: {
+      fontFamily: 'Inter_700Bold',
+      fontSize: 18,
+      color: colors.text,
+    },
+    label: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 13,
+      color: colors.text,
+      marginBottom: 8,
+    },
+    spacedLabel: {
+      marginTop: 16,
+    },
+    card: {
+      backgroundColor: colors.surface,
+      borderRadius: 20,
+      padding: 16,
+    },
+    input: {
+      backgroundColor: colors.background,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 12,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      fontSize: 13,
+      color: colors.text,
+    },
+    textarea: {
+      minHeight: 90,
+    },
+    locationBox: {
+      alignItems: 'center',
+      gap: 8,
+      backgroundColor: colors.background,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 12,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+    },
+    locationLoading: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      flexShrink: 1,
+    },
+    locationText: {
+      fontSize: 13,
+      color: colors.text,
+      flexShrink: 1,
+    },
+    coordsText: {
+      fontSize: 11,
+      color: colors.textSecondary,
+      fontFamily: 'Inter_600SemiBold',
+    },
+    locationButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      backgroundColor: colors.disabled,
+      borderRadius: 10,
+      paddingHorizontal: 10,
+      paddingVertical: 6,
+    },
+    locationButtonText: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 12,
+      color: colors.primary,
+    },
+    photoWrap: {
+      gap: 10,
+    },
+    photoPreviewRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 10,
+    },
+    photoPreview: {
+      width: 96,
+      height: 96,
+      borderRadius: 12,
+      overflow: 'hidden',
+    },
+    photoPreviewImg: {
+      width: '100%',
+      height: '100%',
+    },
+    removePhoto: {
+      position: 'absolute',
+      top: 4,
+      right: 4,
+      backgroundColor: 'rgba(15, 23, 42, 0.7)',
+      borderRadius: 12,
+      padding: 3,
+    },
+    photoActions: {
+      flexDirection: 'row',
+      gap: 10,
+    },
+    photoAction: {
+      flex: 1,
+      paddingVertical: 18,
+    },
+    photoBox: {
+      borderWidth: 1,
+      borderStyle: 'dashed',
+      borderColor: colors.border,
+      borderRadius: 12,
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+      backgroundColor: colors.background,
+    },
+    photoText: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 13,
+      color: colors.primary,
+    },
+    priorityRow: {
+      flexDirection: 'row',
+      gap: 8,
+    },
+    priorityChip: {
+      flex: 1,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 12,
+      paddingVertical: 10,
+      alignItems: 'center',
+    },
+    priorityChipSelected: {
+      backgroundColor: colors.warning,
+      borderColor: colors.warning,
+    },
+    priorityText: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 13,
+      color: colors.text,
+    },
+    priorityTextSelected: {
+      color: colors.warning,
+    },
+    submitButton: {
+      backgroundColor: colors.primary,
+      borderRadius: 16,
+      paddingVertical: 16,
+      alignItems: 'center',
+      marginTop: 20,
+    },
+    submitText: {
+      fontFamily: 'Inter_700Bold',
+      fontSize: 15,
+      color: colors.surface,
+    },
+  })

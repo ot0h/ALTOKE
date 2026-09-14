@@ -7,10 +7,13 @@ import { CategoryTag } from '../../components/CategoryTag'
 import Patronato from '@assets/patronato.png'
 import SearchBar from '../../components/SearchBar'
 import { useAppSelector } from '../../store/hook'
+import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 type Category = 'todos' | 'avisos' | 'eventos' | 'mantenimiento'
 
 export const VerNoticias = () => {
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
   const insets = useSafeAreaInsets()
 
   const [selectedCategory, setSelectedCategory] = useState<Category>('todos')
@@ -120,52 +123,53 @@ export const VerNoticias = () => {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F8FAFC',
-    paddingHorizontal: 15,
-  },
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+      paddingHorizontal: 15,
+    },
 
-  header: {
-    marginBottom: 14,
-  },
+    header: {
+      marginBottom: 14,
+    },
 
-  title: {
-    fontFamily: 'MontserratAlternates_800ExtraBold',
-    fontSize: 26,
-    color: '#1E2744',
-  },
+    title: {
+      fontFamily: 'MontserratAlternates_800ExtraBold',
+      fontSize: 26,
+      color: colors.text,
+    },
 
-  subtitle: {
-    fontFamily: 'Inter_400Regular',
-    fontSize: 14,
-    color: '#64748B',
-    marginTop: 2,
-    marginBottom: 12,
-  },
+    subtitle: {
+      fontFamily: 'Inter_400Regular',
+      fontSize: 14,
+      color: colors.textSecondary,
+      marginTop: 2,
+      marginBottom: 12,
+    },
 
-  categories: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginBottom: 12,
-  },
+    categories: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+      marginBottom: 12,
+    },
 
-  list: {
-    gap: 14,
-    paddingBottom: 20,
-  },
-  empty: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 40,
-  },
-  emptyText: {
-    fontFamily: 'Inter_400Regular',
-    fontSize: 14,
-    color: '#64748B',
-    textAlign: 'center',
-  },
-})
+    list: {
+      gap: 14,
+      paddingBottom: 20,
+    },
+    empty: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 40,
+    },
+    emptyText: {
+      fontFamily: 'Inter_400Regular',
+      fontSize: 14,
+      color: colors.textSecondary,
+      textAlign: 'center',
+    },
+  })

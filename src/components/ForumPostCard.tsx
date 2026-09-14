@@ -9,6 +9,7 @@ import {
 import CommentIcon from '@assets/comments.svg'
 import LikesIcon from '@assets/likes.svg'
 import ILikesIcon from '@assets/Ilikes.svg'
+import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 type Props = {
   title: string
@@ -35,6 +36,8 @@ export default function ForumPostCard({
   onPressLike,
   authorimage,
 }: Props) {
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
   return (
     <View style={styles.container}>
       <View style={styles.topsection}>
@@ -70,68 +73,69 @@ export default function ForumPostCard({
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: 362,
-    height: 202,
-    alignItems: 'flex-start',
-    padding: 16,
-    borderWidth: 1.5,
-    borderRadius: 20,
-    borderColor: '#E2E8F0',
-    justifyContent: 'center',
-    gap: 8,
-  },
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    container: {
+      width: 362,
+      height: 202,
+      alignItems: 'flex-start',
+      padding: 16,
+      borderWidth: 1.5,
+      borderRadius: 20,
+      borderColor: colors.border,
+      justifyContent: 'center',
+      gap: 8,
+    },
 
-  profilephoto: {
-    width: 36,
-    height: 36,
-    borderRadius: 100,
-  },
+    profilephoto: {
+      width: 36,
+      height: 36,
+      borderRadius: 100,
+    },
 
-  topsection: {
-    flexDirection: 'row',
-    gap: 8,
-  },
+    topsection: {
+      flexDirection: 'row',
+      gap: 8,
+    },
 
-  author: {
-    fontFamily: 'Inter_700Bold',
-    fontWeight: 'bold',
-    fontSize: 14,
-    color: '#1E2744',
-  },
+    author: {
+      fontFamily: 'Inter_700Bold',
+      fontWeight: 'bold',
+      fontSize: 14,
+      color: colors.text,
+    },
 
-  time: {
-    fontFamily: 'Inter_400Regular',
-    color: '#64748B',
-    fontSize: 13,
-  },
-  title: {
-    fontFamily: 'Inter_700Bold',
-    fontWeight: 'bold',
-    fontSize: 16,
-    color: '#1E2744',
-  },
+    time: {
+      fontFamily: 'Inter_400Regular',
+      color: colors.textSecondary,
+      fontSize: 13,
+    },
+    title: {
+      fontFamily: 'Inter_700Bold',
+      fontWeight: 'bold',
+      fontSize: 16,
+      color: colors.text,
+    },
 
-  description: {
-    fontFamily: 'Inter_400Regular',
-    color: '#64748B',
-    fontSize: 13,
-  },
-  bothsection: {
-    flexDirection: 'row',
-    gap: 16,
-    marginTop: 20,
-  },
+    description: {
+      fontFamily: 'Inter_400Regular',
+      color: colors.textSecondary,
+      fontSize: 13,
+    },
+    bothsection: {
+      flexDirection: 'row',
+      gap: 16,
+      marginTop: 20,
+    },
 
-  iconssection: {
-    flexDirection: 'row',
-    gap: 8,
-  },
+    iconssection: {
+      flexDirection: 'row',
+      gap: 8,
+    },
 
-  commentslikes: {
-    fontFamily: 'Inter_400Regular',
-    color: '#64748B',
-    fontSize: 13,
-  },
-})
+    commentslikes: {
+      fontFamily: 'Inter_400Regular',
+      color: colors.textSecondary,
+      fontSize: 13,
+    },
+  })

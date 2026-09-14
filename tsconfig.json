@@ -6,6 +6,7 @@
       "@assets/*": ["./assets/*"],
       "@navigation/*": ["./src/navigation/*"],
       "@components": ["./src/components/index.ts"],
+      "@contexts/*": ["./src/contexts/*"],
       "@screens": ["./src/screens/index.ts"],
       "@tabs": ["./src/screens/tabs/index.ts"]
     }

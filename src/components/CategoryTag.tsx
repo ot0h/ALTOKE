@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, Text } from 'react-native'
+import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 type Props = {
   text: string
@@ -7,6 +8,8 @@ type Props = {
 }
 
 export const CategoryTag = ({ text, selected = false, onPress }: Props) => {
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
   return (
     <Pressable
       style={[styles.tag, selected && styles.selected]}
@@ -17,33 +20,34 @@ export const CategoryTag = ({ text, selected = false, onPress }: Props) => {
   )
 }
 
-const styles = StyleSheet.create({
-  tag: {
-    paddingHorizontal: 20,
-    paddingVertical: 12,
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    tag: {
+      paddingHorizontal: 20,
+      paddingVertical: 12,
 
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 24,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 24,
 
-    backgroundColor: '#FFFFFF',
+      backgroundColor: colors.surface,
 
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
 
-  selected: {
-    backgroundColor: '#0145EA',
-    borderColor: '#0145EA',
-  },
+    selected: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
 
-  text: {
-    fontFamily: 'Inter_600SemiBold',
-    fontSize: 16,
-    color: '#1E2744',
-  },
+    text: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 16,
+      color: colors.text,
+    },
 
-  selectedText: {
-    color: '#FFFFFF',
-  },
-})
+    selectedText: {
+      color: colors.surface,
+    },
+  })

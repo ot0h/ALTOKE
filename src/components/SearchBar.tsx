@@ -1,5 +1,6 @@
 import { StyleSheet, TextInput, View } from 'react-native'
 import SearchIcon from '@assets/search.svg'
+import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 type Props = {
   value: string
@@ -12,6 +13,8 @@ export default function SearchBar({
   onChangeText,
   placeholder = 'Buscar avisos o eventos...',
 }: Props) {
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
   return (
     <View style={styles.container}>
       <SearchIcon width={20} height={20} />
@@ -21,32 +24,33 @@ export default function SearchBar({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor="#64748B"
+        placeholderTextColor={colors.textSecondary}
       />
     </View>
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    height: 40,
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 14,
-    gap: 8,
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    container: {
+      height: 40,
+      width: '100%',
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 14,
+      gap: 8,
 
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 20,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 20,
 
-    backgroundColor: '#FFFFFF',
-  },
+      backgroundColor: colors.surface,
+    },
 
-  input: {
-    flex: 1,
-    fontFamily: 'Inter_400Regular',
-    fontSize: 14,
-    color: '#1E2744',
-  },
-})
+    input: {
+      flex: 1,
+      fontFamily: 'Inter_400Regular',
+      fontSize: 14,
+      color: colors.text,
+    },
+  })

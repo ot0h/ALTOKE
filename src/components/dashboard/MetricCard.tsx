@@ -1,6 +1,7 @@
 import React, { JSX } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { MetricType } from './types'
+import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 interface Props {
   type: MetricType
@@ -11,7 +12,8 @@ export const MetricCard = ({
   type = 'residentes',
   quantity,
 }: Props): JSX.Element => {
-  const styles = getStyles(type)
+  const { colors } = useTheme()
+  const styles = getStyles(type, colors)
 
   const labels: Record<MetricType, string> = {
     residentes: 'Residentes',
@@ -28,7 +30,7 @@ export const MetricCard = ({
   )
 }
 
-const getStyles = (tipo: MetricType) =>
+const getStyles = (tipo: MetricType, colors: ThemeColors) =>
   StyleSheet.create({
     container: {
       width: '48%',
@@ -36,13 +38,13 @@ const getStyles = (tipo: MetricType) =>
       padding: 14,
       borderRadius: 16,
       gap: 4,
-      backgroundColor: '#FFFFFF',
-      borderColor: '#E2E8F0',
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
       justifyContent: 'center',
       borderWidth: 1,
     },
     header: {
-      color: '#64748B',
+      color: colors.textSecondary,
       fontSize: 12,
       fontFamily: 'Inter_600SemiBold',
       textTransform: 'capitalize',
@@ -50,12 +52,12 @@ const getStyles = (tipo: MetricType) =>
     quantity_color: {
       color:
         tipo === 'residentes'
-          ? '#1E2744'
+          ? colors.text
           : tipo === 'active_alerts'
-            ? '#EF4444'
+            ? colors.error
             : tipo === 'pagos_pendientes'
-              ? '#F59E0B'
-              : '#10B981',
+              ? colors.warning
+              : colors.success,
       fontFamily: 'Inter_800ExtraBold',
       fontSize: 28,
     },

@@ -14,10 +14,13 @@ import { useAppDispatch, useAppSelector } from '../store/hook'
 import { store } from '../store'
 import { updateProfile } from '../store/slices/userProfileSlice'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>
 
 export const Login = ({ navigation }: Props): JSX.Element => {
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const dispatch = useAppDispatch()
@@ -56,7 +59,7 @@ export const Login = ({ navigation }: Props): JSX.Element => {
                 {
                   fontFamily: 'MontserratAlternates_800ExtraBold',
                   fontSize: 32,
-                  color: '#1E2744',
+                  color: colors.text,
                 },
               ]}
             >
@@ -88,7 +91,7 @@ export const Login = ({ navigation }: Props): JSX.Element => {
             <Text
               style={[
                 {
-                  color: '#0145EA',
+                  color: colors.primary,
                   fontSize: 11,
                   fontFamily: 'MontserratAlternates_400Regular',
                 },
@@ -103,38 +106,39 @@ export const Login = ({ navigation }: Props): JSX.Element => {
   )
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#0145EA',
-  },
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.primary,
+    },
 
-  container: {
-    display: 'flex',
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#0145EA',
-    margin: 0,
-    gap: 0,
-  },
+    container: {
+      display: 'flex',
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.primary,
+      margin: 0,
+      gap: 0,
+    },
 
-  card: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 20,
-    width: 352,
-    height: 356,
-    borderRadius: 35,
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#000000',
-    shadowOffset: { width: 0, height: 20 },
-    shadowOpacity: 0.25,
-    shadowRadius: 18,
-    elevation: 8,
-    marginBottom: '25%',
-  },
+    card: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 20,
+      width: 352,
+      height: 356,
+      borderRadius: 35,
+      backgroundColor: colors.surface,
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: 20 },
+      shadowOpacity: 0.25,
+      shadowRadius: 18,
+      elevation: 8,
+      marginBottom: '25%',
+    },
 
   containerInputs: {
     display: 'flex',

@@ -5,6 +5,7 @@ import { RootStackParamList } from './StackNavigator'
 import { Inicio, Notificaciones, Perfil, Reportes } from '@tabs'
 import { MyProfile } from '../screens/tabs/MyProfile'
 import { VerNoticias } from '../screens/tabs/VerNoticias'
+import { useTheme } from '@contexts/ThemeContext'
 
 export type TabsParamList = {
   Inicio: { email: string }
@@ -18,6 +19,7 @@ const Tab = createBottomTabNavigator<TabsParamList>()
 export const TabNavigator = () => {
   const route = useRoute<RouteProp<RootStackParamList, 'MainTabs'>>()
   const { email } = route.params
+  const { colors } = useTheme()
 
   return (
     <Tab.Navigator
@@ -44,8 +46,8 @@ export const TabNavigator = () => {
 
           return <Ionicons name={iconName} size={size} color={color} />
         },
-        tabBarActiveTintColor: '#0145EA',
-        tabBarInactiveTintColor: '#94A3B8',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textMuted,
         tabBarPosition: 'bottom',
         tabBarStyle: {
           position: 'absolute',
@@ -57,8 +59,8 @@ export const TabNavigator = () => {
 
           borderRadius: 26,
           borderWidth: 1,
-          borderColor: '#0145EA',
-          backgroundColor: '#F8FAFC',
+          borderColor: colors.primary,
+          backgroundColor: colors.background,
 
           shadowColor: '#000000',
           shadowOffset: { width: 0, height: 6 },

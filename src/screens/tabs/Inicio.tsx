@@ -9,10 +9,13 @@ import ReportCard from '../../components/ReportCard'
 import JoinCommunityModal from '../modals/JoinCommunityModal'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAppSelector } from '../../store/hook'
+import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 export const Inicio = (): JSX.Element => {
   // POP UP
   const [joinModalVisible, setJoinModalVisible] = useState(false)
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
   const insets = useSafeAreaInsets()
   const userName = useAppSelector((state) => state.userProfile.name)
   return (
@@ -85,68 +88,69 @@ export const Inicio = (): JSX.Element => {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    flex: 1,
-    backgroundColor: '#F8FAFC',
-  },
-  content: {
-    padding: 20,
-    paddingBottom: 100,
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  greeting: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#1A1A2E',
-  },
-  codeCard: {
-    borderWidth: 1.5,
-    borderColor: '#3D5AFE',
-    borderRadius: 16,
-    padding: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 28,
-  },
-  codeTitle: {
-    fontSize: 24,
-    fontWeight: '800',
-    color: '#1A1A2E',
-    flexShrink: 1,
-  },
-  codeRight: {
-    alignItems: 'flex-end',
-    gap: 10,
-    maxWidth: 160,
-  },
-  codeSubtitle: {
-    fontSize: 12,
-    color: '#3D5AFE',
-    textAlign: 'right',
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 8,
-    marginBottom: 12,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1A1A2E',
-  },
-  sectionLink: {
-    fontSize: 14,
-    color: '#3D5AFE',
-    fontWeight: '600',
-  },
-})
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    container: {
+      display: 'flex',
+      flex: 1,
+      backgroundColor: colors.background,
+    },
+    content: {
+      padding: 20,
+      paddingBottom: 100,
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 20,
+    },
+    greeting: {
+      fontSize: 22,
+      fontWeight: '700',
+      color: colors.text,
+    },
+    codeCard: {
+      borderWidth: 1.5,
+      borderColor: colors.primary,
+      borderRadius: 16,
+      padding: 20,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 28,
+    },
+    codeTitle: {
+      fontSize: 24,
+      fontWeight: '800',
+      color: colors.text,
+      flexShrink: 1,
+    },
+    codeRight: {
+      alignItems: 'flex-end',
+      gap: 10,
+      maxWidth: 160,
+    },
+    codeSubtitle: {
+      fontSize: 12,
+      color: colors.primary,
+      textAlign: 'right',
+    },
+    sectionHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginTop: 8,
+      marginBottom: 12,
+    },
+    sectionTitle: {
+      fontSize: 18,
+      fontWeight: '700',
+      color: colors.text,
+    },
+    sectionLink: {
+      fontSize: 14,
+      color: colors.primary,
+      fontWeight: '600',
+    },
+  })
