@@ -6,6 +6,7 @@ import {
   View,
 } from 'react-native'
 import EditIcon from '@assets/Edit.svg'
+import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 type Props = {
   image: ImageSourcePropType
@@ -13,6 +14,8 @@ type Props = {
 }
 
 export default function ProfileAvatar({ image, onEdit }: Props) {
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
   return (
     <View style={styles.container}>
       <Image source={image} style={styles.image} />
@@ -24,40 +27,41 @@ export default function ProfileAvatar({ image, onEdit }: Props) {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: 104,
-    height: 104,
-    position: 'relative',
-  },
-
-  image: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 52,
-    objectFit: 'cover',
-  },
-
-  editButton: {
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    width: 34,
-    height: 34,
-    borderRadius: 17,
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    alignItems: 'center',
-    justifyContent: 'center',
-
-    elevation: 3,
-    shadowColor: '#000000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    container: {
+      width: 104,
+      height: 104,
+      position: 'relative',
     },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-  },
-})
+
+    image: {
+      width: '100%',
+      height: '100%',
+      borderRadius: 52,
+      objectFit: 'cover',
+    },
+
+    editButton: {
+      position: 'absolute',
+      right: 0,
+      bottom: 0,
+      width: 34,
+      height: 34,
+      borderRadius: 17,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: 'center',
+      justifyContent: 'center',
+
+      elevation: 3,
+      shadowColor: '#000000',
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.15,
+      shadowRadius: 4,
+    },
+  })

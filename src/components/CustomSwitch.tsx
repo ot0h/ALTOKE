@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react'
 import { Animated, Pressable, StyleSheet } from 'react-native'
+import { useTheme } from '@contexts/ThemeContext'
 
 interface CustomSwitchProps {
   value: boolean
@@ -7,6 +8,7 @@ interface CustomSwitchProps {
 }
 
 export const CustomSwitch = ({ value, onValueChange }: CustomSwitchProps) => {
+  const { colors } = useTheme()
   const anim = useRef(new Animated.Value(value ? 1 : 0)).current
 
   useEffect(() => {
@@ -19,7 +21,7 @@ export const CustomSwitch = ({ value, onValueChange }: CustomSwitchProps) => {
 
   const trackColor = anim.interpolate({
     inputRange: [0, 1],
-    outputRange: ['#CBD5E1', '#0145EA'],
+    outputRange: [colors.disabled, colors.primary],
   })
 
   const thumbPosition = anim.interpolate({

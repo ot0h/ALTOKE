@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import CustomLabel from './CustomLabel'
 import LocationIcon from '@assets/Icon-pin.svg'
+import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 type Props = {
   title: string
@@ -24,6 +25,8 @@ export default function ReportCard({
   variant = 'contract',
 }: Props) {
   const isContract = variant === 'contract'
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
 
   return (
     <Pressable
@@ -65,71 +68,72 @@ export default function ReportCard({
   )
 }
 
-const styles = StyleSheet.create({
-  card: {
-    width: 362,
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    card: {
+      width: 362,
 
-    borderColor: '#E2E8F0',
-    borderWidth: 1,
-    borderRadius: 20,
+      borderColor: colors.border,
+      borderWidth: 1,
+      borderRadius: 20,
 
-    padding: 12,
+      padding: 12,
 
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
 
-    backgroundColor: '#FFFFFF',
-  },
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
+      backgroundColor: colors.surface,
+    },
+    titleRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
 
-  contractCard: {
-    height: 56,
-  },
+    contractCard: {
+      height: 56,
+    },
 
-  expandCard: {
-    height: 98,
-  },
+    expandCard: {
+      height: 98,
+    },
 
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    gap: 4,
-  },
+    container: {
+      flex: 1,
+      flexDirection: 'column',
+      gap: 4,
+    },
 
-  title: {
-    fontFamily: 'Inter_600SemiBold',
-    fontSize: 16,
-    color: '#1E2744',
-  },
+    title: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 16,
+      color: colors.text,
+    },
 
-  subtitle: {
-    fontFamily: 'Inter_400Regular',
-    fontSize: 13,
-    color: '#64748B',
-  },
+    subtitle: {
+      fontFamily: 'Inter_400Regular',
+      fontSize: 13,
+      color: colors.textSecondary,
+    },
 
-  details: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    marginTop: 4,
-  },
+    details: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      marginTop: 4,
+    },
 
-  category: {
-    fontFamily: 'Inter_600SemiBold',
-    fontSize: 14,
-    color: '#1E2744',
+    category: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 14,
+      color: colors.text,
 
-    backgroundColor: '#F8FAFC',
+      backgroundColor: colors.background,
 
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+      paddingHorizontal: 8,
+      paddingVertical: 4,
 
-    borderRadius: 8,
-  },
-})
+      borderRadius: 8,
+    },
+  })

@@ -1,5 +1,6 @@
 import { JSX } from 'react'
 import { Pressable, StyleSheet, Text } from 'react-native'
+import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 type Variants = 'default' | 'primary' | 'secondary'
 
@@ -14,7 +15,8 @@ export const CustomButton = ({
   onPress,
   variant = 'default',
 }: Props): JSX.Element => {
-  const styles = getStyles(variant)
+  const { colors } = useTheme()
+  const styles = getStyles(variant, colors)
   return (
     <Pressable style={styles.button} onPress={onPress}>
       <Text style={styles.text}>{text}</Text>
@@ -22,17 +24,18 @@ export const CustomButton = ({
   )
 }
 
-const getStyles = (variant: Variants) =>
+const getStyles = (variant: Variants, colors: ThemeColors) =>
   StyleSheet.create({
     button: {
       backgroundColor:
         variant === 'primary'
-          ? '#1E2744'
+          ? colors.primaryDark
           : variant === 'secondary'
-            ? '#0145ea'
-            : '#FFFFFF',
+            ? colors.primary
+            : colors.surface,
 
-      borderColor: variant === 'primary' ? '#1E2744' : '#0145ea',
+      borderColor:
+        variant === 'primary' ? colors.primaryDark : colors.primary,
       borderWidth: 1,
       borderRadius: 17,
       width: '100%',
@@ -44,7 +47,7 @@ const getStyles = (variant: Variants) =>
       fontSize: 14,
       fontFamily: 'MontserratAlternates_600SemiBold',
       fontWeight: 'semibold',
-      color: variant === 'default' ? '#0145ea' : '#FFFFFF',
+      color: variant === 'default' ? colors.primary : colors.surface,
       textAlign: 'center',
     },
   })

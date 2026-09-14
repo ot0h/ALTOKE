@@ -6,10 +6,13 @@ import { CustomButton } from '@components'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '@navigation/StackNavigator'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>
 
 export const Home = ({ navigation }: Props): JSX.Element => {
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
   const handleLogin = () => navigation.navigate('Login')
   const handleRegister = () => navigation.navigate('Register')
   return (
@@ -22,7 +25,7 @@ export const Home = ({ navigation }: Props): JSX.Element => {
             style={[
               styles.textFont,
               {
-                color: '#1E2744',
+                color: colors.text,
                 fontSize: 24,
                 fontWeight: 600,
               },
@@ -34,7 +37,7 @@ export const Home = ({ navigation }: Props): JSX.Element => {
             style={[
               styles.textFont,
               {
-                color: '#3E6CB0',
+                color: colors.primary,
                 fontSize: 16,
                 fontWeight: 600,
               },
@@ -50,7 +53,7 @@ export const Home = ({ navigation }: Props): JSX.Element => {
             style={[
               styles.textFont,
               {
-                color: '#1E2744',
+                color: colors.text,
                 fontSize: 15,
                 fontWeight: 600,
               },
@@ -78,46 +81,47 @@ export const Home = ({ navigation }: Props): JSX.Element => {
   )
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    safeArea: {
+      flex: 1,
+      backgroundColor: colors.surface,
+    },
 
-  container: {
-    display: 'flex',
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    margin: 0,
-    alignItems: 'center',
-    gap: 20,
-  },
+    container: {
+      display: 'flex',
+      flex: 1,
+      backgroundColor: colors.surface,
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      margin: 0,
+      alignItems: 'center',
+      gap: 20,
+    },
 
-  textFont: {
-    fontFamily: 'MontserratAlternates_600SemiBold',
-  },
+    textFont: {
+      fontFamily: 'MontserratAlternates_600SemiBold',
+    },
 
-  start: {
-    paddingTop: 200,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: 5,
-  },
+    start: {
+      paddingTop: 200,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: 5,
+    },
 
-  end: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: 10,
-  },
+    end: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: 10,
+    },
 
-  botones: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: 20,
-    width: 272,
-  },
-})
+    botones: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 20,
+      width: 272,
+    },
+  })

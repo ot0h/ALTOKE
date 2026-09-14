@@ -4,8 +4,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { CustomButton } from '@components'
 import ManageNoticeCard from '../components/ManageNoticeCard'
 import Patronato from '@assets/patronato.png'
+import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 export const ManageNotices = () => {
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
   const insets = useSafeAreaInsets()
 
   const notices = [
@@ -78,25 +81,26 @@ export const ManageNotices = () => {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F8FAFC',
-    paddingHorizontal: 9,
-  },
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+      paddingHorizontal: 9,
+    },
 
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 20,
-  },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 20,
+    },
 
-  title: {
-    fontFamily: 'Inter_600SemiBold',
-    fontSize: 28,
-    color: '#1E2744',
-  },
+    title: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 28,
+      color: colors.text,
+    },
 
   createButton: {
     width: 115,

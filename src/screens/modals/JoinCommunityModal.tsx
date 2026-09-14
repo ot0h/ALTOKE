@@ -8,6 +8,7 @@ import {
   Text,
   View,
 } from 'react-native'
+import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 type Props = {
   visible: boolean
@@ -17,6 +18,8 @@ type Props = {
 type JoinState = 'idle' | 'found' | 'joining' | 'success' | 'error'
 
 export default function JoinCommunityModal({ visible, onClose }: Props) {
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
   const [code, setCode] = useState('')
   const [state, setState] = useState<JoinState>('idle')
   const [communityName, setCommunityName] = useState('')
@@ -124,7 +127,7 @@ export default function JoinCommunityModal({ visible, onClose }: Props) {
           {/* UNIÉNDOSE */}
           {state === 'joining' && (
             <View style={styles.centerContent}>
-              <ActivityIndicator size="large" color="#0145EA" />
+              <ActivityIndicator size="large" color={colors.primary} />
 
               <Text style={styles.title}>Uniéndote...</Text>
 
@@ -160,106 +163,107 @@ export default function JoinCommunityModal({ visible, onClose }: Props) {
   )
 }
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(15, 23, 42, 0.45)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-  },
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    overlay: {
+      flex: 1,
+      backgroundColor: 'rgba(15, 23, 42, 0.45)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 24,
+    },
 
-  modal: {
-    width: '100%',
-    maxWidth: 380,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 24,
-    padding: 24,
-    position: 'relative',
-  },
+    modal: {
+      width: '100%',
+      maxWidth: 380,
+      backgroundColor: colors.surface,
+      borderRadius: 24,
+      padding: 24,
+      position: 'relative',
+    },
 
-  closeButton: {
-    position: 'absolute',
-    top: 12,
-    right: 14,
-    width: 32,
-    height: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 1,
-  },
+    closeButton: {
+      position: 'absolute',
+      top: 12,
+      right: 14,
+      width: 32,
+      height: 32,
+      alignItems: 'center',
+      justifyContent: 'center',
+      zIndex: 1,
+    },
 
-  closeText: {
-    fontSize: 28,
-    color: '#64748B',
-  },
+    closeText: {
+      fontSize: 28,
+      color: colors.textSecondary,
+    },
 
-  title: {
-    fontFamily: 'MontserratAlternates_800ExtraBold',
-    fontSize: 21,
-    color: '#1E2744',
-    marginBottom: 8,
-  },
+    title: {
+      fontFamily: 'MontserratAlternates_800ExtraBold',
+      fontSize: 21,
+      color: colors.text,
+      marginBottom: 8,
+    },
 
-  description: {
-    fontFamily: 'Inter_400Regular',
-    fontSize: 14,
-    color: '#64748B',
-    lineHeight: 20,
-    marginBottom: 16,
-  },
+    description: {
+      fontFamily: 'Inter_400Regular',
+      fontSize: 14,
+      color: colors.textSecondary,
+      lineHeight: 20,
+      marginBottom: 16,
+    },
 
-  singleButton: {
-    width: '100%',
-    marginTop: 14,
-  },
+    singleButton: {
+      width: '100%',
+      marginTop: 14,
+    },
 
-  buttonsRow: {
-    flexDirection: 'row',
-    gap: 10,
-    marginTop: 4,
-  },
+    buttonsRow: {
+      flexDirection: 'row',
+      gap: 10,
+      marginTop: 4,
+    },
 
-  buttonWrapper: {
-    flex: 1,
-  },
+    buttonWrapper: {
+      flex: 1,
+    },
 
-  communityBox: {
-    padding: 16,
-    borderRadius: 16,
-    backgroundColor: '#F8FAFC',
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-    marginBottom: 16,
-  },
+    communityBox: {
+      padding: 16,
+      borderRadius: 16,
+      backgroundColor: colors.background,
+      borderWidth: 1,
+      borderColor: colors.border,
+      marginBottom: 16,
+    },
 
-  communityName: {
-    fontFamily: 'Inter_700Bold',
-    fontSize: 17,
-    color: '#1E2744',
-    marginBottom: 4,
-  },
+    communityName: {
+      fontFamily: 'Inter_700Bold',
+      fontSize: 17,
+      color: colors.text,
+      marginBottom: 4,
+    },
 
-  communityCode: {
-    fontFamily: 'Inter_400Regular',
-    fontSize: 13,
-    color: '#64748B',
-  },
+    communityCode: {
+      fontFamily: 'Inter_400Regular',
+      fontSize: 13,
+      color: colors.textSecondary,
+    },
 
-  centerContent: {
-    alignItems: 'center',
-  },
+    centerContent: {
+      alignItems: 'center',
+    },
 
-  successIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#D1FAE5',
-    color: '#10B981',
-    textAlign: 'center',
-    lineHeight: 56,
-    fontSize: 30,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-})
+    successIcon: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: '#D1FAE5',
+      color: '#10B981',
+      textAlign: 'center',
+      lineHeight: 56,
+      fontSize: 30,
+      fontWeight: 'bold',
+      marginBottom: 16,
+    },
+  })

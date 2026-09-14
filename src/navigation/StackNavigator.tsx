@@ -1,7 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { Home, Login, NuevaNoticia, Register } from '@screens'
 import { TabNavigator } from './TabsNavigator'
-import { DashboardStats } from '../components/dashboard/DashboardStats'
 import { MyCommunity } from '../screens/MyCommunity'
 import { ManageCommunity } from '../screens/ManageCommunity'
 import { MyProfile } from '../screens/tabs/MyProfile'

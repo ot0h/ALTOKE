@@ -3,8 +3,11 @@ import { useEffect } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAppSelector } from '../../store/hook'
 import ReportCard from '../../components/ReportCard'
+import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 export const Reportes = () => {
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
   const insets = useSafeAreaInsets()
   const reports = useAppSelector((state) => state.report.reports)
 
@@ -50,32 +53,33 @@ export const Reportes = () => {
   )
 }
 
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: '#F1F5F9',
-    paddingHorizontal: 16,
-  },
-  title: {
-    fontFamily: 'MontserratAlternates_700Bold_Italic',
-    fontSize: 22,
-    color: '#1E2744',
-    marginBottom: 16,
-    marginTop: 8,
-  },
-  list: {
-    gap: 12,
-    paddingBottom: 24,
-  },
-  empty: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 40,
-  },
-  emptyText: {
-    fontFamily: 'Inter_400Regular',
-    fontSize: 14,
-    color: '#64748B',
-    textAlign: 'center',
-  },
-})
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.background,
+      paddingHorizontal: 16,
+    },
+    title: {
+      fontFamily: 'MontserratAlternates_700Bold_Italic',
+      fontSize: 22,
+      color: colors.text,
+      marginBottom: 16,
+      marginTop: 8,
+    },
+    list: {
+      gap: 12,
+      paddingBottom: 24,
+    },
+    empty: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 40,
+    },
+    emptyText: {
+      fontFamily: 'Inter_400Regular',
+      fontSize: 14,
+      color: colors.textSecondary,
+      textAlign: 'center',
+    },
+  })

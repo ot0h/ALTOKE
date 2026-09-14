@@ -12,8 +12,11 @@ import NoticiaImage from '@assets/noticia.svg'
 import FIXYICON from '@assets/FIXYLOGIN.svg'
 
 import { MaterialIcons, Octicons } from '@expo/vector-icons'
+import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 export const Noticia = (): JSX.Element => {
+  const { colors } = useTheme()
+  const styles = createStyles(colors)
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -23,7 +26,7 @@ export const Noticia = (): JSX.Element => {
         {/* HEADER */}
         <View style={styles.header}>
           <Pressable style={styles.backButton}>
-            <MaterialIcons size={25} name="arrow-back" color="#64748B" />
+            <MaterialIcons size={25} name="arrow-back" color={colors.textSecondary} />
           </Pressable>
 
           <Text style={styles.headerTitle}>Noticia</Text>
@@ -54,7 +57,7 @@ export const Noticia = (): JSX.Element => {
                 <View style={styles.detailsRow}>
                   <Text style={styles.textDetails}>Publicado el 12 Oct</Text>
 
-                  <Octicons name="dot-fill" size={8} color="#64748B" />
+                  <Octicons name="dot-fill" size={8} color={colors.textSecondary} />
 
                   <Text style={styles.textDetails}>Lectura: 3 min</Text>
                 </View>
@@ -93,120 +96,121 @@ export const Noticia = (): JSX.Element => {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F8F9FC',
-    alignContent: 'center',
-    alignItems: 'center',
-  },
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+      alignContent: 'center',
+      alignItems: 'center',
+    },
 
-  scrollContent: { paddingBottom: 100 },
+    scrollContent: { paddingBottom: 100 },
 
-  /* HEADER */
+    /* HEADER */
 
-  header: {
-    height: 176,
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    backgroundColor: '#F8F9FC',
-  },
+    header: {
+      height: 176,
+      paddingHorizontal: 20,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      backgroundColor: colors.background,
+    },
 
-  backButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#E8EDF3',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+    backButton: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: colors.border,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
 
-  headerTitle: {
-    fontFamily: 'MontserratAlternates_700Bold',
-    fontSize: 24,
-    color: '#1E2744',
-  },
+    headerTitle: {
+      fontFamily: 'MontserratAlternates_700Bold',
+      fontSize: 24,
+      color: colors.text,
+    },
 
-  /* IMAGEN */
+    /* IMAGEN */
 
-  imageContainer: {
-    width: '100%',
-    height: 222,
-    overflow: 'hidden',
-  },
+    imageContainer: {
+      width: '100%',
+      height: 222,
+      overflow: 'hidden',
+    },
 
-  /* CONTENIDO */
+    /* CONTENIDO */
 
-  content: {
-    paddingHorizontal: 20,
-    paddingTop: 16,
-  },
+    content: {
+      paddingHorizontal: 20,
+      paddingTop: 16,
+    },
 
-  title: {
-    fontFamily: 'MontserratAlternates_700Bold',
-    fontSize: 23,
-    lineHeight: 28,
-    color: '#34405A',
-    marginBottom: 14,
-  },
+    title: {
+      fontFamily: 'MontserratAlternates_700Bold',
+      fontSize: 23,
+      lineHeight: 28,
+      color: colors.text,
+      marginBottom: 14,
+    },
 
-  /* AUTOR */
+    /* AUTOR */
 
-  authorSection: {
-    marginBottom: 12,
-  },
+    authorSection: {
+      marginBottom: 12,
+    },
 
-  authorRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
+    authorRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 10,
+    },
 
-  authorInfo: {
-    flex: 1,
-    justifyContent: 'center',
-  },
+    authorInfo: {
+      flex: 1,
+      justifyContent: 'center',
+    },
 
-  textAuthor: {
-    fontFamily: 'Inter_600SemiBold',
-    fontSize: 13,
-    color: '#34405A',
-    marginBottom: 2,
-  },
+    textAuthor: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 13,
+      color: colors.text,
+      marginBottom: 2,
+    },
 
-  detailsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
+    detailsRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 4,
+    },
 
-  textDetails: {
-    fontFamily: 'Inter_400Regular',
-    fontSize: 11,
-    color: '#64748B',
-  },
+    textDetails: {
+      fontFamily: 'Inter_400Regular',
+      fontSize: 11,
+      color: colors.textSecondary,
+    },
 
-  /* DIVISOR */
+    /* DIVISOR */
 
-  divider: {
-    height: 1,
-    backgroundColor: '#D9DEE7',
-    width: '100%',
-    marginBottom: 12,
-  },
+    divider: {
+      height: 1,
+      backgroundColor: colors.border,
+      width: '100%',
+      marginBottom: 12,
+    },
 
-  /* DESCRIPCION */
+    /* DESCRIPCION */
 
-  descriptionContainer: {
-    gap: 14,
-  },
+    descriptionContainer: {
+      gap: 14,
+    },
 
-  fontDescription: {
-    fontFamily: 'Inter_400Regular',
-    fontSize: 15,
-    lineHeight: 22,
-    color: '#64748B',
-  },
-})
+    fontDescription: {
+      fontFamily: 'Inter_400Regular',
+      fontSize: 15,
+      lineHeight: 22,
+      color: colors.textSecondary,
+    },
+  })

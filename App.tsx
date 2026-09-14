@@ -20,6 +20,7 @@ import {
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { Provider } from 'react-redux'
 import { store } from './src/store'
+import { ThemeProvider } from '@contexts/ThemeContext'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -49,11 +50,13 @@ export default function App(): JSX.Element | null {
 
   return (
     <Provider store={store}>
-      <SafeAreaProvider>
-        <NavigationContainer>
-          <StackNavigator />
-        </NavigationContainer>
-      </SafeAreaProvider>
+      <ThemeProvider>
+        <SafeAreaProvider>
+          <NavigationContainer>
+            <StackNavigator />
+          </NavigationContainer>
+        </SafeAreaProvider>
+      </ThemeProvider>
     </Provider>
   )
 }
