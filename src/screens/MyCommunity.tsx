@@ -1,15 +1,29 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native'
 import CommunityCard from '../components/CommunityCard'
 import Patronato from '@assets/patronato.png'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
+import { MaterialIcons } from '@expo/vector-icons'
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { RootStackParamList } from '@navigation/StackNavigator'
 
-export const MyCommunity = () => {
+type Props = NativeStackScreenProps<RootStackParamList, 'MyCommunity'>
+
+export const MyCommunity = ({ navigation }: Props) => {
   const { colors } = useTheme()
   const styles = createStyles(colors)
+  const onPressCommunity = () => {
+    navigation.navigate('CommunityHome', {
+      communityId: '1',
+    })
+  }
   return (
     <SafeAreaView style={styles.safearea}>
       <ScrollView>
+        <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
+          <MaterialIcons size={25} name="arrow-back" color={colors.textSecondary} />
+        </Pressable>
         <View style={styles.container}>
           <View>
             <Text style={styles.title}>Mis Comunidades</Text>
@@ -19,7 +33,7 @@ export const MyCommunity = () => {
             <CommunityCard
               title="Patronato"
               image={Patronato}
-              onPress={() => {}}
+              onPress={onPressCommunity}
               description="Patronato Vecinal"
               variant="extended"
             />
@@ -53,5 +67,14 @@ const createStyles = (colors: ThemeColors) =>
     cards: {
       width: '100%',
       gap: 16,
+    },
+
+    backButton: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: colors.border,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
   })
