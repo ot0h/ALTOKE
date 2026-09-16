@@ -1,50 +1,73 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-type community = {
+export type Community = {
   id: string
+  ownerId: string
   name: string
   description: string
+  address: string
   image: string
+  rules: string
+  createdAt: string
 }
 
-const initialCommunity: community = {
-  id: '',
-  name: '',
-  description: '',
-  image: '',
+//AHORA UN USUARIO PUEDE PERTENECER A VARIAS COMUNIDADES 
+type CommunityState = {
+  communities: Community[]
 }
 
+const initialState: CommunityState = {
+  communities: [],
+}
+
+
+//NO CAMBIO LA ARQUITECTURA, SOLO SE CAMBIO COMO FUNCIONA ESTA PARTE
 const communitySlice = createSlice({
   name: 'community',
-  initialState: initialCommunity,
+  initialState: initialState,
   reducers: {
-    updateCommunity: (state, action: PayloadAction<community>) => {
-      state.id = action.payload.id
-      state.name = action.payload.name
-      state.description = action.payload.description
-      state.image = action.payload.image
+    setCommunities: (
+      state,
+      action: PayloadAction<Community[]>
+    ) => {
+      state.communities = action.payload
     },
-    updateId: (state, action: PayloadAction<string>) => {
-      state.id = action.payload
+    addCommunity: (
+      state,
+      action: PayloadAction<Community>
+    ) => {
+      state.communities.push(action.payload)
     },
-    updateName: (state, action: PayloadAction<string>) => {
-      state.name = action.payload
+
+    removeCommunity: (
+      state,
+      action: PayloadAction<string>
+    ) => {
+      state.communities = state.communities.filter(
+        (community) => community.id !== action.payload
+      )
     },
-    updateDescription: (state, action: PayloadAction<string>) => {
-      state.description = action.payload
-    },
-    updateImage: (state, action: PayloadAction<string>) => {
-      state.image = action.payload
+
+    updateCommunity: (
+      state,
+      action: PayloadAction<Community>
+    ) => {
+      const index = state.communities.findIndex(
+        (community) => community.id === action.payload.id
+      )
+
+      if (index !== -1) {
+        state.communities[index] = action.payload
+      }
     },
   },
 })
 
 export const {
+  setCommunities,
+  addCommunity,
+  removeCommunity,
   updateCommunity,
-  updateId,
-  updateName,
-  updateDescription,
-  updateImage,
 } = communitySlice.actions
 
 export default communitySlice.reducer

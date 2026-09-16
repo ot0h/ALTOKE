@@ -7,6 +7,10 @@ import { useAppSelector } from '../../store/hook'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import SettingsModal from '../modals/SettingsModal'
 import { useState } from 'react'
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { RootStackParamList } from '@navigation/StackNavigator'
+
 
 
 export const MyProfile = () => {
@@ -24,7 +28,8 @@ export const MyProfile = () => {
       role: 'Miembro',
     },
   ]
-
+const navigation =
+  useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const insets = useSafeAreaInsets()
 
   const userName = useAppSelector((state) => state.userProfile.name)
@@ -78,7 +83,7 @@ export const MyProfile = () => {
               </View>
 
               {community.role === 'Administrador' ? (
-                <Pressable style={styles.manageButton} onPress={() => { }}>
+                <Pressable style={styles.manageButton} onPress={()=> navigation.navigate('ManageCommunity', {communityId: community.id})}>
                   <Text style={styles.manageButtonText}>Administrar</Text>
                 </Pressable>
               ) : (
@@ -95,7 +100,7 @@ export const MyProfile = () => {
 
       <CustomButton
         text="Crear Comunidad"
-        onPress={() => { }}
+        onPress={() => navigation.getParent()?.navigate('NuevaComunidad') }
         variant="secondary"
       />
 

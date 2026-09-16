@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import {
   Image,
   ImageSourcePropType,
@@ -6,12 +7,20 @@ import {
   Text,
   View,
 } from 'react-native'
+
 import CommentIcon from '@assets/comments.svg'
 import LikesIcon from '@assets/likes.svg'
 import ILikesIcon from '@assets/Ilikes.svg'
+
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
+import { useAppDispatch } from '../store/hook'
+import {
+  likePost,
+  unlikePost,
+} from '../store/slices/postSlice'
 
 type Props = {
+  postId: string
   title: string
   author: string
   createdAt: string
@@ -19,13 +28,13 @@ type Props = {
   comment: number
   likes: number
   onPressComment: () => void
-  onPressLike: () => void
   authorimage: ImageSourcePropType
   iLike?: boolean
 }
 
 export default function ForumPostCard({
-  iLike = true,
+  postId,
+  iLike = false,
   title,
   author,
   createdAt,
@@ -33,41 +42,104 @@ export default function ForumPostCard({
   comment = 0,
   likes = 0,
   onPressComment,
-  onPressLike,
   authorimage,
 }: Props) {
   const { colors } = useTheme()
   const styles = createStyles(colors)
+
+  const dispatch = useAppDispatch()
+
+  const [liked, setLiked] = useState(iLike)
+  const [likeCount, setLikeCount] = useState(likes)
+
+  const handleLike = () => {
+    if (liked) {
+      setLiked(false)
+      setLikeCount((prev) => prev - 1)
+
+      dispatch(unlikePost(postId))
+
+      return
+    }
+
+    setLiked(true)
+    setLikeCount((prev) => prev + 1)
+
+    dispatch(likePost(postId))
+  }
+
   return (
     <View style={styles.container}>
+
+      {/* AUTOR */}
+
       <View style={styles.topsection}>
-        <Image style={styles.profilephoto} source={authorimage} />
+        <Image
+          style={styles.profilephoto}
+          source={authorimage}
+        />
+
         <View>
-          <Text style={styles.author}>{author}</Text>
-          <Text style={styles.time}>{createdAt}</Text>
+          <Text style={styles.author}>
+            {author}
+          </Text>
+
+          <Text style={styles.time}>
+            {createdAt}
+          </Text>
         </View>
       </View>
-      <Text style={styles.title} numberOfLines={1}>
+
+      {/* TÍTULO */}
+
+      <Text
+        style={styles.title}
+        numberOfLines={1}
+      >
         {title}
       </Text>
-      <Text numberOfLines={3} style={styles.description}>
+
+      {/* DESCRIPCIÓN */}
+
+      <Text
+        numberOfLines={3}
+        style={styles.description}
+      >
         {description}
       </Text>
 
+      {/* COMENTARIOS / LIKES */}
+
       <View style={styles.bothsection}>
+
+        {/* COMENTARIOS */}
+
         <View style={styles.iconssection}>
-          <Pressable>
+          <Pressable onPress={onPressComment}>
             <CommentIcon height={16} />
           </Pressable>
-          <Text style={styles.commentslikes}>{comment}</Text>
+
+          <Text style={styles.commentslikes}>
+            {comment}
+          </Text>
         </View>
+
+        {/* LIKES */}
+
         <View style={styles.iconssection}>
-          <Pressable>
-            {!iLike && <LikesIcon height={16} />}
-            {iLike && <ILikesIcon height={16} />}
+          <Pressable onPress={handleLike}>
+            {liked ? (
+              <ILikesIcon height={16} />
+            ) : (
+              <LikesIcon height={16} />
+            )}
           </Pressable>
-          <Text style={styles.commentslikes}>{likes}</Text>
+
+          <Text style={styles.commentslikes}>
+            {likeCount}
+          </Text>
         </View>
+
       </View>
     </View>
   )
@@ -110,6 +182,7 @@ const createStyles = (colors: ThemeColors) =>
       color: colors.textSecondary,
       fontSize: 13,
     },
+
     title: {
       fontFamily: 'Inter_700Bold',
       fontWeight: 'bold',
@@ -122,6 +195,7 @@ const createStyles = (colors: ThemeColors) =>
       color: colors.textSecondary,
       fontSize: 13,
     },
+
     bothsection: {
       flexDirection: 'row',
       gap: 16,

@@ -1,23 +1,26 @@
 import { JSX, useState } from 'react'
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Pressable } from 'react-native'
 import FixyIcon from '@assets/FIXY.svg'
 import { CustomButton } from '@components'
 import CommunityCard from '../../components/CommunityCard'
-import Comunidad from '@assets/patronato.png'
-import CondominioCentral from '@assets/patronato.png'
 import ReportCard from '../../components/ReportCard'
 import JoinCommunityModal from '../modals/JoinCommunityModal'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAppSelector } from '../../store/hook'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
+import { useNavigation } from '@react-navigation/native'
 
 export const Inicio = (): JSX.Element => {
-  // POP UP
   const [joinModalVisible, setJoinModalVisible] = useState(false)
   const { colors } = useTheme()
   const styles = createStyles(colors)
   const insets = useSafeAreaInsets()
   const userName = useAppSelector((state) => state.userProfile.name)
+  const communities = useAppSelector((state) => state.community.communities)
+  const reports = useAppSelector((state) => state.report.reports)
+  const navigation = useNavigation()
+
+
   return (
     <ScrollView
       style={[styles.container, { paddingTop: insets.top }]}
@@ -45,41 +48,39 @@ export const Inicio = (): JSX.Element => {
       {/* Mis Comunidades */}
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Mis Comunidades</Text>
-        <Text style={styles.sectionLink}>Ver todas</Text>
+        <Pressable onPress={()=>navigation.getParent()?.navigate('MyCommunity')} >
+          <Text style={styles.sectionLink}>Ver todas</Text>
+          </Pressable>
       </View>
 
-      <CommunityCard
-        title={'Condominio Central'}
-        description={'Hace 2 horas • Admin'}
-        image={CondominioCentral}
-        onPress={() => {}}
-      />
-      <CommunityCard
-        title={'Patronato Los Castanos'}
-        description={'Ayer • Comité'}
-        image={Comunidad}
-        onPress={() => {}}
-      />
+      {/*SE AGREGO EL .MAP PARA RENDERIZAR LAS COMMUNITY CARDS Y LOS REPORTS, QUITE EL FLAT LIST porque no se puede usar con el scroll view*/}
+      
+      {communities.map((item) => (
+        <CommunityCard
+          key={item.id}
+          title={item.name}
+          description={item.description}
+          image={item.image}
+          onPress={() => {}}
+        />
+      ))}
 
       {/* Reportes Recientes */}
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Reportes Recientes</Text>
       </View>
 
-      <ReportCard
-        title="Fuga de agua en área común"
-        status={'revision'}
-        report={'#RPT-0847'}
-        category={'Fontanería'}
-        onPress={() => {}}
-      />
-      <ReportCard
-        title="Luminaria fundida pasillo 3"
-        status={'resuelto'}
-        report={'#RPT-0839'}
-        category={'Electricidad'}
-        onPress={() => {}}
-      />
+      {reports.map((item) => (
+        <ReportCard
+          key={item.id}
+          title={item.title}
+          status={item.status}
+          report={item.id}
+          category={item.category}
+          onPress={() => {}}
+        />
+      ))}
+
       <JoinCommunityModal
         visible={joinModalVisible}
         onClose={() => setJoinModalVisible(false)}

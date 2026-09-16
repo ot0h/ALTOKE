@@ -12,7 +12,7 @@ import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 type Props = {
   title: string
   description?: string
-  image: ImageSourcePropType
+  image: ImageSourcePropType |string
   time?: string
   author?: string
   //PARA LA BADGE
@@ -65,7 +65,12 @@ export default function CommunityCard({
 
           isNotice && styles.imagenotice,
         ]}
-        source={image}
+        source={
+    image
+      ? typeof image === 'string'
+        ? { uri: image }
+        : image
+      : require('@assets/patronato.png')}
       />
       {isCompact && (
         <View style={styles.textcontainer}>
