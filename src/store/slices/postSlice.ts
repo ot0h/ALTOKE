@@ -76,6 +76,15 @@ const postsSlice = createSlice({
         post.comments.push(action.payload.comment)
       }
     },
+    unlikePost: (state, action: PayloadAction<string>) => {
+      const post = state.posts.find(
+        (post) => post.id === action.payload
+      )
+
+      if (post && post.likes > 0) {
+        post.likes -= 1
+      }
+    },
 
     removeComment: (
       state,
@@ -98,6 +107,7 @@ const postsSlice = createSlice({
 export const {
   setPosts,
   likePost,
+  unlikePost,
   addPost,
   removePost,
   addComment,

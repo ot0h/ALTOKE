@@ -7,6 +7,8 @@ import { MyProfile } from '../screens/tabs/MyProfile'
 import { ReportProblem } from '../screens/tabs/Reportar_Problema'
 import { CommunityHome } from '../screens/CommunityHome'
 import { NuevaComunidad } from '../screens/NuevaComunidad'
+import { Forum } from '../screens/Forum'
+import { NuevaPublicacion } from '../screens/NuevaPublicacion'
 
 export type RootStackParamList = {
   Home: undefined
@@ -19,6 +21,8 @@ export type RootStackParamList = {
   ReportProblem: {communityId: string}
   NuevaComunidad: undefined
   ManageCommunity: {communityId: string}
+  Forum: {communityId: string}
+  NuevaPublicacion: {communityId: string}
 }
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
@@ -42,6 +46,8 @@ export const StackNavigator = () => {
         <Stack.Screen name="ReportProblem" component={ReportProblem} />
         <Stack.Screen name="NuevaComunidad" component={NuevaComunidad} />
         <Stack.Screen name="ManageCommunity" component={ManageCommunity}/>
+        <Stack.Screen name="Forum" component={Forum}/>
+        <Stack.Screen name="NuevaPublicacion" component={NuevaPublicacion}/>
       </Stack.Navigator>
     </>
   )

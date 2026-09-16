@@ -13,17 +13,19 @@ import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import { RootStackParamList } from '../navigation/StackNavigator'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-type CommunityHomeRouteProp = RouteProp<
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+
+type Props = NativeStackScreenProps<
     RootStackParamList,
     'CommunityHome'
 >
 
-export const CommunityHome = (): JSX.Element => {
-    const navigation = useNavigation()
-    const route = useRoute<CommunityHomeRouteProp>()
+export const CommunityHome = ({
+    navigation,
+    route,
+}: Props): JSX.Element => {
 
     const { communityId } = route.params
-
     const { colors } = useTheme()
     const styles = createStyles(colors)
     const insets = useSafeAreaInsets()
@@ -105,7 +107,7 @@ export const CommunityHome = (): JSX.Element => {
                     Foro de la comunidad
                 </Text>
 
-                <Pressable onPress={() => { }}>
+                <Pressable onPress={() => navigation.navigate("Forum", { communityId })}>
                     <Text style={styles.sectionLink}>
                         Ver Foro
                     </Text>
@@ -114,6 +116,7 @@ export const CommunityHome = (): JSX.Element => {
 
             {post ? (
                 <ForumPostCard
+                    postId={post.id}
                     title={post.title}
                     author="Vecino"
                     createdAt={post.createdAt || 'Reciente'}
@@ -122,7 +125,6 @@ export const CommunityHome = (): JSX.Element => {
                     likes={post.likes}
                     authorimage={Patronato}
                     onPressComment={() => { }}
-                    onPressLike={() => { }}
                 />
             ) : (
                 <Text style={styles.emptyText}>
