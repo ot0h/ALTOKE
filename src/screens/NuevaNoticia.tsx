@@ -8,7 +8,6 @@ import {
   TextInput,
   View,
 } from 'react-native'
-import * as ImagePicker from 'expo-image-picker'
 import { ArrowLeft, Camera } from 'lucide-react-native'
 import { CustomButton, CustomSwitch } from '@components'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -16,6 +15,15 @@ import { useAppDispatch, useAppSelector } from '../store/hook'
 import { store } from '../store'
 import { addPost } from '../store/slices/postSlice'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
+import { RootStackParamList } from '@navigation/StackNavigator'
+import { RouteProp, useRoute } from '@react-navigation/native'
+import { ImageUpload } from '../components/ImageUpload'
+
+type NuevaNoticiaProp = RouteProp<
+  RootStackParamList,
+  'NuevaNoticia'
+>
+
 
 export const NuevaNoticia = (): JSX.Element => {
   const { colors } = useTheme()
@@ -26,7 +34,10 @@ export const NuevaNoticia = (): JSX.Element => {
   const [isPublish, setIsPublish] = useState<boolean>(true)
   const dispatch = useAppDispatch()
   const userId = useAppSelector((state) => state.userProfile.id)
-  const communityId = useAppSelector((state) => state.community.id)
+  const route = useRoute<NuevaNoticiaProp>()
+
+  const { communityId } = route.params
+
 
   const publicarNoticia = () => {
     if (!title.trim()) return
@@ -52,21 +63,6 @@ export const NuevaNoticia = (): JSX.Element => {
     setTitle('')
     setDetail('')
     setFoto('')
-  }
-
-  const elegirDeGaleria = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ['images'],
-      selectionLimit: 1,
-      allowsMultipleSelection: false,
-      allowsEditing: true,
-      aspect: [4, 3], // TODO: PEDIRLE A BYRON EL RADIO PA ESTO :V
-      quality: 1,
-    })
-
-    if (!result.canceled) {
-      setFoto(result.assets[0].uri)
-    }
   }
 
   return (
@@ -105,21 +101,11 @@ export const NuevaNoticia = (): JSX.Element => {
             {/* IMAGE */}
             <View style={styles.field}>
               <Text style={styles.label}>Imagen de portada</Text>
-              <Pressable style={styles.photoBox} onPress={elegirDeGaleria}>
-                {foto ? (
-                  <Image source={{ uri: foto }} style={styles.photoPreview} />
-                ) : (
-                  <>
-                    <Camera size={20} color={colors.primary} />
-                    <Text style={styles.photoTitle}>
-                      Subir imagen de portada
-                    </Text>
-                    <Text style={styles.photoDetail}>
-                      Soporta JPG, PNG (máx. 5MB)
-                    </Text>
-                  </>
-                )}
-              </Pressable>
+              <ImageUpload
+                value={foto}
+                onChange={setFoto}
+                title="Subir foto de la residencial"
+              />
             </View>
 
             {/* DETAIL */}

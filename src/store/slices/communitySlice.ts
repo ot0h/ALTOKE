@@ -2,9 +2,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export type Community = {
   id: string
+  ownerId: string
   name: string
   description: string
+  address: string
   image: string
+  rules: string
+  createdAt: string
 }
 
 //AHORA UN USUARIO PUEDE PERTENECER A VARIAS COMUNIDADES 
@@ -16,10 +20,11 @@ const initialState: CommunityState = {
   communities: [],
 }
 
+
 //NO CAMBIO LA ARQUITECTURA, SOLO SE CAMBIO COMO FUNCIONA ESTA PARTE
 const communitySlice = createSlice({
   name: 'community',
-  initialState,
+  initialState: initialState,
   reducers: {
     setCommunities: (
       state,
@@ -27,7 +32,6 @@ const communitySlice = createSlice({
     ) => {
       state.communities = action.payload
     },
-
     addCommunity: (
       state,
       action: PayloadAction<Community>
