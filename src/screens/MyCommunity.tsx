@@ -1,10 +1,9 @@
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native'
 import CommunityCard from '../components/CommunityCard'
-import Patronato from '@assets/patronato.png'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import { MaterialIcons } from '@expo/vector-icons'
-import { useNavigation } from '@react-navigation/native'
+import { useAppSelector } from '../store/hook'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '@navigation/StackNavigator'
 
@@ -13,11 +12,8 @@ type Props = NativeStackScreenProps<RootStackParamList, 'MyCommunity'>
 export const MyCommunity = ({ navigation }: Props) => {
   const { colors } = useTheme()
   const styles = createStyles(colors)
-  const onPressCommunity = () => {
-    navigation.navigate('CommunityHome', {
-      communityId: '1',
-    })
-  }
+  const communities = useAppSelector((state) => state.community.communities)
+
   return (
     <SafeAreaView style={styles.safearea}>
       <ScrollView>
@@ -30,13 +26,20 @@ export const MyCommunity = ({ navigation }: Props) => {
           </View>
 
           <View style={styles.cards}>
-            <CommunityCard
-              title="Patronato"
-              image={Patronato}
-              onPress={onPressCommunity}
-              description="Patronato Vecinal"
-              variant="extended"
-            />
+            {communities.map((item) => (
+              <CommunityCard
+                key={item.id}
+                title={item.name}
+                image={item.image}
+                onPress={() =>
+                  navigation.navigate('CommunityHome', {
+                    communityId: item.id,
+                  })
+                }
+                description={item.description}
+                variant="extended"
+              />
+            ))}
           </View>
         </View>
       </ScrollView>
