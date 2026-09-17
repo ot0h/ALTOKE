@@ -1,19 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-
-type ReportStatus = 'revision' | 'pendiente' | 'proceso' | 'resuelto'
-
-type Report = {
-  id: string
-  title: string
-  description: string
-  category: string
-  location: string
-  status: ReportStatus
-  userId: string
-  communityId: string
-  createdAt: string
-  fotos?: string[]
-}
+import { Report, ReportStatus } from '../../types'
 
 type ReportsState = {
   reports: Report[]

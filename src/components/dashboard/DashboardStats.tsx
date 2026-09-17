@@ -1,66 +1,134 @@
-import React, { JSX } from 'react'
+import React, { JSX, useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { MetricsGrid } from './MetricsGrid'
 import { ReportBarChart } from './ReportBarChart'
 import { Metric } from './types'
 import ReportCard from '../ReportCard'
+import { membershipService, reportService } from '../../services'
+import { CommunityMember } from '../../services'
+import { Report } from '../../types'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
-interface ReporteMes {
-  mes: string
-  cantidad: number
+interface BarDatum {
+  value: number
+  label: string
 }
 
-export const DashboardStats = (): JSX.Element => {
+const MONTHS = [
+  'Ene',
+  'Feb',
+  'Mar',
+  'Abr',
+  'May',
+  'Jun',
+  'Jul',
+  'Ago',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dic',
+]
+
+interface Props {
+  communityId: string
+}
+
+export const DashboardStats = ({ communityId }: Props): JSX.Element => {
   const { colors } = useTheme()
   const styles = createStyles(colors)
+
+  const [members, setMembers] = useState<CommunityMember[]>([])
+  const [reports, setReports] = useState<Report[]>([])
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const [fetchedMembers, fetchedReports] = await Promise.all([
+          membershipService.fetchCommunityMembers(communityId),
+          reportService.fetchReports(communityId),
+        ])
+
+        setMembers(fetchedMembers)
+        setReports(fetchedReports)
+      } catch (error) {
+        console.error('[DashboardStats] Error cargando datos:', error)
+      }
+    }
+
+    load()
+  }, [communityId])
+
+  const resolved = reports.filter(
+    (report) => report.status === 'resuelto',
+  ).length
+  const pending = reports.filter(
+    (report) => report.status === 'pendiente',
+  ).length
+  const active = reports.length - resolved
+
   const datos: Metric[] = [
-    { type: 'residentes', quantity: 342 },
-    { type: 'active_alerts', quantity: 12 },
-    { type: 'pagos_pendientes', quantity: 8 },
-    { type: 'solucionados', quantity: 48 },
+    { type: 'residentes', quantity: members.length },
+    { type: 'active_alerts', quantity: active },
+    { type: 'pagos_pendientes', quantity: pending },
+    { type: 'solucionados', quantity: resolved },
   ]
 
-  const reportesMensuales: ReporteMes[] = [
-    { mes: 'Ene', cantidad: 0 }, // No aparecerá
-    { mes: 'Jun', cantidad: 35 },
-    { mes: 'Jul', cantidad: 60 },
-    { mes: 'Ago', cantidad: 45 },
-    { mes: 'Sep', cantidad: 80 },
-    { mes: 'Oct', cantidad: 65 },
-  ]
+  const now = new Date()
+  const buckets: { key: string; label: string; count: number }[] = []
 
-  const datosGrafico = reportesMensuales
-    .filter((item) => item.cantidad > 0)
-    .map((item) => ({
-      value: item.cantidad,
-      label: item.mes,
-    }))
+  for (let i = 5; i >= 0; i--) {
+    const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    buckets.push({
+      key: `${date.getFullYear()}-${date.getMonth() + 1}`,
+      label: MONTHS[date.getMonth()],
+      count: 0,
+    })
+  }
+
+  reports.forEach((report) => {
+    const date = new Date(report.createdAt)
+    const key = `${date.getFullYear()}-${date.getMonth() + 1}`
+    const bucket = buckets.find((item) => item.key === key)
+
+    if (bucket) {
+      bucket.count += 1
+    }
+  })
+
+  const reportesMensuales: BarDatum[] = buckets
+    .filter((item) => item.count > 0)
+    .map((item) => ({ value: item.count, label: item.label }))
+
+  const recentReports = reports.slice(0, 3)
 
   return (
     <ScrollView>
       <View style={styles.container}>
         <MetricsGrid data={datos} />
 
-        <ReportBarChart data={datosGrafico} />
+        <ReportBarChart data={reportesMensuales} />
 
-        <View>
-          <Text style={styles.sectionTitle}>Incidencias Recientes</Text>
-          <ReportCard
-            title="Fuga de agua en área común"
-            status={'revision'}
-            report={'#RPT-0847'}
-            category={'Fontanería'}
-            onPress={() => {}}
-          />
-          <ReportCard
-            title="Luminaria fundida pasillo 3"
-            status={'resuelto'}
-            report={'#RPT-0839'}
-            category={'Electricidad'}
-            onPress={() => {}}
-          />
-        </View>
+        {recentReports.length > 0 && (
+          <View>
+            <Text style={styles.sectionTitle}>Incidencias Recientes</Text>
+
+            {recentReports.map((report) => (
+              <ReportCard
+                key={report.id}
+                title={report.title}
+                status={report.status}
+                report={`RPT-${report.id.slice(0, 6).toUpperCase()}`}
+                category={report.category}
+                time={
+                  report.createdAt
+                    ? new Date(report.createdAt).toLocaleDateString()
+                    : 'Reciente'
+                }
+                onPress={() => {}}
+              />
+            ))}
+          </View>
+        )}
       </View>
     </ScrollView>
   )

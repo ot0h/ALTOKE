@@ -1,13 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { Category, CategoryType } from '../../types'
 
-export type CategoryType = 'report' | 'news'
-
-export type Category = {
-  id: string
-  communityId: string
-  name: string
-  type: CategoryType
-}
+export type { Category, CategoryType }
 
 type CategoryState = {
   categories: Category[]

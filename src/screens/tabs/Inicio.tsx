@@ -1,4 +1,4 @@
-import { JSX, useState } from 'react'
+import { JSX, useEffect, useState } from 'react'
 import { StyleSheet, Text, View, ScrollView, Pressable } from 'react-native'
 import FixyIcon from '@assets/FIXY.svg'
 import { CustomButton } from '@components'
@@ -6,19 +6,41 @@ import CommunityCard from '../../components/CommunityCard'
 import ReportCard from '../../components/ReportCard'
 import JoinCommunityModal from '../modals/JoinCommunityModal'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useAppSelector } from '../../store/hook'
+import { useAppDispatch, useAppSelector } from '../../store/hook'
+import { setCommunities } from '../../store/slices/communitySlice'
+import { setReports } from '../../store/slices/reportSlice'
+import { communityService, reportService } from '../../services'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { RootStackParamList } from '@navigation/StackNavigator'
 
 export const Inicio = (): JSX.Element => {
   const [joinModalVisible, setJoinModalVisible] = useState(false)
   const { colors } = useTheme()
   const styles = createStyles(colors)
   const insets = useSafeAreaInsets()
+  const dispatch = useAppDispatch()
   const userName = useAppSelector((state) => state.userProfile.name)
   const communities = useAppSelector((state) => state.community.communities)
   const reports = useAppSelector((state) => state.report.reports)
   const navigation = useNavigation()
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [comms, reps] = await Promise.all([
+          communityService.fetchCommunities(),
+          reportService.fetchReports(),
+        ])
+        dispatch(setCommunities(comms))
+        dispatch(setReports(reps))
+      } catch (e) {
+        console.error('[Inicio] Error cargando datos:', e)
+      }
+    }
+    loadData()
+  }, [dispatch])
 
 
   return (
@@ -61,7 +83,11 @@ export const Inicio = (): JSX.Element => {
           title={item.name}
           description={item.description}
           image={item.image}
-          onPress={() => {}}
+          onPress={() =>
+            navigation
+              .getParent<NativeStackNavigationProp<RootStackParamList>>()
+              ?.navigate('CommunityHome', { communityId: item.id })
+          }
         />
       ))}
 

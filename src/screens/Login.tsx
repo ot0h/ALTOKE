@@ -8,11 +8,12 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native'
 import FixyLogin from '@assets/FIXYLOGIN.svg'
-import { useAppDispatch, useAppSelector } from '../store/hook'
-import { store } from '../store'
+import { useAppDispatch } from '../store/hook'
 import { updateProfile } from '../store/slices/userProfileSlice'
+import { authService, userProfileService } from '../services'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
@@ -23,25 +24,28 @@ export const Login = ({ navigation }: Props): JSX.Element => {
   const styles = createStyles(colors)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
   const dispatch = useAppDispatch()
-  const storedName = useAppSelector((state) => state.userProfile.name)
 
-  const handleLogin = () => {
-    const userId = Date.now().toString()
+  const handleLogin = async () => {
+    if (loading) return
+    setLoading(true)
 
-    dispatch(updateProfile({ id: userId, name: storedName, email }))
+    try {
+      const user = await authService.signIn(email, password)
+      if (!user) throw new Error('No se pudo iniciar sesión')
 
-    console.log('[Redux] useDispatch(updateProfile) -> payload:', {
-      id: userId,
-      name: storedName,
-      email,
-    })
-    console.log(
-      '[Redux] Nuevo estado de userProfile:',
-      store.getState().userProfile,
-    )
+      const profile = await userProfileService.fetchProfile(user.id)
 
-    navigation.navigate('MainTabs', { email })
+      dispatch(updateProfile(profile))
+      navigation.navigate('MainTabs', { email: profile.email })
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Error al iniciar sesión'
+      Alert.alert('Error', message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (

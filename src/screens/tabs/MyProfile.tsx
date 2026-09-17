@@ -1,40 +1,101 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import Patronato from '@assets/patronato.png'
 import { CustomButton } from '@components'
 import ProfileAvatar from '../../components/ProfileAvatar'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useAppSelector } from '../../store/hook'
+import { useAppDispatch, useAppSelector } from '../../store/hook'
+import { updateProfile } from '../../store/slices/userProfileSlice'
+import { authService, communityService, membershipService } from '../../services'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import SettingsModal from '../modals/SettingsModal'
-import { useState } from 'react'
-import { useNavigation } from '@react-navigation/native'
+import { useEffect, useState } from 'react'
+import { useIsFocused, useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { RootStackParamList } from '@navigation/StackNavigator'
+import { RootStackParamList } from '../../navigation/StackNavigator'
+import { MemberShip } from '../../types'
 
-
+type MyCommunity = {
+  id: string
+  name: string
+  role: 'Administrador' | 'Miembro'
+}
 
 export const MyProfile = () => {
   const { colors } = useTheme()
   const styles = createStyles(colors)
-  const communities = [
-    {
-      id: '1',
-      name: 'Patronato',
-      role: 'Administrador',
-    },
-    {
-      id: '2',
-      name: 'Colonia Centro',
-      role: 'Miembro',
-    },
-  ]
-const navigation =
-  useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>()
   const insets = useSafeAreaInsets()
+
+  const dispatch = useAppDispatch()
+  const isFocused = useIsFocused()
 
   const userName = useAppSelector((state) => state.userProfile.name)
   const userEmail = useAppSelector((state) => state.userProfile.email)
+  const userId = useAppSelector((state) => state.userProfile.id)
+
+  const [myCommunities, setMyCommunities] = useState<MyCommunity[]>([])
   const [settingsVisible, setSettingsVisible] = useState(false)
+
+  useEffect(() => {
+    if (!userId || !isFocused) return
+
+    const loadCommunities = async () => {
+      try {
+        const [allCommunities, owned, memberships] = await Promise.all([
+          communityService.fetchCommunities(),
+          communityService.fetchCommunities(userId),
+          membershipService.fetchMemberships(userId),
+        ])
+
+        const nameMap = new Map(
+          allCommunities.map((community) => [community.id, community.name]),
+        )
+
+        const byId = new Map<string, 'Administrador' | 'Miembro'>()
+
+        owned.forEach((community) =>
+          byId.set(community.id, 'Administrador'),
+        )
+
+        memberships.forEach((membership: MemberShip) =>
+          byId.set(
+            membership.communityId,
+            membership.role === 'admin' ? 'Administrador' : 'Miembro',
+          ),
+        )
+
+        setMyCommunities(
+          Array.from(byId.entries()).map(([id, role]) => ({
+            id,
+            name: nameMap.get(id) ?? 'Comunidad',
+            role,
+          })),
+        )
+      } catch (error) {
+        console.error('[MyProfile] Error cargando comunidades:', error)
+      }
+    }
+
+    loadCommunities()
+  }, [userId, isFocused])
+
+  const cerrarSesion = async () => {
+    try {
+      await authService.signOut()
+
+      dispatch(updateProfile({ id: '', name: '', email: '', avatar: '' }))
+
+      navigation.navigate('Login')
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'No se pudo cerrar la sesión'
+      Alert.alert('Error', message)
+    }
+  }
 
   return (
     <ScrollView
@@ -70,11 +131,11 @@ const navigation =
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Mis Comunidades</Text>
 
-          <Text style={styles.communityCount}>{communities.length}</Text>
+          <Text style={styles.communityCount}>{myCommunities.length}</Text>
         </View>
 
         <View style={styles.communityList}>
-          {communities.map((community) => (
+          {myCommunities.map((community) => (
             <View key={community.id} style={styles.communityCard}>
               <View style={styles.communityInfo}>
                 <Text style={styles.communityName}>{community.name}</Text>
@@ -83,11 +144,17 @@ const navigation =
               </View>
 
               {community.role === 'Administrador' ? (
-                <Pressable style={styles.manageButton} onPress={()=> navigation.navigate('ManageCommunity', {communityId: community.id})}>
+                <Pressable
+                  style={styles.manageButton}
+                  onPress={() => navigation.navigate('ManageCommunity', { communityId: community.id })}
+                >
                   <Text style={styles.manageButtonText}>Administrar</Text>
                 </Pressable>
               ) : (
-                <Pressable style={styles.viewButton} onPress={() => { }}>
+                <Pressable
+                  style={styles.viewButton}
+                  onPress={() => navigation.navigate('CommunityHome', { communityId: community.id })}
+                >
                   <Text style={styles.viewButtonText}>Ver</Text>
                 </Pressable>
               )}
@@ -100,13 +167,13 @@ const navigation =
 
       <CustomButton
         text="Crear Comunidad"
-        onPress={() => navigation.getParent()?.navigate('NuevaComunidad') }
+        onPress={() => navigation.navigate('NuevaComunidad') }
         variant="secondary"
       />
 
       {/* CERRAR SESIÓN */}
 
-      <Pressable style={styles.logoutButton} onPress={() => { }}>
+      <Pressable style={styles.logoutButton} onPress={cerrarSesion}>
         <Text style={styles.logoutText}>Cerrar sesión</Text>
       </Pressable>
 

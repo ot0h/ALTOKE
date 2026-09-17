@@ -43,26 +43,27 @@ export const ManageCommunity = (): JSX.Element => {
       description: 'Consulta las estadísticas de tu comunidad',
       icon: BarChart3,
       onPress: () =>
-        {},
+        navigation.navigate('ManageDashboard', { communityId }),
     },
     {
       title: 'Gestionar noticias',
       description: 'Crea, edita y administra las noticias',
       icon: FileText,
       onPress: () =>
-        {},
+        navigation.navigate('ManageNotices', { communityId }),
     },
     {
       title: 'Ver miembros',
       description: 'Consulta y administra los miembros',
       icon: Users,
-      onPress: () =>{},
+      onPress: () => navigation.navigate('Members', { communityId }),
     },
     {
       title: 'Ver foro',
       description: 'Consulta y administra las conversaciones',
       icon: MessageCircle,
-      onPress: () =>{},
+      onPress: () =>
+        navigation.navigate('Forum', { communityId }),
     },
   ]
 

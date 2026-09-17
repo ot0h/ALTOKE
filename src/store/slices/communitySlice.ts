@@ -1,15 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-
-export type Community = {
-  id: string
-  ownerId: string
-  name: string
-  description: string
-  address: string
-  image: string
-  rules: string
-  createdAt: string
-}
+import { Community } from '../../types'
 
 //AHORA UN USUARIO PUEDE PERTENECER A VARIAS COMUNIDADES 
 type CommunityState = {

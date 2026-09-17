@@ -1,4 +1,4 @@
-import { JSX } from 'react'
+import { JSX, useEffect, useMemo } from 'react'
 import {
   FlatList,
   Pressable,
@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from 'react-native'
-import { Plus } from 'lucide-react-native'
+import { Plus, ArrowLeft } from 'lucide-react-native'
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -19,7 +19,10 @@ import {
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
-import { useAppSelector } from '../store/hook'
+import { useAppDispatch, useAppSelector } from '../store/hook'
+import { setPosts } from '../store/slices/postSlice'
+import { postService } from '../services'
+import { mergeById } from '../utils/mergeById'
 import { RootStackParamList } from '@navigation/StackNavigator'
 import ForumPostCard from '../components/ForumPostCard'
 
@@ -44,12 +47,33 @@ export const Forum = (): JSX.Element => {
 
   const { communityId } = route.params
 
-  const posts = useAppSelector(
-    (state) =>
-      state.post.posts.filter(
-        (post) => post.communityId === communityId,
-      ),
+  const dispatch = useAppDispatch()
+
+  const allPosts = useAppSelector((state) => state.post.posts)
+
+  const posts = useMemo(
+    () => allPosts.filter((post) => post.communityId === communityId),
+    [allPosts, communityId],
   )
+
+  useEffect(() => {
+    const loadPosts = async () => {
+      try {
+        const remotePosts = await postService.fetchPosts()
+
+        dispatch(
+          setPosts(mergeById(posts, remotePosts)),
+        )
+      } catch (error) {
+        console.error(
+          '[Forum] Error al cargar publicaciones:',
+          error,
+        )
+      }
+    }
+
+    loadPosts()
+  }, [])
 
   return (
     <SafeAreaView
@@ -63,6 +87,13 @@ export const Forum = (): JSX.Element => {
       {/* HEADER */}
 
       <View style={styles.header}>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <ArrowLeft size={20} color={colors.text} />
+        </Pressable>
+
         <Text style={styles.title}>
           Foro Comunitario
         </Text>
@@ -146,9 +177,21 @@ const createStyles = (colors: ThemeColors) =>
     },
 
     title: {
+      flex: 1,
       fontFamily: 'MontserratAlternates_700Bold',
       fontSize: 24,
       color: colors.text,
+    },
+
+    backButton: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
 
     publishButton: {

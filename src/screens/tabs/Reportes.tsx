@@ -1,7 +1,10 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native'
 import { useEffect } from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useAppSelector } from '../../store/hook'
+import { useAppDispatch, useAppSelector } from '../../store/hook'
+import { setReports } from '../../store/slices/reportSlice'
+import { reportService } from '../../services'
+import { mergeById } from '../../utils/mergeById'
 import ReportCard from '../../components/ReportCard'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
@@ -11,9 +14,24 @@ export const Reportes = () => {
   const insets = useSafeAreaInsets()
   const reports = useAppSelector((state) => state.report.reports)
 
+  const dispatch = useAppDispatch()
+
   useEffect(() => {
-    console.log('[Redux] useSelector(state => state.report.reports):', reports)
-  }, [reports])
+    const loadReports = async () => {
+      try {
+        const remoteReports = await reportService.fetchReports()
+
+        dispatch(setReports(mergeById(reports, remoteReports)))
+      } catch (error) {
+        console.error(
+          '[Reportes] Error al cargar reportes:',
+          error,
+        )
+      }
+    }
+
+    loadReports()
+  }, [])
 
   return (
     <View

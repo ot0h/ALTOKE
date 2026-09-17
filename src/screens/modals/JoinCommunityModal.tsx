@@ -8,6 +8,10 @@ import {
   Text,
   View,
 } from 'react-native'
+import { useAppDispatch, useAppSelector } from '../../store/hook'
+import { addCommunity } from '../../store/slices/communitySlice'
+import { communityService, membershipService } from '../../services'
+import { Community } from '../../types'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 type Props = {
@@ -15,36 +19,86 @@ type Props = {
   onClose: () => void
 }
 
-type JoinState = 'idle' | 'found' | 'joining' | 'success' | 'error'
+type JoinState =
+  | 'idle'
+  | 'searching'
+  | 'found'
+  | 'joining'
+  | 'success'
+  | 'error'
 
 export default function JoinCommunityModal({ visible, onClose }: Props) {
   const { colors } = useTheme()
   const styles = createStyles(colors)
   const [code, setCode] = useState('')
   const [state, setState] = useState<JoinState>('idle')
-  const [communityName, setCommunityName] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [foundCommunity, setFoundCommunity] = useState<Community | null>(null)
 
-  const buscarComunidad = () => {
-    if (!code.trim()) return
+  const userId = useAppSelector((state) => state.userProfile.id)
+  const dispatch = useAppDispatch()
 
-    // MOCK TEMPORAL
-    // AQUÍ IRÁ LA CONSULTA A SUPABASE
-    setCommunityName('Patronato Los Castaños')
-    setState('found')
+  const communityName = foundCommunity?.name ?? ''
+
+  const buscarComunidad = async () => {
+    if (!code.trim() || !userId) return
+
+    setState('searching')
+    try {
+      const communities = await communityService.fetchCommunities()
+      const term = code.trim().toUpperCase()
+      const found = communities.find(
+        (c) => c.code.toUpperCase() === term,
+      )
+
+      if (!found) {
+        setErrorMessage(
+          'No se encontró ninguna comunidad con ese código.',
+        )
+        setState('error')
+        return
+      }
+
+      setFoundCommunity(found)
+      setState('found')
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : 'Error al buscar la comunidad',
+      )
+      setState('error')
+    }
   }
 
-  const unirse = () => {
-    setState('joining')
+  const unirse = async () => {
+    if (!userId || !foundCommunity) return
 
-    // MOCK TEMPORAL
-    setTimeout(() => {
+    setState('joining')
+    try {
+      await membershipService.joinCommunity(userId, foundCommunity.id)
+
+      dispatch(addCommunity(foundCommunity))
+
       setState('success')
-    }, 1200)
+    } catch (error) {
+      const code = (error as { code?: string }).code
+
+      setErrorMessage(
+        code === '23505'
+          ? 'Ya formas parte de esta comunidad.'
+          : error instanceof Error
+            ? error.message
+            : 'No se pudo unir a la comunidad',
+      )
+      setState('error')
+    }
   }
 
   const cerrar = () => {
     setCode('')
-    setCommunityName('')
+    setFoundCommunity(null)
+    setErrorMessage('')
     setState('idle')
     onClose()
   }
@@ -87,6 +141,19 @@ export default function JoinCommunityModal({ visible, onClose }: Props) {
                 />
               </View>
             </>
+          )}
+
+          {/* BUSCANDO */}
+          {state === 'searching' && (
+            <View style={styles.centerContent}>
+              <ActivityIndicator size="large" color={colors.primary} />
+
+              <Text style={styles.title}>Buscando...</Text>
+
+              <Text style={styles.description}>
+                Estamos buscando la comunidad {code.trim()}
+              </Text>
+            </View>
           )}
 
           {/* COMUNIDAD ENCONTRADA */}
@@ -135,6 +202,23 @@ export default function JoinCommunityModal({ visible, onClose }: Props) {
                 Estamos agregándote a {communityName}
               </Text>
             </View>
+          )}
+
+          {/* ERROR */}
+          {state === 'error' && (
+            <>
+              <Text style={styles.title}>No se pudo continuar</Text>
+
+              <Text style={styles.description}>{errorMessage}</Text>
+
+              <View style={styles.singleButton}>
+                <CustomButton
+                  text="Entendido"
+                  variant="secondary"
+                  onPress={cerrar}
+                />
+              </View>
+            </>
           )}
 
           {/* ÉXITO */}

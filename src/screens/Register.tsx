@@ -8,11 +8,10 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native'
 import FixyLogin from '@assets/FIXYLOGIN.svg'
-import { useAppDispatch } from '../store/hook'
-import { store } from '../store'
-import { updateProfile } from '../store/slices/userProfileSlice'
+import { authService } from '../services'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
@@ -24,27 +23,25 @@ export const Register = ({ navigation }: Props): JSX.Element => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
-  const dispatch = useAppDispatch()
+  const [loading, setLoading] = useState(false)
 
-  const handleRegister = () => {
-    const userId = Date.now().toString()
+  const handleRegister = async () => {
+    if (loading) return
+    setLoading(true)
 
-    dispatch(updateProfile({ id: userId, name, email }))
+    try {
+      const user = await authService.signUp({ email, password, name })
+      if (!user) throw new Error('No se pudo crear la cuenta')
 
-    console.log(
-      '[Redux] useDispatch(updateProfile) desde Register -> payload:',
-      {
-        id: userId,
-        name,
-        email,
-      },
-    )
-    console.log(
-      '[Redux] Nuevo estado de userProfile:',
-      store.getState().userProfile,
-    )
-
-    navigation.navigate('Login')
+      Alert.alert('Éxito', 'Cuenta creada. Ahora inicia sesión.')
+      navigation.navigate('Login')
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Error al registrarse'
+      Alert.alert('Error', message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (

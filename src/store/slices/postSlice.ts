@@ -1,24 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-
-type Comment = {
-  id: string
-  userId: string
-  content: string
-  createdAt: string
-}
-
-type Post = {
-  id: string
-  userId: string
-  communityId: string
-  title: string
-  content: string
-  comments: Comment[]
-  likes: number
-  image?: string
-  category?: 'avisos' | 'eventos' | 'mantenimiento'
-  createdAt?: string
-}
+import { Comment, Post } from '../../types'
 
 type PostsState = {
   posts: Post[]

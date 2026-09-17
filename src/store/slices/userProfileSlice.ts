@@ -1,11 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-
-type UserProfile = {
-  id: string
-  name: string
-  email: string
-  avatar?: string
-}
+import { UserProfile } from '../../types'
 
 const initialUserProfile: UserProfile = {
   id: '',

@@ -1,12 +1,18 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FlatList, Image, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import CommunityCard from '../../components/CommunityCard'
 import { CategoryTag } from '../../components/CategoryTag'
 
 import Patronato from '@assets/patronato.png'
 import SearchBar from '../../components/SearchBar'
-import { useAppSelector } from '../../store/hook'
+import { useAppDispatch, useAppSelector } from '../../store/hook'
+import { setPosts } from '../../store/slices/postSlice'
+import { postService } from '../../services'
+import { mergeById } from '../../utils/mergeById'
+import { RootStackParamList } from '../../navigation/StackNavigator'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 type Category = 'todos' | 'avisos' | 'eventos' | 'mantenimiento'
@@ -20,6 +26,27 @@ export const VerNoticias = () => {
   const [search, setSearch] = useState('')
 
   const notices = useAppSelector((state) => state.post.posts)
+
+  const dispatch = useAppDispatch()
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+
+  useEffect(() => {
+    const loadPosts = async () => {
+      try {
+        const remotePosts = await postService.fetchPosts()
+
+        dispatch(setPosts(mergeById(notices, remotePosts)))
+      } catch (error) {
+        console.error(
+          '[VerNoticias] Error al cargar noticias:',
+          error,
+        )
+      }
+    }
+
+    loadPosts()
+  }, [])
 
   const categories: {
     text: string
@@ -111,7 +138,11 @@ export const VerNoticias = () => {
               }
               category={item.category}
               variant="notices"
-              onPress={() => {}}
+              onPress={() =>
+                navigation
+                  .getParent<NativeStackNavigationProp<RootStackParamList>>()
+                  ?.navigate('Noticia', { postId: item.id })
+              }
             />
           )}
           contentContainerStyle={styles.list}

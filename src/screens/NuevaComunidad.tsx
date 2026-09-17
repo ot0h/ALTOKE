@@ -1,16 +1,16 @@
 import { JSX, useState } from 'react'
-import { Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, } from 'react-native'
+import { Alert, Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import { Camera, MapPin } from 'lucide-react-native'
 import { CustomButton } from '@components'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAppDispatch, useAppSelector } from '../store/hook'
-import { store } from '../store'
 import { addCommunity } from '../store/slices/communitySlice'
+import { communityService, membershipService } from '../services'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
-import Alert from './modals/Alert'
+import AlertModal from './modals/Alert'
+import { Community } from '../types'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { RouteProp } from '@react-navigation/native'
 import { RootStackParamList } from '@navigation/StackNavigator'
 import { ImageUpload } from '../components/ImageUpload'
 
@@ -28,34 +28,45 @@ export const NuevaComunidad = ({ navigation }: Props): JSX.Element => {
   const userId = useAppSelector((state) => state.userProfile.id)
   const insets = useSafeAreaInsets()
   const [visibleAlert, setVisibleAlert] = useState(false)
+  const [creating, setCreating] = useState(false)
+  const [createdCommunity, setCreatedCommunity] = useState<Community | null>(
+    null,
+  )
 
-  const crearComunidad = () => {
+  const crearComunidad = async () => {
+    if (creating || !name.trim()) return
 
-    if (!name.trim()) return
+    setCreating(true)
+    try {
+      const community = await communityService.createCommunity({
+        ownerId: userId,
+        name: name.trim(),
+        description: description.trim(),
+        address: address.trim(),
+        rules: rules.trim(),
+        image: foto,
+      })
 
-    const community = {
-      id: Date.now().toString(),
-      ownerId: userId,
-      name: name.trim(),
-      description: description.trim(),
-      address: address.trim(),
-      rules: rules.trim(),
-      image: foto,
-      createdAt: new Date().toISOString(),
+      await membershipService.joinCommunity(userId, community.id, 'admin')
+
+      dispatch(addCommunity(community))
+      setCreatedCommunity(community)
+      setVisibleAlert(true)
+
+      setName('')
+      setDescription('')
+      setAddress('')
+      setRules('')
+      setFoto('')
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'No se pudo crear la comunidad'
+      Alert.alert('Error', message)
+    } finally {
+      setCreating(false)
     }
-
-    dispatch(addCommunity(community))
-
-    console.log('[Redux] useDispatch(addCommunity) -> payload:', community)
-    console.log('[Redux] Nuevo estado de comunidades:', store.getState().community.communities)
-
-    setName('')
-    setDescription('')
-    setAddress('')
-    setRules('')
-    setFoto('')
-
-    setVisibleAlert(true)
   }
 
   return (
@@ -164,9 +175,15 @@ export const NuevaComunidad = ({ navigation }: Props): JSX.Element => {
               onPress={crearComunidad}
             />
           </View>
-          <Alert
-            text='Comunidad Creada Correctamente'
-            onPress={() => navigation.navigate('MainTabs', { email: '' })} //PENDIENTE ARREGLAR 
+          <AlertModal
+            text={`Comunidad Creada Correctamente\n\nCódigo de unión: ${createdCommunity?.code ?? ''}`}
+            onPress={() =>
+              createdCommunity
+                ? navigation.replace('CommunityHome', {
+                    communityId: createdCommunity.id,
+                  })
+                : navigation.goBack()
+            } 
             visible={visibleAlert} />
 
         </ScrollView>

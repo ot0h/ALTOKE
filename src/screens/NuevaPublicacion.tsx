@@ -25,7 +25,9 @@ import { CustomButton } from '@components'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import { useAppDispatch, useAppSelector } from '../store/hook'
 import { addPost } from '../store/slices/postSlice'
+import { postService } from '../services'
 import { RootStackParamList } from '@navigation/StackNavigator'
+import { Alert } from 'react-native'
 
 type NuevaPublicacionRouteProp = RouteProp<
   RootStackParamList,
@@ -56,29 +58,37 @@ export const NuevaPublicacion = (): JSX.Element => {
 
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
+  const [publishing, setPublishing] = useState(false)
 
-  const publicar = () => {
-    if (!title.trim() || !content.trim()) {
+  const publicar = async () => {
+    if (publishing || !title.trim() || !content.trim()) {
       return
     }
 
-    const post = {
-      id: Date.now().toString(),
-      userId,
-      communityId,
-      title: title.trim(),
-      content: content.trim(),
-      comments: [],
-      likes: 0,
-      createdAt: new Date().toISOString(),
+    setPublishing(true)
+    try {
+      const post = await postService.createPost({
+        title: title.trim(),
+        content: content.trim(),
+        userId,
+        communityId,
+      })
+
+      dispatch(addPost(post))
+
+      setTitle('')
+      setContent('')
+
+      navigation.goBack()
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'No se pudo publicar'
+      Alert.alert('Error', message)
+    } finally {
+      setPublishing(false)
     }
-
-    dispatch(addPost(post))
-
-    setTitle('')
-    setContent('')
-
-    navigation.goBack()
   }
 
   return (

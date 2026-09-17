@@ -1,4 +1,4 @@
-import { JSX } from 'react'
+import { JSX, useEffect, useMemo } from 'react'
 import { Pressable, ScrollView, StyleSheet, Text, View, Image } from 'react-native'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
@@ -8,7 +8,13 @@ import ForumPostCard from '../components/ForumPostCard'
 import ReportCard from '../components/ReportCard'
 
 import Patronato from '@assets/patronato.png'
-import { useAppSelector } from '../store/hook'
+import { store } from '../store'
+import { useAppDispatch, useAppSelector } from '../store/hook'
+import { addCommunity } from '../store/slices/communitySlice'
+import { setPosts } from '../store/slices/postSlice'
+import { setReports } from '../store/slices/reportSlice'
+import { communityService, postService, reportService } from '../services'
+import { mergeById } from '../utils/mergeById'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import { RootStackParamList } from '../navigation/StackNavigator'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -29,6 +35,7 @@ export const CommunityHome = ({
     const { colors } = useTheme()
     const styles = createStyles(colors)
     const insets = useSafeAreaInsets()
+    const dispatch = useAppDispatch()
 
     const community = useAppSelector((state) =>
         state.community.communities.find(
@@ -36,17 +43,52 @@ export const CommunityHome = ({
         ),
     )
 
-    const posts = useAppSelector((state) =>
-        state.post.posts.filter(
-            (post) => post.communityId === communityId,
-        ),
+    const allPosts = useAppSelector((state) => state.post.posts)
+    const allReports = useAppSelector((state) => state.report.reports)
+
+    const posts = useMemo(
+        () => allPosts.filter((post) => post.communityId === communityId),
+        [allPosts, communityId],
     )
 
-    const reports = useAppSelector((state) =>
-        state.report.reports.filter(
-            (report) => report.communityId === communityId,
-        ),
+    const reports = useMemo(
+        () => allReports.filter((report) => report.communityId === communityId),
+        [allReports, communityId],
     )
+
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                if (!community) {
+                    const fetchedCommunity =
+                        await communityService.fetchCommunity(communityId)
+                    if (fetchedCommunity) {
+                        dispatch(addCommunity(fetchedCommunity))
+                    }
+                }
+
+                const [fetchedPosts, fetchedReports] = await Promise.all([
+                    postService.fetchPosts(communityId),
+                    reportService.fetchReports(communityId),
+                ])
+
+                const mergedPosts = mergeById(
+                    store.getState().post.posts,
+                    fetchedPosts,
+                )
+                const mergedReports = mergeById(
+                    store.getState().report.reports,
+                    fetchedReports,
+                )
+
+                dispatch(setPosts(mergedPosts))
+                dispatch(setReports(mergedReports))
+            } catch (error) {
+                console.error('[CommunityHome] Error cargando datos:', error)
+            }
+        }
+        loadData()
+    }, [communityId, community, dispatch])
 
     const post = posts[0]
     const recentReports = reports.slice(0, 2)
@@ -96,7 +138,7 @@ export const CommunityHome = ({
                 text="+ Crear Reporte"
                 variant="secondary"
                 onPress={() =>
-                    navigation.navigate('ReportProblem' as never)
+                    navigation.navigate('ReportProblem', { communityId })
                 }
             />
 

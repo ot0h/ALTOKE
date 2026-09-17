@@ -13,11 +13,8 @@ import LikesIcon from '@assets/likes.svg'
 import ILikesIcon from '@assets/Ilikes.svg'
 
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
-import { useAppDispatch } from '../store/hook'
-import {
-  likePost,
-  unlikePost,
-} from '../store/slices/postSlice'
+import { useAppSelector } from '../store/hook'
+import { postService } from '../services'
 
 type Props = {
   postId: string
@@ -47,25 +44,27 @@ export default function ForumPostCard({
   const { colors } = useTheme()
   const styles = createStyles(colors)
 
-  const dispatch = useAppDispatch()
+  const userId = useAppSelector((state) => state.userProfile.id)
 
   const [liked, setLiked] = useState(iLike)
   const [likeCount, setLikeCount] = useState(likes)
 
-  const handleLike = () => {
-    if (liked) {
-      setLiked(false)
-      setLikeCount((prev) => prev - 1)
+  const handleLike = async () => {
+    if (!userId) return
 
-      dispatch(unlikePost(postId))
-
-      return
+    try {
+      if (liked) {
+        await postService.unlikePost(postId, userId)
+        setLiked(false)
+        setLikeCount((prev) => Math.max(0, prev - 1))
+      } else {
+        await postService.likePost(postId, userId)
+        setLiked(true)
+        setLikeCount((prev) => prev + 1)
+      }
+    } catch (error) {
+      console.error('[ForumPostCard] Error al cambiar el like:', error)
     }
-
-    setLiked(true)
-    setLikeCount((prev) => prev + 1)
-
-    dispatch(likePost(postId))
   }
 
   return (

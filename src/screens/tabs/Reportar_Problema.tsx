@@ -1,6 +1,7 @@
 import { JSX, useState } from 'react'
 import {
   ActivityIndicator,
+  Alert,
   Image,
   Pressable,
   ScrollView,
@@ -15,9 +16,13 @@ import { Camera, MapPin, ArrowLeft, ImagePlus, X } from 'lucide-react-native'
 import { CategoryTag } from '../../components/CategoryTag'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAppDispatch, useAppSelector } from '../../store/hook'
-import { store } from '../../store'
 import { addReport } from '../../store/slices/reportSlice'
+import { reportService } from '../../services'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { RootStackParamList } from '@navigation/StackNavigator'
+
+type Props = NativeStackScreenProps<RootStackParamList, 'ReportProblem'>
 
 type CategoriasType =
   | 'alumbrado'
@@ -31,13 +36,14 @@ type CategoriasType =
 
 type PrioridadType = 'baja' | 'media' | 'alta'
 
-export const ReportProblem = (): JSX.Element => {
+export const ReportProblem = ({ navigation, route }: Props): JSX.Element => {
+  const { communityId } = route.params
   const { colors } = useTheme()
   const styles = createStyles(colors)
   const insets = useSafeAreaInsets()
   const dispatch = useAppDispatch()
   const userId = useAppSelector((state) => state.userProfile.id)
-  const communityId = useAppSelector((state) => state.community.id)
+  const [sending, setSending] = useState(false)
   const [selected, setSelected] = useState<CategoriasType | null>('agua')
   const [prioridad, setPrioridad] = useState<PrioridadType>('media')
   const [titulo, setTitulo] = useState('')
@@ -165,33 +171,43 @@ export const ReportProblem = (): JSX.Element => {
     setFotos((prev) => prev.filter((f) => f !== uri))
   }
 
-  const enviarReporte = () => {
-    if (!titulo.trim()) return
+  const enviarReporte = async () => {
+    if (sending || !titulo.trim()) return
 
-    const report = {
-      id: Date.now().toString(),
-      title: titulo.trim(),
-      description: detalles.trim(),
-      category: selectedCategory,
-      location: ubicacion,
-      status: 'pendiente' as const,
-      userId,
-      communityId,
-      createdAt: new Date().toISOString(),
-      fotos,
+    if (!communityId) {
+      Alert.alert('Error', 'No se encontró la comunidad.')
+      return
     }
 
-    dispatch(addReport(report))
+    setSending(true)
+    try {
+      const report = await reportService.createReport({
+        title: titulo.trim(),
+        description: detalles.trim(),
+        category: selectedCategory,
+        location: ubicacion,
+        userId,
+        communityId,
+        fotos,
+      })
 
-    console.log('[Redux] useDispatch(addReport) -> payload:', report)
-    console.log(
-      '[Redux] Nuevo estado de reports:',
-      store.getState().report.reports,
-    )
+      dispatch(addReport(report))
+      Alert.alert('Éxito', 'Reporte enviado correctamente.')
 
-    setTitulo('')
-    setDetalles('')
-    setFotos([])
+      setTitulo('')
+      setDetalles('')
+      setFotos([])
+      setUbicacion('')
+      setCoords(null)
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'No se pudo enviar el reporte'
+      Alert.alert('Error', message)
+    } finally {
+      setSending(false)
+    }
   }
 
   return (
@@ -201,7 +217,10 @@ export const ReportProblem = (): JSX.Element => {
     >
       {/* Header */}
       <View style={styles.header}>
-        <Pressable style={styles.backButton}>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
           <ArrowLeft size={20} color={colors.text} />
         </Pressable>
         <Text style={styles.headerTitle}>Reportar problema</Text>
@@ -341,8 +360,16 @@ export const ReportProblem = (): JSX.Element => {
             )
           })}
         </View>
-        <Pressable style={styles.submitButton} onPress={enviarReporte}>
-          <Text style={styles.submitText}>Enviar reporte</Text>
+        <Pressable
+          style={styles.submitButton}
+          onPress={enviarReporte}
+          disabled={sending}
+        >
+          {sending ? (
+            <ActivityIndicator size="small" color={colors.surface} />
+          ) : (
+            <Text style={styles.submitText}>Enviar reporte</Text>
+          )}
         </Pressable>
       </View>
     </ScrollView>

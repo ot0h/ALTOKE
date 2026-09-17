@@ -1,14 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { MemberShip, Role } from '../../types'
 
-export type Role = 'admin' | 'user'
+export type { Role }
 
-type memberShip = {
-  userId: string
-  role: Role
-  communityId: string
-}
-
-const initialMemberShip: memberShip = {
+const initialMemberShip: MemberShip = {
   userId: '',
   role: 'user',
   communityId: '',
@@ -18,7 +13,7 @@ const memberShipSlices = createSlice({
   name: 'memberShip',
   initialState: initialMemberShip,
   reducers: {
-    updateMemberShip: (state, action: PayloadAction<memberShip>) => {
+    updateMemberShip: (state, action: PayloadAction<MemberShip>) => {
       state.userId = action.payload.userId
       state.role = action.payload.role
       state.communityId = action.payload.communityId

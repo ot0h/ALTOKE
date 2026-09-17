@@ -1,4 +1,4 @@
-import { JSX } from 'react'
+import { JSX, useEffect, useState } from 'react'
 import {
   ScrollView,
   StyleSheet,
@@ -6,17 +6,50 @@ import {
   View,
   Pressable,
   SafeAreaView,
+  Image,
 } from 'react-native'
 
 import NoticiaImage from '@assets/noticia.svg'
 import FIXYICON from '@assets/FIXYLOGIN.svg'
 
 import { MaterialIcons, Octicons } from '@expo/vector-icons'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { RootStackParamList } from '../navigation/StackNavigator'
+import { postService } from '../services'
+import { Post } from '../types'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
+
+type NoticiaRouteProp = RouteProp<RootStackParamList, 'Noticia'>
 
 export const Noticia = (): JSX.Element => {
   const { colors } = useTheme()
   const styles = createStyles(colors)
+
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+
+  const route = useRoute<NoticiaRouteProp>()
+
+  const { postId } = route.params
+
+  const [post, setPost] = useState<Post | null>(null)
+
+  useEffect(() => {
+    const loadPost = async () => {
+      try {
+        const fetchedPost = await postService.fetchPost(postId)
+        setPost(fetchedPost)
+      } catch (error) {
+        console.error('[Noticia] Error al cargar la noticia:', error)
+      }
+    }
+
+    loadPost()
+  }, [postId])
+
+  const paragraphs = (post?.content ?? '').split(/\n+/).filter(Boolean)
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -25,7 +58,10 @@ export const Noticia = (): JSX.Element => {
       >
         {/* HEADER */}
         <View style={styles.header}>
-          <Pressable style={styles.backButton}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
             <MaterialIcons size={25} name="arrow-back" color={colors.textSecondary} />
           </Pressable>
 
@@ -34,17 +70,27 @@ export const Noticia = (): JSX.Element => {
 
         {/* IMAGEN */}
         <View style={styles.imageContainer}>
-          <NoticiaImage
-            width="100%"
-            height="100%"
-            preserveAspectRatio="xMidYMid slice"
-          />
+          {post?.image ? (
+            <Image
+              style={styles.image}
+              source={{ uri: post.image }}
+              resizeMode="cover"
+            />
+          ) : (
+            <NoticiaImage
+              width="100%"
+              height="100%"
+              preserveAspectRatio="xMidYMid slice"
+            />
+          )}
         </View>
 
         {/* CONTENIDO */}
         <View style={styles.content}>
           {/* TITULO */}
-          <Text style={styles.title}>Gran reunión de vecinos este Domingo</Text>
+          <Text style={styles.title}>
+            {post?.title || 'Noticia'}
+          </Text>
 
           {/* AUTOR */}
           <View style={styles.authorSection}>
@@ -55,11 +101,19 @@ export const Noticia = (): JSX.Element => {
                 <Text style={styles.textAuthor}>Administración Al Toke</Text>
 
                 <View style={styles.detailsRow}>
-                  <Text style={styles.textDetails}>Publicado el 12 Oct</Text>
+                  <Text style={styles.textDetails}>
+                    {post?.createdAt
+                      ? `Publicado el ${new Date(
+                          post.createdAt,
+                        ).toLocaleDateString()}`
+                      : 'Publicado recientemente'}
+                  </Text>
 
                   <Octicons name="dot-fill" size={8} color={colors.textSecondary} />
 
-                  <Text style={styles.textDetails}>Lectura: 3 min</Text>
+                  <Text style={styles.textDetails}>
+                    Lectura: {Math.max(1, Math.ceil((post?.content ?? '').length / 700))} min
+                  </Text>
                 </View>
               </View>
             </View>
@@ -70,25 +124,17 @@ export const Noticia = (): JSX.Element => {
 
           {/* DESCRIPCION */}
           <View style={styles.descriptionContainer}>
-            <Text style={styles.fontDescription}>
-              Estimados residentes de Los Pinos, los invitamos cordialmente a
-              participar en nuestra asamblea general de vecinos que se llevará a
-              cabo este domingo en el salón de eventos comunal. Su presencia y
-              voz son fundamentales para el desarrollo de nuestro condominio.
-            </Text>
-
-            <Text style={styles.fontDescription}>
-              Durante la asamblea trataremos temas de vital importancia, tales
-              como el presupuesto del próximo ciclo, las mejoras en el sistema
-              de acceso vehicular mediante códigos QR y el cronograma de
-              mantenimiento general de áreas verdes.
-            </Text>
-
-            <Text style={styles.fontDescription}>
-              Agradecemos de antemano su puntual asistencia. Al finalizar la
-              reunión tendremos un espacio para resolver dudas y escuchar sus
-              sugerencias.
-            </Text>
+            {paragraphs.length > 0 ? (
+              paragraphs.map((paragraph, index) => (
+                <Text key={index} style={styles.fontDescription}>
+                  {paragraph}
+                </Text>
+              ))
+            ) : (
+              <Text style={styles.fontDescription}>
+                Esta noticia aún no tiene contenido.
+              </Text>
+            )}
           </View>
         </View>
       </ScrollView>
@@ -139,6 +185,11 @@ const createStyles = (colors: ThemeColors) =>
       width: '100%',
       height: 222,
       overflow: 'hidden',
+    },
+
+    image: {
+      width: '100%',
+      height: '100%',
     },
 
     /* CONTENIDO */

@@ -1,5 +1,6 @@
 import { JSX, useState } from 'react'
 import {
+  Alert,
   Image,
   Pressable,
   ScrollView,
@@ -12,11 +13,12 @@ import { ArrowLeft, Camera } from 'lucide-react-native'
 import { CustomButton, CustomSwitch } from '@components'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useAppDispatch, useAppSelector } from '../store/hook'
-import { store } from '../store'
 import { addPost } from '../store/slices/postSlice'
+import { postService } from '../services'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import { RootStackParamList } from '@navigation/StackNavigator'
-import { RouteProp, useRoute } from '@react-navigation/native'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { ImageUpload } from '../components/ImageUpload'
 
 type NuevaNoticiaProp = RouteProp<
@@ -32,37 +34,43 @@ export const NuevaNoticia = (): JSX.Element => {
   const [title, setTitle] = useState<string>('')
   const [detail, setDetail] = useState<string>('')
   const [isPublish, setIsPublish] = useState<boolean>(true)
+  const [publishing, setPublishing] = useState(false)
   const dispatch = useAppDispatch()
   const userId = useAppSelector((state) => state.userProfile.id)
   const route = useRoute<NuevaNoticiaProp>()
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
   const { communityId } = route.params
 
 
-  const publicarNoticia = () => {
-    if (!title.trim()) return
+  const publicarNoticia = async () => {
+    if (publishing || !title.trim()) return
 
-    const post = {
-      id: Date.now().toString(),
-      userId,
-      communityId,
-      title: title.trim(),
-      content: detail.trim(),
-      comments: [],
-      likes: 0,
-      category: 'avisos' as const,
-      createdAt: new Date().toISOString(),
-      image: foto || undefined,
+    setPublishing(true)
+    try {
+      const post = await postService.createPost({
+        userId,
+        communityId,
+        title: title.trim(),
+        content: detail.trim(),
+        category: 'avisos',
+        image: foto || undefined,
+      })
+
+      dispatch(addPost(post))
+
+      setTitle('')
+      setDetail('')
+      setFoto('')
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'No se pudo publicar la noticia'
+      Alert.alert('Error', message)
+    } finally {
+      setPublishing(false)
     }
-
-    dispatch(addPost(post))
-
-    console.log('[Redux] useDispatch(addPost) -> payload:', post)
-    console.log('[Redux] Nuevo estado de posts:', store.getState().post.posts)
-
-    setTitle('')
-    setDetail('')
-    setFoto('')
   }
 
   return (
@@ -74,7 +82,10 @@ export const NuevaNoticia = (): JSX.Element => {
         <View style={styles.container}>
           {/* HEADER */}
           <View style={styles.header}>
-            <Pressable style={styles.backButton}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+            >
               <ArrowLeft size={20} color={colors.text} />
             </Pressable>
             <Text style={styles.headerTitle}>Nueva Noticia</Text>

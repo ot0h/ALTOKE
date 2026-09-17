@@ -1,39 +1,77 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native'
+import { JSX, useEffect, useMemo, useState } from 'react'
+import { Alert, FlatList, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { CustomButton } from '@components'
 import ManageNoticeCard from '../components/ManageNoticeCard'
 import Patronato from '@assets/patronato.png'
+import { ArrowLeft } from 'lucide-react-native'
+import { Pressable } from 'react-native'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { RootStackParamList } from '../navigation/StackNavigator'
+import { store } from '../store'
+import { useAppDispatch, useAppSelector } from '../store/hook'
+import { removePost, setPosts } from '../store/slices/postSlice'
+import { postService } from '../services'
+import { mergeById } from '../utils/mergeById'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
-export const ManageNotices = () => {
+type Props = NativeStackScreenProps<RootStackParamList, 'ManageNotices'>
+
+export const ManageNotices = ({ navigation, route }: Props): JSX.Element => {
   const { colors } = useTheme()
   const styles = createStyles(colors)
   const insets = useSafeAreaInsets()
+  const dispatch = useAppDispatch()
 
-  const notices = [
-    {
-      id: '1',
-      title: 'Paneles solares vecinales',
-      time: '12 Oct 2024',
-      status: 'publicada' as const,
-      image: Patronato,
-    },
-    {
-      id: '2',
-      title: 'Jornada de poda general',
-      time: '15 Oct 2024',
-      status: 'borrador' as const,
-      image: Patronato,
-    },
-    {
-      id: '3',
-      title: 'Campaña de reciclaje',
-      time: '10 Oct 2024',
-      status: 'publicada' as const,
-      image: Patronato,
-    },
-  ]
+  const { communityId } = route.params
+
+  const allPosts = useAppSelector((state) => state.post.posts)
+
+  const notices = useMemo(
+    () => allPosts.filter((post) => post.communityId === communityId),
+    [allPosts, communityId],
+  )
+
+  useEffect(() => {
+    const loadNotices = async () => {
+      try {
+        const remotePosts = await postService.fetchPosts(communityId)
+
+        dispatch(
+          setPosts(
+            mergeById(store.getState().post.posts, remotePosts),
+          ),
+        )
+      } catch (error) {
+        console.error('[ManageNotices] Error al cargar noticias:', error)
+      }
+    }
+
+    loadNotices()
+  }, [communityId])
+
+  const eliminarNoticia = (postId: string) => {
+    Alert.alert(
+      'Eliminar noticia',
+      '¿Seguro que deseas eliminar esta noticia?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await postService.deletePost(postId)
+              dispatch(removePost(postId))
+            } catch (error) {
+              console.error('[ManageNotices] Error al eliminar:', error)
+            }
+          },
+        },
+      ],
+    )
+  }
 
   return (
     <View
@@ -46,13 +84,20 @@ export const ManageNotices = () => {
       ]}
     >
       <View style={styles.header}>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <ArrowLeft size={22} color={colors.text} />
+        </Pressable>
+
         <Text style={styles.title}>Gestión noticias</Text>
 
         <View style={styles.createButton}>
           <CustomButton
             text="+  Crear"
             variant="secondary"
-            onPress={() => {}}
+            onPress={() => navigation.navigate('NuevaNoticia', { communityId })}
           />
         </View>
       </View>
@@ -63,19 +108,32 @@ export const ManageNotices = () => {
         renderItem={({ item }) => (
           <ManageNoticeCard
             title={item.title}
-            time={item.time}
-            status={item.status}
-            image={item.image}
-            onEdit={() => {
-              console.log('Editar', item.id)
-            }}
-            onDelete={() => {
-              console.log('Eliminar', item.id)
-            }}
+            time={
+              item.createdAt
+                ? new Date(item.createdAt).toLocaleDateString()
+                : 'Reciente'
+            }
+            status="publicada"
+            image={
+              item.image
+                ? { uri: item.image }
+                : Patronato
+            }
+            onEdit={() =>
+              navigation.navigate('NuevaNoticia', { communityId })
+            }
+            onDelete={() => eliminarNoticia(item.id)}
           />
         )}
         contentContainerStyle={styles.list}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <View style={styles.empty}>
+            <Text style={styles.emptyText}>
+              Aún no hay noticias para esta comunidad.
+            </Text>
+          </View>
+        }
       />
     </View>
   )
@@ -93,21 +151,47 @@ const createStyles = (colors: ThemeColors) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
+      gap: 12,
       marginBottom: 20,
+      marginHorizontal: 7,
+    },
+
+    backButton: {
+      width: 38,
+      height: 38,
+      borderRadius: 19,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
 
     title: {
+      flex: 1,
       fontFamily: 'Inter_600SemiBold',
       fontSize: 28,
       color: colors.text,
     },
 
-  createButton: {
-    width: 115,
-  },
+    createButton: {
+      width: 115,
+    },
 
-  list: {
-    gap: 16,
-    paddingBottom: 20,
-  },
-})
+    list: {
+      gap: 16,
+      paddingBottom: 20,
+    },
+
+    empty: {
+      alignItems: 'center',
+      paddingVertical: 40,
+    },
+
+    emptyText: {
+      fontFamily: 'Inter_400Regular',
+      fontSize: 14,
+      color: colors.textSecondary,
+      textAlign: 'center',
+    },
+  })

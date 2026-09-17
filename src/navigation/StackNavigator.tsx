@@ -3,6 +3,10 @@ import { Home, Login, NuevaNoticia, Register } from '@screens'
 import { TabNavigator } from './TabsNavigator'
 import { MyCommunity } from '../screens/MyCommunity'
 import { ManageCommunity } from '../screens/ManageCommunity'
+import { ManageNotices } from '../screens/ManageNotice'
+import { ManageDashboard } from '../screens/ManageDashboard'
+import { Members } from '../screens/Members'
+import { Noticia } from '../screens/Noticia'
 import { MyProfile } from '../screens/tabs/MyProfile'
 import { ReportProblem } from '../screens/tabs/Reportar_Problema'
 import { CommunityHome } from '../screens/CommunityHome'
@@ -21,6 +25,10 @@ export type RootStackParamList = {
   ReportProblem: {communityId: string}
   NuevaComunidad: undefined
   ManageCommunity: {communityId: string}
+  ManageNotices: {communityId: string}
+  ManageDashboard: {communityId: string}
+  Members: {communityId: string}
+  Noticia: {postId: string}
   Forum: {communityId: string}
   NuevaPublicacion: {communityId: string}
 }
@@ -46,6 +54,10 @@ export const StackNavigator = () => {
         <Stack.Screen name="ReportProblem" component={ReportProblem} />
         <Stack.Screen name="NuevaComunidad" component={NuevaComunidad} />
         <Stack.Screen name="ManageCommunity" component={ManageCommunity}/>
+        <Stack.Screen name="ManageNotices" component={ManageNotices} />
+        <Stack.Screen name="ManageDashboard" component={ManageDashboard} />
+        <Stack.Screen name="Members" component={Members} />
+        <Stack.Screen name="Noticia" component={Noticia} />
         <Stack.Screen name="Forum" component={Forum}/>
         <Stack.Screen name="NuevaPublicacion" component={NuevaPublicacion}/>
       </Stack.Navigator>
