@@ -18,24 +18,11 @@ export type CommunityMember = {
   avatar: string
 }
 
-type MemberRow = MembershipRow & {
-  profile: {
-    id: string
-    name: string | null
-    email: string | null
-    avatar: string | null
-  } | null
-}
-
-function toMember(row: MemberRow): CommunityMember {
-  return {
-    userId: row.user_id,
-    communityId: row.community_id,
-    role: row.role,
-    name: row.profile?.name || row.profile?.email || 'Vecino',
-    email: row.profile?.email || '',
-    avatar: row.profile?.avatar || '',
-  }
+type ProfileRow = {
+  id: string
+  name: string | null
+  email: string | null
+  avatar: string | null
 }
 
 function toMemberShip(row: MembershipRow): MemberShip {
@@ -64,14 +51,45 @@ export const membershipService = {
   ): Promise<CommunityMember[]> {
     const { data, error } = await supabase
       .from('memberships')
-      .select('*, profile:profiles(id, name, email, avatar)')
+      .select('*')
       .eq('community_id', communityId)
       .order('created_at', { ascending: true })
 
     logRequest('fetchCommunityMembers', error, data)
     if (error) throw error
 
-    return (data ?? []).map((row) => toMember(row as MemberRow))
+    const rows = (data ?? []) as MembershipRow[]
+    const userIds = [...new Set(rows.map((row) => row.user_id))]
+
+    if (userIds.length === 0) return []
+
+    const { data: profilesData, error: profilesError } = await supabase
+      .from('profiles')
+      .select('id, name, email, avatar')
+      .in('id', userIds)
+
+    logRequest('fetchCommunityMembers-profiles', profilesError, profilesData)
+    if (profilesError) throw profilesError
+
+    const profileMap = new Map(
+      ((profilesData ?? []) as ProfileRow[]).map((profile) => [
+        profile.id,
+        profile,
+      ]),
+    )
+
+    return rows.map((row) => {
+      const profile = profileMap.get(row.user_id)
+
+      return {
+        userId: row.user_id,
+        communityId: row.community_id,
+        role: row.role,
+        name: profile?.name || profile?.email || 'Vecino',
+        email: profile?.email || '',
+        avatar: profile?.avatar || '',
+      }
+    })
   },
 
   async joinCommunity(
