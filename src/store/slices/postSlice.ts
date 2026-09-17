@@ -18,6 +18,7 @@ type Post = {
   image?: string
   category?: 'avisos' | 'eventos' | 'mantenimiento'
   createdAt?: string
+  iLike: boolean
 }
 
 type PostsState = {
@@ -52,12 +53,22 @@ const postsSlice = createSlice({
     removePost: (state, action: PayloadAction<string>) => {
       state.posts = state.posts.filter((post) => post.id !== action.payload)
     },
+    likePost: (
+      state,
+      action: PayloadAction<string>
+    ) => {
+      const post = state.posts.find(
+        p => p.id === action.payload
+      )
 
-    likePost: (state, action: PayloadAction<string>) => {
-      const post = state.posts.find((post) => post.id === action.payload)
+      if (!post) return
 
-      if (post) {
-        post.likes += 1
+      if (post.iLike) {
+        post.iLike = false
+        post.likes--
+      } else {
+        post.iLike = true
+        post.likes++
       }
     },
 

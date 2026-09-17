@@ -1,4 +1,4 @@
-import { JSX } from 'react'
+import { JSX, useMemo } from 'react'
 import { Pressable, ScrollView, StyleSheet, Text, View, Image } from 'react-native'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
@@ -36,16 +36,18 @@ export const CommunityHome = ({
         ),
     )
 
-    const posts = useAppSelector((state) =>
-        state.post.posts.filter(
-            (post) => post.communityId === communityId,
-        ),
+    const allPosts = useAppSelector((state) => state.post.posts)
+
+    const posts = useMemo(
+        () => allPosts.filter((post) => post.communityId === communityId),
+        [allPosts, communityId]
     )
 
-    const reports = useAppSelector((state) =>
-        state.report.reports.filter(
-            (report) => report.communityId === communityId,
-        ),
+    const allReports = useAppSelector((state) => state.report.reports)
+
+    const reports = useMemo(
+        () => allReports.filter((report) => report.communityId === communityId),
+        [allReports, communityId]
     )
 
     const post = posts[0]
@@ -96,7 +98,7 @@ export const CommunityHome = ({
                 text="+ Crear Reporte"
                 variant="secondary"
                 onPress={() =>
-                    navigation.navigate('ReportProblem' as never)
+                    navigation.navigate('ReportProblem', {communityId})
                 }
             />
 
@@ -124,6 +126,7 @@ export const CommunityHome = ({
                     comment={post.comments.length}
                     likes={post.likes}
                     authorimage={Patronato}
+                    iLike={post.iLike}
                     onPressComment={() => { }}
                 />
             ) : (

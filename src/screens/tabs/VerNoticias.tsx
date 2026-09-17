@@ -19,7 +19,7 @@ export const VerNoticias = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category>('todos')
   const [search, setSearch] = useState('')
 
-  const notices = useAppSelector((state) => state.post.posts)
+  const notices = useAppSelector((state) => state.news.news)
 
   const categories: {
     text: string

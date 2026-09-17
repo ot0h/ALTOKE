@@ -18,6 +18,8 @@ import { useAppDispatch, useAppSelector } from '../../store/hook'
 import { store } from '../../store'
 import { addReport } from '../../store/slices/reportSlice'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { RootStackParamList } from '@navigation/StackNavigator'
 
 type CategoriasType =
   | 'alumbrado'
@@ -31,13 +33,17 @@ type CategoriasType =
 
 type PrioridadType = 'baja' | 'media' | 'alta'
 
-export const ReportProblem = (): JSX.Element => {
+type Props = NativeStackScreenProps<
+  RootStackParamList,
+  'ReportProblem'
+>
+
+export const ReportProblem = ({ route }: Props): JSX.Element => {
   const { colors } = useTheme()
   const styles = createStyles(colors)
   const insets = useSafeAreaInsets()
   const dispatch = useAppDispatch()
   const userId = useAppSelector((state) => state.userProfile.id)
-  const communityId = useAppSelector((state) => state.community.id)
   const [selected, setSelected] = useState<CategoriasType | null>('agua')
   const [prioridad, setPrioridad] = useState<PrioridadType>('media')
   const [titulo, setTitulo] = useState('')
@@ -50,6 +56,7 @@ export const ReportProblem = (): JSX.Element => {
     useState<CategoriasType>('otros')
   const [locationLoading, setLocationLoading] = useState(false)
   const [fotos, setFotos] = useState<string[]>([])
+  const { communityId } = route.params
 
   const categories: {
     text: string
@@ -151,9 +158,8 @@ export const ReportProblem = (): JSX.Element => {
   const elegirDeGaleria = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       allowsEditing: true,
-      aspect: [4, 3],
       quality: 0.7,
-      allowsMultipleSelection: true,
+      allowsMultipleSelection: false,
       selectionLimit: 4,
     })
     if (!result.canceled) {

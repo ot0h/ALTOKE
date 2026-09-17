@@ -13,11 +13,11 @@ import { CustomButton, CustomSwitch } from '@components'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useAppDispatch, useAppSelector } from '../store/hook'
 import { store } from '../store'
-import { addPost } from '../store/slices/postSlice'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import { RootStackParamList } from '@navigation/StackNavigator'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { ImageUpload } from '../components/ImageUpload'
+import { addNews } from '../store/slices/newsSlice'
 
 type NuevaNoticiaProp = RouteProp<
   RootStackParamList,
@@ -42,7 +42,7 @@ export const NuevaNoticia = (): JSX.Element => {
   const publicarNoticia = () => {
     if (!title.trim()) return
 
-    const post = {
+    const news = {
       id: Date.now().toString(),
       userId,
       communityId,
@@ -55,10 +55,10 @@ export const NuevaNoticia = (): JSX.Element => {
       image: foto || undefined,
     }
 
-    dispatch(addPost(post))
+    dispatch(addNews(news))
 
-    console.log('[Redux] useDispatch(addPost) -> payload:', post)
-    console.log('[Redux] Nuevo estado de posts:', store.getState().post.posts)
+    console.log('[Redux] useDispatch(addPost) -> payload:', news)
+    console.log('[Redux] Nuevo estado de posts:', store.getState().news.news)
 
     setTitle('')
     setDetail('')
