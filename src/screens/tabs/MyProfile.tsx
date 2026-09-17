@@ -5,6 +5,10 @@ import ProfileAvatar from '../../components/ProfileAvatar'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAppDispatch, useAppSelector } from '../../store/hook'
 import { updateProfile } from '../../store/slices/userProfileSlice'
+import { setCommunities } from '../../store/slices/communitySlice'
+import { setReports } from '../../store/slices/reportSlice'
+import { setPosts } from '../../store/slices/postSlice'
+import { updateMemberShip } from '../../store/slices/memberShipSlice'
 import { authService, communityService, membershipService } from '../../services'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import SettingsModal from '../modals/SettingsModal'
@@ -86,8 +90,12 @@ export const MyProfile = () => {
       await authService.signOut()
 
       dispatch(updateProfile({ id: '', name: '', email: '', avatar: '' }))
+      dispatch(setCommunities([]))
+      dispatch(setReports([]))
+      dispatch(setPosts([]))
+      dispatch(updateMemberShip({ userId: '', role: 'user', communityId: '' }))
 
-      navigation.navigate('Login')
+      navigation.reset({ index: 0, routes: [{ name: 'Login' }] })
     } catch (error) {
       const message =
         error instanceof Error

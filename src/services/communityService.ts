@@ -73,6 +73,54 @@ export const communityService = {
     return data ? toCommunity(data) : null
   },
 
+  async fetchCommunitiesByUser(userId: string): Promise<Community[]> {
+    const [owned, memberships] = await Promise.all([
+      supabase
+        .from('communities')
+        .select('*')
+        .eq('owner_id', userId),
+      supabase
+        .from('memberships')
+        .select('community_id')
+        .eq('user_id', userId),
+    ])
+
+    if (owned.error) {
+      logRequest('fetchCommunitiesByUser', owned.error, owned.data)
+      throw owned.error
+    }
+
+    if (memberships.error) {
+      logRequest('fetchCommunitiesByUser', memberships.error, memberships.data)
+      throw memberships.error
+    }
+
+    const ownedCommunities = (owned.data ?? []).map(toCommunity)
+    const ownedIds = new Set(ownedCommunities.map((c) => c.id))
+
+    const extraIds = [
+      ...new Set(
+        (memberships.data ?? [])
+          .map((membership) => membership.community_id)
+          .filter((communityId) => !ownedIds.has(communityId)),
+      ),
+    ]
+
+    if (extraIds.length === 0) {
+      return ownedCommunities
+    }
+
+    const { data, error } = await supabase
+      .from('communities')
+      .select('*')
+      .in('id', extraIds)
+
+    logRequest('fetchCommunitiesByUser', error, data)
+    if (error) throw error
+
+    return [...ownedCommunities, ...(data ?? []).map(toCommunity)]
+  },
+
   async createCommunity(input: CreateCommunityInput): Promise<Community> {
     let lastError: unknown = null
 

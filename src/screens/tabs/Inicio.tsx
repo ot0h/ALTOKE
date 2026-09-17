@@ -22,15 +22,18 @@ export const Inicio = (): JSX.Element => {
   const insets = useSafeAreaInsets()
   const dispatch = useAppDispatch()
   const userName = useAppSelector((state) => state.userProfile.name)
+  const userId = useAppSelector((state) => state.userProfile.id)
   const communities = useAppSelector((state) => state.community.communities)
   const reports = useAppSelector((state) => state.report.reports)
   const navigation = useNavigation()
 
   useEffect(() => {
+    if (!userId) return
+
     const loadData = async () => {
       try {
         const [comms, reps] = await Promise.all([
-          communityService.fetchCommunities(),
+          communityService.fetchCommunitiesByUser(userId),
           reportService.fetchReports(),
         ])
         dispatch(setCommunities(comms))
@@ -40,7 +43,7 @@ export const Inicio = (): JSX.Element => {
       }
     }
     loadData()
-  }, [dispatch])
+  }, [dispatch, userId])
 
 
   return (
