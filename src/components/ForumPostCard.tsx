@@ -53,18 +53,6 @@ export default function ForumPostCard({
   const [likeCount, setLikeCount] = useState(likes)
 
   const handleLike = () => {
-    if (liked) {
-      setLiked(false)
-      setLikeCount((prev) => prev - 1)
-
-      dispatch(unlikePost(postId))
-
-      return
-    }
-
-    setLiked(true)
-    setLikeCount((prev) => prev + 1)
-
     dispatch(likePost(postId))
   }
 
@@ -128,7 +116,7 @@ export default function ForumPostCard({
 
         <View style={styles.iconssection}>
           <Pressable onPress={handleLike}>
-            {liked ? (
+            {iLike ? (
               <ILikesIcon height={16} />
             ) : (
               <LikesIcon height={16} />
@@ -136,7 +124,7 @@ export default function ForumPostCard({
           </Pressable>
 
           <Text style={styles.commentslikes}>
-            {likeCount}
+            {likes}
           </Text>
         </View>
 

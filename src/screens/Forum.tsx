@@ -1,4 +1,4 @@
-import { JSX } from 'react'
+import { JSX, useMemo } from 'react'
 import {
   FlatList,
   Pressable,
@@ -44,11 +44,18 @@ export const Forum = (): JSX.Element => {
 
   const { communityId } = route.params
 
+  // Obtenemos todos los posts de Redux
   const posts = useAppSelector(
-    (state) =>
-      state.post.posts.filter(
-        (post) => post.communityId === communityId,
+    (state) => state.post.posts
+  )
+
+  // Solo mostramos los posts de esta comunidad
+  const communityPosts = useMemo(
+    () =>
+      posts.filter(
+        (post) => post.communityId === communityId
       ),
+    [posts, communityId]
   )
 
   return (
@@ -89,7 +96,7 @@ export const Forum = (): JSX.Element => {
       {/* POSTS */}
 
       <FlatList
-        data={posts}
+        data={communityPosts}
         keyExtractor={(item) => item.id}
         contentContainerStyle={[
           styles.list,
@@ -108,9 +115,12 @@ export const Forum = (): JSX.Element => {
             comment={item.comments.length}
             likes={item.likes}
             authorimage={require('@assets/default-avatar.png')}
-            iLike={false}
+            iLike={item.iLike}
             onPressComment={() => {
-              console.log('Comentarios:', item.id)
+              console.log(
+                'Comentarios:',
+                item.id
+              )
             }}
           />
         )}
