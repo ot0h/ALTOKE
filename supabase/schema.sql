@@ -49,8 +49,12 @@ create table if not exists public.communities (
   address text not null default '',
   image text,
   rules text,
+  code text,
   created_at timestamptz not null default now()
 );
+
+create unique index if not exists communities_code_key
+  on public.communities (code);
 
 -- ------------------------------------------------------------
 -- MEMBERSHIPS
@@ -87,6 +91,10 @@ as $$
   select exists (
     select 1 from public.memberships
     where community_id = cid and user_id = auth.uid() and role = 'admin'
+  )
+  or exists (
+    select 1 from public.communities
+    where id = cid and owner_id = auth.uid()
   );
 $$;
 
@@ -197,13 +205,13 @@ create policy "memberships_select" on public.memberships
   for select using (user_id = auth.uid() or public.is_community_admin(community_id));
 drop policy if exists "memberships_insert_own" on public.memberships;
 create policy "memberships_insert_own" on public.memberships
-  for insert with check (user_id = auth.uid());
+  for insert with check (user_id = auth.uid() or public.is_community_admin(community_id));
 drop policy if exists "memberships_update_admin" on public.memberships;
 create policy "memberships_update_admin" on public.memberships
   for update using (public.is_community_admin(community_id));
 drop policy if exists "memberships_delete_own" on public.memberships;
 create policy "memberships_delete_own" on public.memberships
-  for delete using (user_id = auth.uid());
+  for delete using (user_id = auth.uid() or public.is_community_admin(community_id));
 
 -- CATEGORIES
 drop policy if exists "categories_select" on public.categories;

@@ -1,7 +1,22 @@
 -- =============================================
 -- ALTOKE - Migración: códigos de unión + admin memberships
 -- Ejecutar en: Supabase Dashboard > SQL Editor
--- =============================================
+
+-- 0) EL DUEÑO TAMBIÉN CUENTA COMO "ADMIN" PARA GESTIONAR SU COMUNIDAD
+create or replace function public.is_community_admin(cid uuid)
+returns boolean
+language sql
+security definer set search_path = public
+as $$
+  select exists (
+    select 1 from public.memberships
+    where community_id = cid and user_id = auth.uid() and role = 'admin'
+  )
+  or exists (
+    select 1 from public.communities
+    where id = cid and owner_id = auth.uid()
+  );
+$$;
 
 -- 1) CÓDIGO DE UNIÓN ÚNICO POR COMUNIDAD
 alter table public.communities
