@@ -77,15 +77,18 @@ export const ManageNotices = ({ route, navigation }: Props): JSX.Element => {
           <ManageNoticeCard
             key={notice.id}
             title={notice.title}
-            time={notice.createdAt}
-            status="publicada"
+            time={
+                notice.createdAt
+                  ? new Date(notice.createdAt).toLocaleDateString()
+               : ''   
+              }
+            status={notice.status}
             image={
               notice.image
                 ? { uri: notice.image }
                 : Patronato
             }
-            onEdit={() => {
-              console.log('Editar', notice.id)
+            onEdit={() => {navigation.navigate('EditarNoticia', {noticeId: notice.id})
             }}
             onDelete={() => {
               handleDelete(notice.id)

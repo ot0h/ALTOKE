@@ -4,6 +4,8 @@ export type NewsCategory =
     | 'avisos'
     | 'eventos'
     | 'mantenimiento'
+    
+export type NewsStatus = 'publicada' | 'borrador'
 
 export type News = {
     id: string
@@ -14,6 +16,7 @@ export type News = {
     category: NewsCategory
     createdAt: string
     image?: string
+    status: NewsStatus
 }
 
 type NewsState = {
@@ -51,6 +54,21 @@ const newsSlice = createSlice({
                 state.news[index] = action.payload
             }
         },
+        updateNewsStatus: (
+            state,
+            action: PayloadAction<{
+                id: string
+                status: NewsStatus
+            }>
+        ) => {
+            const news = state.news.find(
+                (item) => item.id === action.payload.id
+            )
+
+            if (news) {
+                news.status = action.payload.status
+            }
+        },
     },
 })
 
@@ -59,6 +77,7 @@ export const {
     addNews,
     removeNews,
     updateNews,
+    updateNewsStatus,
 } = newsSlice.actions
 
 export default newsSlice.reducer

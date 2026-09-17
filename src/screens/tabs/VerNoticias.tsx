@@ -51,14 +51,16 @@ export const VerNoticias = ({ navigation }: Props) => {
   //FILTRADO POR ETIQUETA
   const filteredNotices = notices.filter((notice) => {
     const matchesCategory =
-      selectedCategory === 'todos' || notice.category === selectedCategory
+      selectedCategory === 'todos' || notice.category === selectedCategory 
+
+  const matchesStatus = notice.status === 'publicada'
 
     //FILTRADO POR BUSQUEDA
     const matchesSearch =
       notice.title.toLowerCase().includes(search.toLowerCase()) ||
       (notice.content ?? '').toLowerCase().includes(search.toLowerCase())
 
-    return matchesCategory && matchesSearch
+    return matchesCategory && matchesSearch && matchesStatus
   })
 
   return (
