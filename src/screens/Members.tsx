@@ -1,13 +1,14 @@
 import { JSX, useEffect, useState } from 'react'
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Pressable,
   StyleSheet,
   Text,
   View,
 } from 'react-native'
-import { ArrowLeft, UserPlus, Users } from 'lucide-react-native'
+import { ArrowLeft, Trash2, UserPlus, Users } from 'lucide-react-native'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useIsFocused } from '@react-navigation/native'
@@ -18,6 +19,7 @@ import {
   CommunityMember,
   communityService,
 } from '../services'
+import { useAppSelector } from '../store/hook'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import AddMemberModal from './modals/AddMemberModal'
 
@@ -31,9 +33,12 @@ export const Members = ({ navigation, route }: Props): JSX.Element => {
 
   const { communityId } = route.params
 
+  const userId = useAppSelector((state) => state.userProfile.id)
+
   const [members, setMembers] = useState<CommunityMember[]>([])
   const [communityCode, setCommunityCode] = useState('')
   const [loading, setLoading] = useState(true)
+  const [removingId, setRemovingId] = useState<string | null>(null)
   const [showAddModal, setShowAddModal] = useState(false)
 
   const loadMembers = async () => {
@@ -59,6 +64,38 @@ export const Members = ({ navigation, route }: Props): JSX.Element => {
 
   const roleLabel = (role: CommunityMember['role']) =>
     role === 'admin' ? 'Administrador' : 'Miembro'
+
+  const eliminarMiembro = (member: CommunityMember) => {
+    Alert.alert(
+      'Eliminar miembro',
+      `¿Seguro que deseas quitar a ${member.name} de la comunidad?`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: async () => {
+            setRemovingId(member.userId)
+            try {
+              await membershipService.leaveCommunity(
+                member.userId,
+                communityId,
+              )
+              loadMembers()
+            } catch (error) {
+              const message =
+                error instanceof Error
+                  ? error.message
+                  : 'No se pudo eliminar al miembro'
+              Alert.alert('Error', message)
+            } finally {
+              setRemovingId(null)
+            }
+          },
+        },
+      ],
+    )
+  }
 
   return (
     <SafeAreaView
@@ -134,6 +171,24 @@ export const Members = ({ navigation, route }: Props): JSX.Element => {
                 </View>
 
                 <Text style={styles.memberRole}>{roleLabel(item.role)}</Text>
+
+                {item.role === 'user' && item.userId !== userId ? (
+                  <Pressable
+                    style={styles.removeButton}
+                    onPress={() => eliminarMiembro(item)}
+                    accessibilityLabel={`Eliminar a ${item.name}`}
+                    disabled={removingId !== null}
+                  >
+                    {removingId === item.userId ? (
+                      <ActivityIndicator
+                        size="small"
+                        color={colors.error}
+                      />
+                    ) : (
+                      <Trash2 size={18} color={colors.error} />
+                    )}
+                  </Pressable>
+                ) : null}
               </View>
             )}
             ListEmptyComponent={
@@ -296,6 +351,17 @@ const createStyles = (colors: ThemeColors) =>
       fontFamily: 'Inter_600SemiBold',
       fontSize: 12,
       color: colors.primary,
+    },
+
+    removeButton: {
+      width: 36,
+      height: 36,
+      borderRadius: 10,
+      backgroundColor: colors.background,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
 
     center: {
