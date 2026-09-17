@@ -19,7 +19,7 @@
       "package": "com.anonymous.ALTOKE"
     },
     "web": {
-      "favicon": "./assets/altoke_icon.svg"
+      "favicon": "./assets/icon_1024x1024.png"
     },
     "plugins": [
       "expo-font",
