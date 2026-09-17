@@ -1,39 +1,51 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native'
+import { JSX, useMemo } from 'react'
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
+import { useNavigation } from '@react-navigation/native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
 import { CustomButton } from '@components'
 import ManageNoticeCard from '../components/ManageNoticeCard'
 import Patronato from '@assets/patronato.png'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
+import { useAppDispatch, useAppSelector } from '../store/hook'
+import { removeNews } from '../store/slices/newsSlice'
+import { RootStackParamList } from '../navigation/StackNavigator'
 
-export const ManageNotices = () => {
+type Props = NativeStackScreenProps<
+  RootStackParamList,
+  'ManageNotice'
+>
+
+export const ManageNotices = ({ route, navigation }: Props): JSX.Element => {
+  const { communityId } = route.params
+
   const { colors } = useTheme()
   const styles = createStyles(colors)
   const insets = useSafeAreaInsets()
 
-  const notices = [
-    {
-      id: '1',
-      title: 'Paneles solares vecinales',
-      time: '12 Oct 2024',
-      status: 'publicada' as const,
-      image: Patronato,
-    },
-    {
-      id: '2',
-      title: 'Jornada de poda general',
-      time: '15 Oct 2024',
-      status: 'borrador' as const,
-      image: Patronato,
-    },
-    {
-      id: '3',
-      title: 'Campaña de reciclaje',
-      time: '10 Oct 2024',
-      status: 'publicada' as const,
-      image: Patronato,
-    },
-  ]
+  const dispatch = useAppDispatch()
+
+  const allNews = useAppSelector(
+    (state) => state.news.news,
+  )
+
+  const news = useMemo(
+    () =>
+      allNews.filter(
+        (notice) => notice.communityId === communityId,
+      ),
+    [allNews, communityId],
+  )
+
+  const handleDelete = (id: string) => {
+    dispatch(removeNews(id))
+  }
 
   return (
     <View
@@ -52,31 +64,35 @@ export const ManageNotices = () => {
           <CustomButton
             text="+  Crear"
             variant="secondary"
-            onPress={() => {}}
+            onPress={() => {navigation.navigate('NuevaNoticia',  {communityId})}}
           />
         </View>
       </View>
 
-      <FlatList
-        data={notices}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.list}
+      >
+        {news.map((notice) => (
           <ManageNoticeCard
-            title={item.title}
-            time={item.time}
-            status={item.status}
-            image={item.image}
+            key={notice.id}
+            title={notice.title}
+            time={notice.createdAt}
+            status="publicada"
+            image={
+              notice.image
+                ? { uri: notice.image }
+                : Patronato
+            }
             onEdit={() => {
-              console.log('Editar', item.id)
+              console.log('Editar', notice.id)
             }}
             onDelete={() => {
-              console.log('Eliminar', item.id)
+              handleDelete(notice.id)
             }}
           />
-        )}
-        contentContainerStyle={styles.list}
-        showsVerticalScrollIndicator={false}
-      />
+        ))}
+      </ScrollView>
     </View>
   )
 }
@@ -102,12 +118,12 @@ const createStyles = (colors: ThemeColors) =>
       color: colors.text,
     },
 
-  createButton: {
-    width: 115,
-  },
+    createButton: {
+      width: 115,
+    },
 
-  list: {
-    gap: 16,
-    paddingBottom: 20,
-  },
-})
+    list: {
+      gap: 16,
+      paddingBottom: 20,
+    },
+  })

@@ -50,7 +50,7 @@ export const ManageCommunity = (): JSX.Element => {
       description: 'Crea, edita y administra las noticias',
       icon: FileText,
       onPress: () =>
-        {},
+        {navigation.navigate('ManageNotice', {communityId})},
     },
     {
       title: 'Ver miembros',

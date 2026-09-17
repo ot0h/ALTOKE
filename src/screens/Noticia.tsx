@@ -5,28 +5,51 @@ import {
   Text,
   View,
   Pressable,
-  SafeAreaView,
+  Image
 } from 'react-native'
 
 import NoticiaImage from '@assets/noticia.svg'
 import FIXYICON from '@assets/FIXYLOGIN.svg'
-
 import { MaterialIcons, Octicons } from '@expo/vector-icons'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
+import { useAppSelector } from '../store/hook'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { RootStackParamList } from '@navigation/StackNavigator'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-export const Noticia = (): JSX.Element => {
+type Props = NativeStackScreenProps<RootStackParamList, 'Noticia'>
+
+export const Noticia = ({ route, navigation }: Props): JSX.Element => {
   const { colors } = useTheme()
   const styles = createStyles(colors)
+
+  const { noticeId } = route.params
+
+  const notice = useAppSelector((state) =>
+    state.news.news.find((news) => news.id === noticeId)
+  )
+
+  const insets = useSafeAreaInsets()
+  const user = useAppSelector((state) => state.userProfile)
+
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={[styles.container, {paddingTop:insets.top, paddingBottom:insets.bottom}]}>
       <ScrollView
+        style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
         {/* HEADER */}
         <View style={styles.header}>
-          <Pressable style={styles.backButton}>
-            <MaterialIcons size={25} name="arrow-back" color={colors.textSecondary} />
+          <Pressable
+            style={styles.backButton}
+            onPress={() => navigation.goBack()}
+          >
+            <MaterialIcons
+              size={25}
+              name="arrow-back"
+              color={colors.textSecondary}
+            />
           </Pressable>
 
           <Text style={styles.headerTitle}>Noticia</Text>
@@ -34,17 +57,27 @@ export const Noticia = (): JSX.Element => {
 
         {/* IMAGEN */}
         <View style={styles.imageContainer}>
-          <NoticiaImage
-            width="100%"
-            height="100%"
-            preserveAspectRatio="xMidYMid slice"
-          />
+          {notice?.image ? (
+            <Image
+              source={{ uri: notice.image }}
+              style={{ width: '100%', height: '100%' }}
+              resizeMode="cover"
+            />
+          ) : (
+            <NoticiaImage
+              width="100%"
+              height="100%"
+              preserveAspectRatio="xMidYMid slice"
+            />
+          )}
         </View>
 
         {/* CONTENIDO */}
         <View style={styles.content}>
           {/* TITULO */}
-          <Text style={styles.title}>Gran reunión de vecinos este Domingo</Text>
+          <Text style={styles.title}>
+            {notice?.title}
+          </Text>
 
           {/* AUTOR */}
           <View style={styles.authorSection}>
@@ -52,14 +85,30 @@ export const Noticia = (): JSX.Element => {
               <FIXYICON width={34} height={34} />
 
               <View style={styles.authorInfo}>
-                <Text style={styles.textAuthor}>Administración Al Toke</Text>
+                <Text style={styles.textAuthor}>
+                  {user.name}
+                </Text>
 
                 <View style={styles.detailsRow}>
-                  <Text style={styles.textDetails}>Publicado el 12 Oct</Text>
+                  <Text style={styles.textDetails}>
+                    {notice?.createdAt
+                      ? new Date(notice.createdAt).toLocaleDateString('es-HN', {
+                        day: 'numeric',
+                        month: 'long',
+                        year: 'numeric',
+                      })
+                      : ''}
+                  </Text>
 
-                  <Octicons name="dot-fill" size={8} color={colors.textSecondary} />
+                  <Octicons
+                    name="dot-fill"
+                    size={8}
+                    color={colors.textSecondary}
+                  />
 
-                  <Text style={styles.textDetails}>Lectura: 3 min</Text>
+                  <Text style={styles.textDetails}>
+                    Lectura: 3 min
+                  </Text>
                 </View>
               </View>
             </View>
@@ -71,28 +120,12 @@ export const Noticia = (): JSX.Element => {
           {/* DESCRIPCION */}
           <View style={styles.descriptionContainer}>
             <Text style={styles.fontDescription}>
-              Estimados residentes de Los Pinos, los invitamos cordialmente a
-              participar en nuestra asamblea general de vecinos que se llevará a
-              cabo este domingo en el salón de eventos comunal. Su presencia y
-              voz son fundamentales para el desarrollo de nuestro condominio.
-            </Text>
-
-            <Text style={styles.fontDescription}>
-              Durante la asamblea trataremos temas de vital importancia, tales
-              como el presupuesto del próximo ciclo, las mejoras en el sistema
-              de acceso vehicular mediante códigos QR y el cronograma de
-              mantenimiento general de áreas verdes.
-            </Text>
-
-            <Text style={styles.fontDescription}>
-              Agradecemos de antemano su puntual asistencia. Al finalizar la
-              reunión tendremos un espacio para resolver dudas y escuchar sus
-              sugerencias.
+              {notice?.content}
             </Text>
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   )
 }
 
@@ -105,7 +138,14 @@ const createStyles = (colors: ThemeColors) =>
       alignItems: 'center',
     },
 
-    scrollContent: { paddingBottom: 100 },
+    scrollView: {
+      flex: 1,
+      width: '100%',
+    },
+
+    scrollContent: {
+      paddingBottom: 100,
+    },
 
     /* HEADER */
 

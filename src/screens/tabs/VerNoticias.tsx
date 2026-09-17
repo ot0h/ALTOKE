@@ -8,10 +8,16 @@ import Patronato from '@assets/patronato.png'
 import SearchBar from '../../components/SearchBar'
 import { useAppSelector } from '../../store/hook'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
+import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack'
+import { RootStackParamList } from '@navigation/StackNavigator'
 
 type Category = 'todos' | 'avisos' | 'eventos' | 'mantenimiento'
 
-export const VerNoticias = () => {
+type Props = {
+  navigation: NativeStackNavigationProp<RootStackParamList>
+}
+
+export const VerNoticias = ({ navigation }: Props) => {
   const { colors } = useTheme()
   const styles = createStyles(colors)
   const insets = useSafeAreaInsets()
@@ -25,23 +31,23 @@ export const VerNoticias = () => {
     text: string
     value: Category
   }[] = [
-    {
-      text: 'Todos',
-      value: 'todos',
-    },
-    {
-      text: 'Avisos',
-      value: 'avisos',
-    },
-    {
-      text: 'Eventos',
-      value: 'eventos',
-    },
-    {
-      text: 'Mantenimiento',
-      value: 'mantenimiento',
-    },
-  ]
+      {
+        text: 'Todos',
+        value: 'todos',
+      },
+      {
+        text: 'Avisos',
+        value: 'avisos',
+      },
+      {
+        text: 'Eventos',
+        value: 'eventos',
+      },
+      {
+        text: 'Mantenimiento',
+        value: 'mantenimiento',
+      },
+    ]
   //FILTRADO POR ETIQUETA
   const filteredNotices = notices.filter((notice) => {
     const matchesCategory =
@@ -111,7 +117,9 @@ export const VerNoticias = () => {
               }
               category={item.category}
               variant="notices"
-              onPress={() => {}}
+              onPress={() => navigation.getParent()?.navigate('Noticia', {
+                noticeId: item.id,
+              })}
             />
           )}
           contentContainerStyle={styles.list}

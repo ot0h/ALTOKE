@@ -1,13 +1,5 @@
 import { JSX, useState } from 'react'
-import {
-  Image,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native'
+import {KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet,Text, TextInput,  View,} from 'react-native'
 import { ArrowLeft, Camera } from 'lucide-react-native'
 import { CustomButton, CustomSwitch } from '@components'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -18,14 +10,16 @@ import { RootStackParamList } from '@navigation/StackNavigator'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { ImageUpload } from '../components/ImageUpload'
 import { addNews } from '../store/slices/newsSlice'
+import Alert from './modals/Alert'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
-type NuevaNoticiaProp = RouteProp<
+type Props = NativeStackScreenProps<
   RootStackParamList,
   'NuevaNoticia'
 >
 
 
-export const NuevaNoticia = (): JSX.Element => {
+export const NuevaNoticia = ({navigation, route}: Props): JSX.Element => {
   const { colors } = useTheme()
   const styles = createStyles(colors)
   const [foto, setFoto] = useState<string>('')
@@ -34,7 +28,6 @@ export const NuevaNoticia = (): JSX.Element => {
   const [isPublish, setIsPublish] = useState<boolean>(true)
   const dispatch = useAppDispatch()
   const userId = useAppSelector((state) => state.userProfile.id)
-  const route = useRoute<NuevaNoticiaProp>()
 
   const { communityId } = route.params
 
@@ -54,18 +47,27 @@ export const NuevaNoticia = (): JSX.Element => {
       createdAt: new Date().toISOString(),
       image: foto || undefined,
     }
-
     dispatch(addNews(news))
-
     console.log('[Redux] useDispatch(addPost) -> payload:', news)
     console.log('[Redux] Nuevo estado de posts:', store.getState().news.news)
 
     setTitle('')
     setDetail('')
     setFoto('')
+    setModalVisible(true)
   }
+  const [modalVisible, setModalVisible]= useState(false)
+
+    const closeAlert= () => {
+      setModalVisible(false)
+      navigation.goBack
+    }
 
   return (
+          <KeyboardAvoidingView
+              style={{ flex: 1 }}
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            >
     <SafeAreaView>
       <ScrollView
         style={styles.scrollContent}
@@ -145,8 +147,15 @@ export const NuevaNoticia = (): JSX.Element => {
             onPress={publicarNoticia}
           />
         </View>
+        <Alert
+        text='Noticia creada correctamente'
+        onPress={closeAlert}
+        visible= {modalVisible}
+        />
       </ScrollView>
+    
     </SafeAreaView>
+      </KeyboardAvoidingView>
   )
 }
 
