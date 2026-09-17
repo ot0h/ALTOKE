@@ -38,7 +38,10 @@ export const Login = ({ navigation }: Props): JSX.Element => {
       const profile = await userProfileService.fetchProfile(user.id)
 
       dispatch(updateProfile(profile))
-      navigation.navigate('MainTabs', { email: profile.email })
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'MainTabs', params: { email: profile.email } }],
+      })
     } catch (error) {
       const message =
         error instanceof Error ? error.message : 'Error al iniciar sesión'

@@ -34,7 +34,7 @@ export const Register = ({ navigation }: Props): JSX.Element => {
       if (!user) throw new Error('No se pudo crear la cuenta')
 
       Alert.alert('Éxito', 'Cuenta creada. Ahora inicia sesión.')
-      navigation.navigate('Login')
+      navigation.reset({ index: 0, routes: [{ name: 'Login' }] })
     } catch (error) {
       const message =
         error instanceof Error ? error.message : 'Error al registrarse'

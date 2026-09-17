@@ -5,9 +5,9 @@ import {
   Text,
   View,
   Pressable,
-  SafeAreaView,
   Image,
 } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 import NoticiaImage from '@assets/noticia.svg'
 import FIXYICON from '@assets/FIXYLOGIN.svg'

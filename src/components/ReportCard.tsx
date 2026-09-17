@@ -58,7 +58,7 @@ export default function ReportCard({
 
             <View style={styles.details}>
               <Text style={styles.category}>{category}</Text>
-              <LocationIcon width={12} height={12} />{' '}
+              <LocationIcon width={12} height={12} />
               <Text style={styles.subtitle}>{location}</Text>
             </View>
           </>
