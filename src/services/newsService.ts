@@ -1,4 +1,5 @@
 import { logRequest, supabase } from './supabase'
+import { loadProfilesByUserId } from './profileUtils'
 import { News, NewsCategory, NewsStatus } from '../store/slices/newsSlice'
 
 type NewsRow = {
@@ -27,6 +28,19 @@ function toNews(row: NewsRow): News {
   }
 }
 
+async function attachNewsAuthors(news: News[]): Promise<void> {
+  const profilesByUser = await loadProfilesByUserId(
+    news.map((item) => item.userId),
+  )
+
+  for (const item of news) {
+    const profile = profilesByUser.get(item.userId)
+
+    item.author = profile?.name || undefined
+    item.authorAvatar = profile?.avatar || undefined
+  }
+}
+
 export type CreateNewsInput = {
   title: string
   content: string
@@ -52,7 +66,9 @@ export const newsService = {
     logRequest('fetchNews', error, data)
     if (error) throw error
 
-    return (data ?? []).map(toNews)
+    const news = (data ?? []).map(toNews)
+    await attachNewsAuthors(news)
+    return news
   },
 
   async fetchNewsByCommunity(communityId: string): Promise<News[]> {
@@ -76,7 +92,10 @@ export const newsService = {
 
     logRequest('createNews', error, data)
     if (error) throw error
-    return toNews(data)
+
+    const news = toNews(data)
+    await attachNewsAuthors([news])
+    return news
   },
 
   async deleteNews(id: string): Promise<void> {
@@ -98,6 +117,9 @@ export const newsService = {
 
     logRequest('updateNewsStatus', error, data)
     if (error) throw error
-    return toNews(data)
+
+    const news = toNews(data)
+    await attachNewsAuthors([news])
+    return news
   },
 }

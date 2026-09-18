@@ -1,5 +1,6 @@
 import { logRequest, supabase } from './supabase'
-import { Report, ReportStatus } from '../types'
+import { loadProfilesByUserId } from './profileUtils'
+import { Report, ReportNote, ReportStatus } from '../types'
 
 type ReportRow = {
   id: string
@@ -26,6 +27,39 @@ function toReport(row: ReportRow): Report {
     communityId: row.community_id,
     fotos: row.fotos ?? [],
     createdAt: row.created_at,
+  }
+}
+
+type ReportNoteRow = {
+  id: string
+  report_id: string
+  user_id: string
+  content: string
+  created_at: string
+}
+
+function toReportNote(row: ReportNoteRow): ReportNote {
+  return {
+    id: row.id,
+    reportId: row.report_id,
+    userId: row.user_id,
+    content: row.content,
+    createdAt: row.created_at,
+  }
+}
+
+async function attachNoteAuthors(notes: ReportNote[]): Promise<void> {
+  if (notes.length === 0) return
+
+  const profilesByUser = await loadProfilesByUserId(
+    notes.map((note) => note.userId),
+  )
+
+  for (const note of notes) {
+    const profile = profilesByUser.get(note.userId)
+
+    note.author = profile?.name || undefined
+    note.authorAvatar = profile?.avatar || undefined
   }
 }
 
@@ -61,6 +95,20 @@ export const reportService = {
     return (data ?? []).map(toReport)
   },
 
+  async fetchReportsByCommunities(communityIds: string[]): Promise<Report[]> {
+    if (communityIds.length === 0) return []
+
+    const { data, error } = await supabase
+      .from('reports')
+      .select('*')
+      .in('community_id', communityIds)
+      .order('created_at', { ascending: false })
+
+    logRequest('fetchReportsByCommunities', error, data)
+    if (error) throw error
+    return (data ?? []).map(toReport)
+  },
+
   async fetchReport(id: string): Promise<Report> {
     const { data, error } = await supabase
       .from('reports')
@@ -70,7 +118,64 @@ export const reportService = {
 
     logRequest('fetchReport', error, data)
     if (error) throw error
-    return toReport(data)
+
+    const report = toReport(data)
+
+    try {
+      report.notes = await reportService.fetchReportNotes(id)
+    } catch (notesError) {
+      console.error('[fetchReport] No se pudieron cargar notas:', notesError)
+    }
+
+    return report
+  },
+
+  async fetchReportNotes(reportId: string): Promise<ReportNote[]> {
+    const { data, error } = await supabase
+      .from('report_notes')
+      .select('*')
+      .eq('report_id', reportId)
+      .order('created_at', { ascending: true })
+
+    logRequest('fetchReportNotes', error, data)
+    if (error) throw error
+
+    const notes = ((data ?? []) as ReportNoteRow[]).map(toReportNote)
+    await attachNoteAuthors(notes)
+    return notes
+  },
+
+  async addReportNote(
+    reportId: string,
+    userId: string,
+    content: string,
+  ): Promise<ReportNote> {
+    const { data, error } = await supabase
+      .from('report_notes')
+      .insert({
+        report_id: reportId,
+        user_id: userId,
+        content,
+      })
+      .select()
+      .single()
+
+    logRequest('addReportNote', error, data)
+    if (error) throw error
+
+    const note = toReportNote(data as ReportNoteRow)
+    await attachNoteAuthors([note])
+    return note
+  },
+
+  async removeReportNote(noteId: string): Promise<void> {
+    const { error } = await supabase
+      .from('report_notes')
+      .delete()
+      .eq('id', noteId)
+
+    logRequest('removeReportNote', error)
+    if (error) throw error
   },
 
   async createReport(input: CreateReportInput): Promise<Report> {

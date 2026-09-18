@@ -15,6 +15,8 @@ export type News = {
     content: string
     category: NewsCategory
     createdAt: string
+    author?: string
+    authorAvatar?: string
     image?: string
     status: NewsStatus
 }

@@ -9,14 +9,12 @@ import {
 } from 'react-native'
 
 import NoticiaImage from '@assets/noticia.svg'
-import FIXYICON from '@assets/FIXYLOGIN.svg'
-import { SafeAreaView } from 'react-native-safe-area-context'
-
 import { MaterialIcons, Octicons } from '@expo/vector-icons'
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { RootStackParamList } from '../navigation/StackNavigator'
-import { useAppSelector } from '../store/hook'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
+import { useAppSelector } from '../store/hook'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { RootStackParamList } from '@navigation/StackNavigator'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Noticia'>
 
@@ -26,17 +24,21 @@ export const Noticia = ({ route, navigation }: Props): JSX.Element => {
 
   const { noticeId } = route.params
 
-  const user = useAppSelector((state) => state.userProfile)
-
   const notice = useAppSelector((state) =>
     state.news.news.find((news) => news.id === noticeId),
   )
 
-  const paragraphs = (notice?.content ?? '').split(/\n+/).filter(Boolean)
+  const insets = useSafeAreaInsets()
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { paddingTop: insets.top, paddingBottom: insets.bottom },
+      ]}
+    >
       <ScrollView
+        style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
@@ -46,7 +48,11 @@ export const Noticia = ({ route, navigation }: Props): JSX.Element => {
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
-            <MaterialIcons size={25} name="arrow-back" color={colors.textSecondary} />
+            <MaterialIcons
+              size={25}
+              name="arrow-back"
+              color={colors.textSecondary}
+            />
           </Pressable>
 
           <Text style={styles.headerTitle}>Noticia</Text>
@@ -56,8 +62,8 @@ export const Noticia = ({ route, navigation }: Props): JSX.Element => {
         <View style={styles.imageContainer}>
           {notice?.image ? (
             <Image
-              style={styles.image}
               source={{ uri: notice.image }}
+              style={{ width: '100%', height: '100%' }}
               resizeMode="cover"
             />
           ) : (
@@ -73,32 +79,48 @@ export const Noticia = ({ route, navigation }: Props): JSX.Element => {
         <View style={styles.content}>
           {/* TITULO */}
           <Text style={styles.title}>
-            {notice?.title || 'Noticia'}
+            {notice?.title}
           </Text>
 
           {/* AUTOR */}
           <View style={styles.authorSection}>
             <View style={styles.authorRow}>
-              <FIXYICON width={34} height={34} />
+              <Image
+                style={styles.authorImage}
+                source={
+                  notice?.authorAvatar
+                    ? { uri: notice.authorAvatar }
+                    : require('@assets/default-avatar.png')
+                }
+              />
 
               <View style={styles.authorInfo}>
                 <Text style={styles.textAuthor}>
-                  {user.name || 'Administración Al Toke'}
+                  {notice?.author || 'Administración Al Toke'}
                 </Text>
 
                 <View style={styles.detailsRow}>
                   <Text style={styles.textDetails}>
                     {notice?.createdAt
-                      ? `Publicado el ${new Date(
-                          notice.createdAt,
-                        ).toLocaleDateString()}`
-                      : 'Publicado recientemente'}
+                      ? new Date(notice.createdAt).toLocaleDateString(
+                          'es-HN',
+                          {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
+                          },
+                        )
+                      : ''}
                   </Text>
 
-                  <Octicons name="dot-fill" size={8} color={colors.textSecondary} />
+                  <Octicons
+                    name="dot-fill"
+                    size={8}
+                    color={colors.textSecondary}
+                  />
 
                   <Text style={styles.textDetails}>
-                    Lectura: {Math.max(1, Math.ceil((notice?.content ?? '').length / 700))} min
+                    Lectura: 3 min
                   </Text>
                 </View>
               </View>
@@ -110,21 +132,13 @@ export const Noticia = ({ route, navigation }: Props): JSX.Element => {
 
           {/* DESCRIPCION */}
           <View style={styles.descriptionContainer}>
-            {paragraphs.length > 0 ? (
-              paragraphs.map((paragraph, index) => (
-                <Text key={index} style={styles.fontDescription}>
-                  {paragraph}
-                </Text>
-              ))
-            ) : (
-              <Text style={styles.fontDescription}>
-                Esta noticia aún no tiene contenido.
-              </Text>
-            )}
+            <Text style={styles.fontDescription}>
+              {notice?.content}
+            </Text>
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   )
 }
 
@@ -137,7 +151,14 @@ const createStyles = (colors: ThemeColors) =>
       alignItems: 'center',
     },
 
-    scrollContent: { paddingBottom: 100 },
+    scrollView: {
+      flex: 1,
+      width: '100%',
+    },
+
+    scrollContent: {
+      paddingBottom: 100,
+    },
 
     /* HEADER */
 
@@ -173,11 +194,6 @@ const createStyles = (colors: ThemeColors) =>
       overflow: 'hidden',
     },
 
-    image: {
-      width: '100%',
-      height: '100%',
-    },
-
     /* CONTENIDO */
 
     content: {
@@ -203,6 +219,13 @@ const createStyles = (colors: ThemeColors) =>
       flexDirection: 'row',
       alignItems: 'center',
       gap: 10,
+    },
+
+    authorImage: {
+      width: 34,
+      height: 34,
+      borderRadius: 17,
+      backgroundColor: colors.primary,
     },
 
     authorInfo: {

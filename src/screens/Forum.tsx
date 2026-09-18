@@ -49,6 +49,8 @@ export const Forum = (): JSX.Element => {
 
   const dispatch = useAppDispatch()
 
+  const userId = useAppSelector((state) => state.userProfile.id)
+
   const allPosts = useAppSelector((state) => state.post.posts)
 
   const posts = useMemo(
@@ -59,7 +61,7 @@ export const Forum = (): JSX.Element => {
   useEffect(() => {
     const loadPosts = async () => {
       try {
-        const remotePosts = await postService.fetchPosts(undefined, true)
+        const remotePosts = await postService.fetchPosts(undefined, true, userId)
 
         dispatch(
           setPosts(mergeById(posts, remotePosts)),
@@ -73,7 +75,7 @@ export const Forum = (): JSX.Element => {
     }
 
     loadPosts()
-  }, [])
+  }, [dispatch, userId])
 
   return (
     <SafeAreaView
@@ -133,15 +135,21 @@ export const Forum = (): JSX.Element => {
           <ForumPostCard
             postId={item.id}
             title={item.title}
-            author="Usuario"
+            author={item.author || 'Usuario'}
             createdAt={item.createdAt || 'Hace poco'}
             description={item.content}
-            comment={item.comments.length}
+            comment={item.commentsCount}
             likes={item.likes}
-            authorimage={require('@assets/default-avatar.png')}
-            iLike={false}
+            authorimage={
+              item.authorAvatar
+                ? { uri: item.authorAvatar }
+                : require('@assets/default-avatar.png')
+            }
+            iLike={item.iLike}
             onPressComment={() => {
-              console.log('Comentarios:', item.id)
+              navigation.navigate('Comments', {
+                postId: item.id,
+              })
             }}
           />
         )}

@@ -57,9 +57,16 @@ export default function ReportCard({
             </Text>
 
             <View style={styles.details}>
-              <Text style={styles.category}>{category}</Text>
+              <Text
+                style={styles.category}
+                numberOfLines={1}
+              >
+                {category}
+              </Text>
               <LocationIcon width={12} height={12} />
-              <Text style={styles.subtitle}>{location}</Text>
+              <Text style={styles.subtitle} numberOfLines={1}>
+                {location}
+              </Text>
             </View>
           </>
         )}
@@ -115,6 +122,7 @@ const createStyles = (colors: ThemeColors) =>
       fontFamily: 'Inter_400Regular',
       fontSize: 13,
       color: colors.textSecondary,
+      flexShrink: 1,
     },
 
     details: {
@@ -126,14 +134,17 @@ const createStyles = (colors: ThemeColors) =>
 
     category: {
       fontFamily: 'Inter_600SemiBold',
-      fontSize: 14,
+      fontSize: 12,
       color: colors.text,
 
       backgroundColor: colors.background,
 
       paddingHorizontal: 8,
-      paddingVertical: 4,
+      paddingVertical: 3,
 
       borderRadius: 8,
+
+      maxWidth: '45%',
+      overflow: 'hidden',
     },
   })

@@ -27,6 +27,16 @@ export type MemberShip = {
 
 export type ReportStatus = 'revision' | 'pendiente' | 'proceso' | 'resuelto'
 
+export type ReportNote = {
+  id: string
+  reportId: string
+  userId: string
+  author?: string
+  authorAvatar?: string
+  content: string
+  createdAt: string
+}
+
 export type Report = {
   id: string
   title: string
@@ -38,11 +48,14 @@ export type Report = {
   communityId: string
   createdAt: string
   fotos?: string[]
+  notes?: ReportNote[]
 }
 
 export type Comment = {
   id: string
   userId: string
+  author?: string
+  authorAvatar?: string
   content: string
   createdAt: string
 }
@@ -53,8 +66,12 @@ export type Post = {
   communityId: string
   title: string
   content: string
+  author?: string
+  authorAvatar?: string
   comments: Comment[]
+  commentsCount: number
   likes: number
+  iLike: boolean
   image?: string
   category?: 'avisos' | 'eventos' | 'mantenimiento'
   createdAt?: string

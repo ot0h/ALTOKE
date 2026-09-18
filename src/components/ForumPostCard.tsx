@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   Image,
   ImageSourcePropType,
@@ -13,7 +12,8 @@ import LikesIcon from '@assets/likes.svg'
 import ILikesIcon from '@assets/Ilikes.svg'
 
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
-import { useAppSelector } from '../store/hook'
+import { useAppDispatch, useAppSelector } from '../store/hook'
+import { likePost } from '../store/slices/postSlice'
 import { postService } from '../services'
 
 type Props = {
@@ -44,25 +44,22 @@ export default function ForumPostCard({
   const { colors } = useTheme()
   const styles = createStyles(colors)
 
+  const dispatch = useAppDispatch()
   const userId = useAppSelector((state) => state.userProfile.id)
-
-  const [liked, setLiked] = useState(iLike)
-  const [likeCount, setLikeCount] = useState(likes)
 
   const handleLike = async () => {
     if (!userId) return
 
+    dispatch(likePost(postId))
+
     try {
-      if (liked) {
+      if (iLike) {
         await postService.unlikePost(postId, userId)
-        setLiked(false)
-        setLikeCount((prev) => Math.max(0, prev - 1))
       } else {
         await postService.likePost(postId, userId)
-        setLiked(true)
-        setLikeCount((prev) => prev + 1)
       }
     } catch (error) {
+      dispatch(likePost(postId))
       console.error('[ForumPostCard] Error al cambiar el like:', error)
     }
   }
@@ -127,7 +124,7 @@ export default function ForumPostCard({
 
         <View style={styles.iconssection}>
           <Pressable onPress={handleLike}>
-            {liked ? (
+            {iLike ? (
               <ILikesIcon height={16} />
             ) : (
               <LikesIcon height={16} />
@@ -135,7 +132,7 @@ export default function ForumPostCard({
           </Pressable>
 
           <Text style={styles.commentslikes}>
-            {likeCount}
+            {likes}
           </Text>
         </View>
 

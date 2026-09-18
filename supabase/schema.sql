@@ -125,6 +125,15 @@ create table if not exists public.reports (
   created_at timestamptz not null default now()
 );
 
+-- REPORT NOTES
+create table if not exists public.report_notes (
+  id uuid primary key default gen_random_uuid(),
+  report_id uuid not null references public.reports(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  content text not null,
+  created_at timestamptz not null default now()
+);
+
 -- ------------------------------------------------------------
 -- POSTS (foro / avisos)
 -- ------------------------------------------------------------
@@ -187,6 +196,7 @@ alter table public.communities enable row level security;
 alter table public.memberships enable row level security;
 alter table public.categories enable row level security;
 alter table public.reports enable row level security;
+alter table public.report_notes enable row level security;
 alter table public.posts enable row level security;
 alter table public.news enable row level security;
 alter table public.post_likes enable row level security;
@@ -259,6 +269,25 @@ drop policy if exists "reports_delete_admin_or_author" on public.reports;
 create policy "reports_delete_admin_or_author" on public.reports
   for delete using (user_id = auth.uid() or public.is_community_admin(community_id));
 
+-- REPORT NOTES
+drop policy if exists "report_notes_select" on public.report_notes;
+create policy "report_notes_select" on public.report_notes
+  for select using (auth.role() = 'authenticated');
+drop policy if exists "report_notes_insert" on public.report_notes;
+create policy "report_notes_insert" on public.report_notes
+  for insert with check (
+    user_id = auth.uid()
+    and exists (
+      select 1
+      from public.reports
+      where reports.id = report_id
+        and public.is_community_admin(reports.community_id)
+    )
+  );
+drop policy if exists "report_notes_delete_author" on public.report_notes;
+create policy "report_notes_delete_author" on public.report_notes
+  for delete using (user_id = auth.uid());
+
 -- POSTS
 drop policy if exists "posts_select" on public.posts;
 create policy "posts_select" on public.posts
@@ -327,3 +356,87 @@ create policy "comments_insert_own" on public.comments
 drop policy if exists "comments_delete_author" on public.comments;
 create policy "comments_delete_author" on public.comments
   for delete using (user_id = auth.uid());
+
+-- ------------------------------------------------------------
+-- STORAGE: BUCKET AVATARS (fotos de perfil)
+-- ------------------------------------------------------------
+insert into storage.buckets (id, name, public)
+values ('avatars', 'avatars', true)
+on conflict (id) do update set public = true;
+
+drop policy if exists "avatars_public_read" on storage.objects;
+create policy "avatars_public_read" on storage.objects
+  for select using (bucket_id = 'avatars');
+
+drop policy if exists "avatars_own_insert" on storage.objects;
+create policy "avatars_own_insert" on storage.objects
+  for insert with check (
+    bucket_id = 'avatars'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+drop policy if exists "avatars_own_update" on storage.objects;
+create policy "avatars_own_update" on storage.objects
+  for update using (
+    bucket_id = 'avatars'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+drop policy if exists "avatars_own_delete" on storage.objects;
+create policy "avatars_own_delete" on storage.objects
+  for delete using (
+    bucket_id = 'avatars'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+-- ------------------------------------------------------------
+-- STORAGE: BUCKET NEWS (imágenes de noticias)
+-- ------------------------------------------------------------
+insert into storage.buckets (id, name, public)
+values ('news', 'news', true)
+on conflict (id) do update set public = true;
+
+drop policy if exists "news_images_public_read" on storage.objects;
+create policy "news_images_public_read" on storage.objects
+  for select using (bucket_id = 'news');
+
+drop policy if exists "news_images_authenticated_insert" on storage.objects;
+create policy "news_images_authenticated_insert" on storage.objects
+  for insert with check (
+    bucket_id = 'news'
+    and auth.role() = 'authenticated'
+  );
+
+drop policy if exists "news_images_authenticated_update" on storage.objects;
+create policy "news_images_authenticated_update" on storage.objects
+  for update using (bucket_id = 'news' and auth.role() = 'authenticated');
+
+drop policy if exists "news_images_authenticated_delete" on storage.objects;
+create policy "news_images_authenticated_delete" on storage.objects
+  for delete using (bucket_id = 'news' and auth.role() = 'authenticated');
+
+-- ------------------------------------------------------------
+-- STORAGE: BUCKET REPORT-PHOTOS (evidencias de reportes)
+-- ------------------------------------------------------------
+insert into storage.buckets (id, name, public)
+values ('report-photos', 'report-photos', true)
+on conflict (id) do update set public = true;
+
+drop policy if exists "report_photos_public_read" on storage.objects;
+create policy "report_photos_public_read" on storage.objects
+  for select using (bucket_id = 'report-photos');
+
+drop policy if exists "report_photos_authenticated_insert" on storage.objects;
+create policy "report_photos_authenticated_insert" on storage.objects
+  for insert with check (
+    bucket_id = 'report-photos'
+    and auth.role() = 'authenticated'
+  );
+
+drop policy if exists "report_photos_authenticated_update" on storage.objects;
+create policy "report_photos_authenticated_update" on storage.objects
+  for update using (bucket_id = 'report-photos' and auth.role() = 'authenticated');
+
+drop policy if exists "report_photos_authenticated_delete" on storage.objects;
+create policy "report_photos_authenticated_delete" on storage.objects
+  for delete using (bucket_id = 'report-photos' and auth.role() = 'authenticated');

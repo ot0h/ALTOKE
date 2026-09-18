@@ -17,7 +17,8 @@ import { CategoryTag } from '../../components/CategoryTag'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAppDispatch, useAppSelector } from '../../store/hook'
 import { addReport } from '../../store/slices/reportSlice'
-import { reportService } from '../../services'
+import { reportService, storageService } from '../../services'
+import { makeImagePath } from '../../services/storageService'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '@navigation/StackNavigator'
@@ -159,7 +160,7 @@ export const ReportProblem = ({ navigation, route }: Props): JSX.Element => {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 0.7,
-      allowsMultipleSelection: true,
+      allowsMultipleSelection: false,
       selectionLimit: 4,
     })
     if (!result.canceled) {
@@ -181,6 +182,18 @@ export const ReportProblem = ({ navigation, route }: Props): JSX.Element => {
 
     setSending(true)
     try {
+      const uploadedFotos: string[] = []
+
+      for (const uri of fotos) {
+        const publicUrl = await storageService.uploadImage(
+          'report-photos',
+          makeImagePath('reportes'),
+          uri,
+        )
+
+        uploadedFotos.push(publicUrl)
+      }
+
       const report = await reportService.createReport({
         title: titulo.trim(),
         description: detalles.trim(),
@@ -188,7 +201,7 @@ export const ReportProblem = ({ navigation, route }: Props): JSX.Element => {
         location: ubicacion,
         userId,
         communityId,
-        fotos,
+        fotos: uploadedFotos,
       })
 
       dispatch(addReport(report))

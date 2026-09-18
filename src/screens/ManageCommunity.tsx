@@ -1,6 +1,6 @@
 import { JSX } from 'react'
 import { Pressable, ScrollView,   StyleSheet, Text, View,} from 'react-native'
-import {  ArrowLeft,BarChart3,FileText, MessageCircle,Users,} from 'lucide-react-native'
+import {  ArrowLeft,BarChart3,FileText, MessageCircle,Users,Flag,} from 'lucide-react-native'
 import {SafeAreaView,useSafeAreaInsets,} from 'react-native-safe-area-context'
 import { RouteProp, useNavigation,useRoute,} from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -64,6 +64,13 @@ export const ManageCommunity = (): JSX.Element => {
       icon: MessageCircle,
       onPress: () =>
         navigation.navigate('Forum', { communityId }),
+    },
+    {
+      title: 'Gestionar reportes',
+      description: 'Revisa los reportes y cambia su estado',
+      icon: Flag,
+      onPress: () =>
+        navigation.navigate('ManageReports', { communityId }),
     },
   ]
 

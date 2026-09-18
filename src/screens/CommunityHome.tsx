@@ -45,6 +45,7 @@ export const CommunityHome = ({
 
     const allPosts = useAppSelector((state) => state.post.posts)
     const allReports = useAppSelector((state) => state.report.reports)
+    const userId = useAppSelector((state) => state.userProfile.id)
 
     const posts = useMemo(
         () => allPosts.filter((post) => post.communityId === communityId),
@@ -68,7 +69,7 @@ export const CommunityHome = ({
                 }
 
                 const [fetchedPosts, fetchedReports] = await Promise.all([
-                    postService.fetchPosts(communityId, true),
+                    postService.fetchPosts(communityId, true, userId),
                     reportService.fetchReports(undefined, communityId),
                 ])
 
@@ -88,7 +89,7 @@ export const CommunityHome = ({
             }
         }
         loadData()
-    }, [communityId, community, dispatch])
+    }, [communityId, community, dispatch, userId])
 
     const post = posts[0]
     const recentReports = reports.slice(0, 2)
@@ -160,13 +161,20 @@ export const CommunityHome = ({
                 <ForumPostCard
                     postId={post.id}
                     title={post.title}
-                    author="Vecino"
+                    author={post.author || 'Vecino'}
                     createdAt={post.createdAt || 'Reciente'}
                     description={post.content}
-                    comment={post.comments.length}
+                    comment={post.commentsCount}
                     likes={post.likes}
-                    authorimage={Patronato}
-                    onPressComment={() => { }}
+                    iLike={post.iLike}
+                    authorimage={
+                    post.authorAvatar
+                      ? { uri: post.authorAvatar }
+                      : require('@assets/default-avatar.png')
+                  }
+                    onPressComment={() =>
+                        navigation.navigate('Comments', { postId: post.id })
+                    }
                 />
             ) : (
                 <Text style={styles.emptyText}>

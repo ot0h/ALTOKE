@@ -1,6 +1,5 @@
 import { JSX, useEffect, useState } from 'react'
-import { StyleSheet, Text, View, ScrollView, Pressable } from 'react-native'
-import FixyIcon from '@assets/FIXY.svg'
+import { Image, StyleSheet, Text, View, ScrollView, Pressable } from 'react-native'
 import { CustomButton } from '@components'
 import CommunityCard from '../../components/CommunityCard'
 import ReportCard from '../../components/ReportCard'
@@ -14,6 +13,7 @@ import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootStackParamList } from '@navigation/StackNavigator'
+import { useIsFocused } from '@react-navigation/native'
 
 export const Inicio = (): JSX.Element => {
   const [joinModalVisible, setJoinModalVisible] = useState(false)
@@ -23,38 +23,50 @@ export const Inicio = (): JSX.Element => {
   const dispatch = useAppDispatch()
   const userName = useAppSelector((state) => state.userProfile.name)
   const userId = useAppSelector((state) => state.userProfile.id)
+  const avatar = useAppSelector((state) => state.userProfile.avatar)
   const communities = useAppSelector((state) => state.community.communities)
   const reports = useAppSelector((state) => state.report.reports)
   const navigation = useNavigation()
+  const isFocused = useIsFocused()
 
-  useEffect(() => {
-    if (!userId) return
 
-    const loadData = async () => {
-      try {
-        const [comms, reps] = await Promise.all([
-          communityService.fetchCommunitiesByUser(userId),
-          reportService.fetchReports(userId),
-        ])
-        dispatch(setCommunities(comms))
-        dispatch(setReports(reps))
-      } catch (e) {
-        console.error('[Inicio] Error cargando datos:', e)
-      }
+ useEffect(() => {
+  if (!userId || !isFocused) return
+
+  const loadData = async () => {
+    try {
+      const [comms, reps] = await Promise.all([
+        communityService.fetchCommunitiesByUser(userId),
+        reportService.fetchReports(userId),
+      ])
+
+      dispatch(setCommunities(comms))
+      dispatch(setReports(reps))
+    } catch (e) {
+      console.error('[Inicio] Error cargando datos:', e)
     }
-    loadData()
-  }, [dispatch, userId])
+  }
+
+  loadData()
+}, [dispatch, userId, isFocused])
 
 
   return (
     <ScrollView
-      style={[styles.container, { paddingTop: insets.top }]}
+      style={[styles.container, { paddingTop: insets.top, paddingBottom: 20, backgroundColor: colors.background }]}
       contentContainerStyle={styles.content}
     >
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.greeting}>¡Hola, {userName || 'vecino'}! 👋</Text>
-        <FixyIcon height={48} width={48} />
+        <Image
+          style={styles.avatar}
+          source={
+            avatar
+              ? { uri: avatar }
+              : require('@assets/default-avatar.png')
+          }
+        />
       </View>
 
       {/* Banner código */}
@@ -79,7 +91,7 @@ export const Inicio = (): JSX.Element => {
       </View>
 
       {/*SE AGREGO EL .MAP PARA RENDERIZAR LAS COMMUNITY CARDS Y LOS REPORTS, QUITE EL FLAT LIST porque no se puede usar con el scroll view*/}
-      
+      <View style= {[{gap:20}]}>
       {communities.map((item) => (
         <CommunityCard
           key={item.id}
@@ -99,6 +111,7 @@ export const Inicio = (): JSX.Element => {
         <Text style={styles.sectionTitle}>Reportes Recientes</Text>
       </View>
 
+    
       {reports
         .filter((report) => report.status !== 'resuelto')
         .map((item) => (
@@ -111,7 +124,7 @@ export const Inicio = (): JSX.Element => {
             onPress={() => {}}
           />
         ))}
-
+      </View>
       {reports.every((report) => report.status === 'resuelto') && reports.length > 0 && (
         <Text style={styles.noActiveText}>
           No tienes reportes activos.
@@ -147,6 +160,12 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: 22,
       fontWeight: '700',
       color: colors.text,
+    },
+    avatar: {
+      width: 48,
+      height: 48,
+      borderRadius: 24,
+      backgroundColor: colors.primary,
     },
     codeCard: {
       borderWidth: 1.5,

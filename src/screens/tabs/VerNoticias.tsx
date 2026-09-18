@@ -1,6 +1,7 @@
 import { JSX, useEffect, useState } from 'react'
 import { FlatList, Image, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useIsFocused } from '@react-navigation/native'
 import CommunityCard from '../../components/CommunityCard'
 import { CategoryTag } from '../../components/CategoryTag'
 
@@ -34,9 +35,10 @@ export const VerNoticias = ({ navigation }: Props): JSX.Element => {
   const userId = useAppSelector((state) => state.userProfile.id)
   const communities = useAppSelector((state) => state.community.communities)
   const allNews = useAppSelector((state) => state.news.news)
+  const isFocused = useIsFocused()
 
   useEffect(() => {
-    if (!userId) return
+    if (!userId || !isFocused) return
 
     const loadNews = async () => {
       try {
@@ -64,7 +66,7 @@ export const VerNoticias = ({ navigation }: Props): JSX.Element => {
     }
 
     loadNews()
-  }, [dispatch, userId])
+  }, [dispatch, userId, isFocused])
 
   const categories: {
     text: string

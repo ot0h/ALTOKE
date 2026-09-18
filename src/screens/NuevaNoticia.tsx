@@ -18,7 +18,7 @@ import {
 } from 'react-native-safe-area-context'
 import { useAppDispatch, useAppSelector } from '../store/hook'
 import { addNews } from '../store/slices/newsSlice'
-import { newsService } from '../services'
+import { newsService, makeImagePath, storageService } from '../services'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import { ImageUpload } from '../components/ImageUpload'
 import Alert from './modals/Alert'
@@ -69,13 +69,25 @@ export const NuevaNoticia = ({
 
     setPublishing(true)
     try {
+      // Sube la imagen al bucket de Supabase Storage para que
+      // sea visible desde cualquier dispositivo.
+      let imageUrl: string | undefined
+
+      if (foto) {
+        imageUrl = await storageService.uploadImage(
+          'news',
+          makeImagePath(communityId),
+          foto,
+        )
+      }
+
       const news = await newsService.createNews({
         userId,
         communityId,
         title: title.trim(),
         content: detail.trim(),
         category,
-        image: foto || undefined,
+        image: imageUrl,
         status: isPublish ? 'publicada' : 'borrador',
       })
 

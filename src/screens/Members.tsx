@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   Alert,
   FlatList,
+  Image,
   Pressable,
   StyleSheet,
   Text,
@@ -156,11 +157,14 @@ export const Members = ({ navigation, route }: Props): JSX.Element => {
             showsVerticalScrollIndicator={false}
             renderItem={({ item }) => (
               <View style={styles.memberCard}>
-                <View style={styles.memberAvatar}>
-                  <Text style={styles.memberAvatarText}>
-                    {item.name.charAt(0).toUpperCase()}
-                  </Text>
-                </View>
+                <Image
+                  style={styles.memberAvatar}
+                  source={
+                    item.avatar
+                      ? { uri: item.avatar }
+                      : require('@assets/default-avatar.png')
+                  }
+                />
 
                 <View style={styles.memberInfo}>
                   <Text style={styles.memberName}>{item.name}</Text>
@@ -320,14 +324,6 @@ const createStyles = (colors: ThemeColors) =>
       height: 40,
       borderRadius: 20,
       backgroundColor: colors.primary,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-
-    memberAvatarText: {
-      fontFamily: 'MontserratAlternates_700Bold',
-      fontSize: 17,
-      color: colors.surface,
     },
 
     memberInfo: {

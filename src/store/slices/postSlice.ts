@@ -37,7 +37,13 @@ const postsSlice = createSlice({
     likePost: (state, action: PayloadAction<string>) => {
       const post = state.posts.find((post) => post.id === action.payload)
 
-      if (post) {
+      if (!post) return
+
+      if (post.iLike) {
+        post.iLike = false
+        post.likes = Math.max(0, post.likes - 1)
+      } else {
+        post.iLike = true
         post.likes += 1
       }
     },
@@ -82,6 +88,22 @@ const postsSlice = createSlice({
         )
       }
     },
+
+    incrementComments: (state, action: PayloadAction<string>) => {
+      const post = state.posts.find((post) => post.id === action.payload)
+
+      if (post) {
+        post.commentsCount += 1
+      }
+    },
+
+    decrementComments: (state, action: PayloadAction<string>) => {
+      const post = state.posts.find((post) => post.id === action.payload)
+
+      if (post) {
+        post.commentsCount = Math.max(0, post.commentsCount - 1)
+      }
+    },
   },
 })
 
@@ -93,6 +115,8 @@ export const {
   removePost,
   addComment,
   removeComment,
+  incrementComments,
+  decrementComments,
 } = postsSlice.actions
 
 export default postsSlice.reducer

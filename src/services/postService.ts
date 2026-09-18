@@ -1,4 +1,5 @@
 import { logRequest, supabase } from './supabase'
+import { loadProfilesByUserId } from './profileUtils'
 import { Comment, Post } from '../types'
 
 type PostRow = {
@@ -11,6 +12,7 @@ type PostRow = {
   category: Post['category'] | null
   created_at: string
   likes: { count: number }[]
+  comments_count: { count: number }[]
 }
 
 type CommentRow = {
@@ -31,6 +33,8 @@ function toPost(row: PostRow): Post {
     image: row.image ?? undefined,
     category: row.category ?? undefined,
     likes: row.likes?.[0]?.count ?? 0,
+    commentsCount: row.comments_count?.[0]?.count ?? 0,
+    iLike: false,
     comments: [],
     createdAt: row.created_at,
   }
@@ -42,6 +46,32 @@ function toComment(row: CommentRow): Comment {
     userId: row.user_id,
     content: row.content,
     createdAt: row.created_at,
+  }
+}
+
+async function attachAuthors(comments: Comment[]): Promise<void> {
+  const profilesByUser = await loadProfilesByUserId(
+    comments.map((comment) => comment.userId),
+  )
+
+  for (const comment of comments) {
+    const profile = profilesByUser.get(comment.userId)
+
+    comment.author = profile?.name || undefined
+    comment.authorAvatar = profile?.avatar || undefined
+  }
+}
+
+async function attachPostAuthors(posts: Post[]): Promise<void> {
+  const profilesByUser = await loadProfilesByUserId(
+    posts.map((post) => post.userId),
+  )
+
+  for (const post of posts) {
+    const profile = profilesByUser.get(post.userId)
+
+    post.author = profile?.name || undefined
+    post.authorAvatar = profile?.avatar || undefined
   }
 }
 
@@ -58,10 +88,11 @@ export const postService = {
   async fetchPosts(
     communityId?: string,
     forumOnly = true,
+    userId?: string,
   ): Promise<Post[]> {
     let query = supabase
       .from('posts')
-      .select('*, likes:post_likes(count)')
+      .select('*, likes:post_likes(count), comments_count:comments(count)')
       .order('created_at', { ascending: false })
 
     if (communityId) {
@@ -76,7 +107,29 @@ export const postService = {
     logRequest('fetchPosts', error, data)
     if (error) throw error
 
-    return (data ?? []).map(toPost)
+    const posts = (data ?? []).map(toPost)
+
+    if (posts.length > 0) {
+      await attachPostAuthors(posts)
+    }
+
+    if (userId && posts.length > 0) {
+      const { data: likedRows, error: likesError } = await supabase
+        .from('post_likes')
+        .select('post_id')
+        .eq('user_id', userId)
+
+      logRequest('fetchPosts(liked)', likesError, likedRows)
+      if (!likesError) {
+        const likedIds = new Set((likedRows ?? []).map((row) => row.post_id))
+
+        for (const post of posts) {
+          post.iLike = likedIds.has(post.id)
+        }
+      }
+    }
+
+    return posts
   },
 
   async fetchPost(id: string): Promise<Post> {
@@ -121,7 +174,10 @@ export const postService = {
 
     logRequest('createPost', error, data)
     if (error) throw error
-    return toPost({ ...data, likes: [] })
+
+    const post = toPost({ ...data, likes: [] })
+    await attachPostAuthors([post])
+    return post
   },
 
   async deletePost(id: string): Promise<void> {
@@ -158,7 +214,10 @@ export const postService = {
 
     logRequest('fetchComments', error, data)
     if (error) throw error
-    return (data ?? []).map(toComment)
+
+    const comments = (data ?? []).map(toComment)
+    await attachAuthors(comments)
+    return comments
   },
 
   async addComment(
@@ -174,7 +233,10 @@ export const postService = {
 
     logRequest('addComment', error, data)
     if (error) throw error
-    return toComment(data)
+
+    const comment = toComment(data)
+    await attachAuthors([comment])
+    return comment
   },
 
   async removeComment(commentId: string): Promise<void> {

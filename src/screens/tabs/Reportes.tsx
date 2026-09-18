@@ -1,30 +1,38 @@
-import { FlatList, StyleSheet, Text, View } from 'react-native'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useAppDispatch, useAppSelector } from '../../store/hook'
-import { setReports } from '../../store/slices/reportSlice'
+import { useIsFocused, useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+
+import { useAppSelector } from '../../store/hook'
 import { reportService } from '../../services'
-import { mergeById } from '../../utils/mergeById'
 import ReportCard from '../../components/ReportCard'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
+import { Report } from '../../types'
+import { RootStackParamList } from '../../navigation/StackNavigator'
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>
 
 export const Reportes = () => {
   const { colors } = useTheme()
   const styles = createStyles(colors)
   const insets = useSafeAreaInsets()
-  const reports = useAppSelector((state) => state.report.reports)
+
+  const navigation = useNavigation<NavigationProp>()
+  const isFocused = useIsFocused()
+
   const userId = useAppSelector((state) => state.userProfile.id)
 
-  const dispatch = useAppDispatch()
+  const [reports, setReports] = useState<Report[]>([])
 
   useEffect(() => {
-    if (!userId) return
+    if (!userId || !isFocused) return
 
     const loadReports = async () => {
       try {
         const remoteReports = await reportService.fetchReports(userId)
 
-        dispatch(setReports(mergeById(reports, remoteReports)))
+        setReports(remoteReports)
       } catch (error) {
         console.error(
           '[Reportes] Error al cargar reportes:',
@@ -34,7 +42,7 @@ export const Reportes = () => {
     }
 
     loadReports()
-  }, [userId])
+  }, [userId, isFocused])
 
   return (
     <View
@@ -43,12 +51,12 @@ export const Reportes = () => {
         { paddingTop: insets.top, paddingBottom: insets.bottom },
       ]}
     >
-      <Text style={styles.title}>Mis Reportes</Text>
+      <Text style={styles.title}>Reportes</Text>
 
       {reports.length === 0 ? (
         <View style={styles.empty}>
           <Text style={styles.emptyText}>
-            Aún no hay reportes. Ve a «Reportar problema» para agregar uno.
+            Aún no hay reportes tuyos. Ve a «Reportar problema» para agregar uno.
           </Text>
         </View>
       ) : (
@@ -57,16 +65,26 @@ export const Reportes = () => {
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
           renderItem={({ item }) => (
-            <ReportCard
-              title={item.title}
-              status={item.status}
-              report={item.id}
-              category={item.category}
-              time={new Date(item.createdAt).toLocaleDateString()}
-              location={item.location}
-              onPress={() => {}}
-              variant="expand"
-            />
+            <Pressable
+              onPress={() =>
+                navigation.navigate('ReportDetail', {
+                  reportId: item.id,
+                  communityId: item.communityId,
+                  canManage: false,
+                })
+              }
+            >
+              <ReportCard
+                title={item.title}
+                status={item.status}
+                report={item.id}
+                category={item.category}
+                time={new Date(item.createdAt).toLocaleDateString()}
+                location={item.location}
+                onPress={() => {}}
+                variant="expand"
+              />
+            </Pressable>
           )}
         />
       )}

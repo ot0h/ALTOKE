@@ -1,5 +1,4 @@
 import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
-import Patronato from '@assets/patronato.png'
 import { CustomButton } from '@components'
 import ProfileAvatar from '../../components/ProfileAvatar'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -9,7 +8,9 @@ import { setCommunities } from '../../store/slices/communitySlice'
 import { setReports } from '../../store/slices/reportSlice'
 import { setPosts } from '../../store/slices/postSlice'
 import { updateMemberShip } from '../../store/slices/memberShipSlice'
-import { authService, communityService, membershipService } from '../../services'
+import { authService, avatarService, communityService, membershipService, userProfileService } from '../../services'
+import { updateAvatar } from '../../store/slices/userProfileSlice'
+import * as ImagePicker from 'expo-image-picker'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import SettingsModal from '../modals/SettingsModal'
 import { useEffect, useState } from 'react'
@@ -38,6 +39,7 @@ export const MyProfile = () => {
   const userName = useAppSelector((state) => state.userProfile.name)
   const userEmail = useAppSelector((state) => state.userProfile.email)
   const userId = useAppSelector((state) => state.userProfile.id)
+  const avatar = useAppSelector((state) => state.userProfile.avatar)
 
   const [myCommunities, setMyCommunities] = useState<MyCommunity[]>([])
   const [settingsVisible, setSettingsVisible] = useState(false)
@@ -85,6 +87,43 @@ export const MyProfile = () => {
     loadCommunities()
   }, [userId, isFocused])
 
+  const cambiarFoto = async () => {
+    try {
+      const permission =
+        await ImagePicker.requestMediaLibraryPermissionsAsync()
+
+      if (!permission.granted) {
+        Alert.alert(
+          'Permiso requerido',
+          'Necesitamos acceso a tus fotos para cambiar la imagen de perfil.',
+        )
+        return
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ['images'],
+        selectionLimit: 1,
+        allowsMultipleSelection: false,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.7,
+      })
+
+      if (result.canceled || !result.assets[0]) return
+
+      const uri = result.assets[0].uri
+
+      if (!userId) return
+
+      const url = await avatarService.uploadAvatar(userId, uri)
+      await userProfileService.updateProfile(userId, { avatar: url })
+      dispatch(updateAvatar(url))
+    } catch (error) {
+      console.error('[MyProfile] Error al cambiar la foto:', error)
+      Alert.alert('Error', 'No se pudo actualizar la foto de perfil.')
+    }
+  }
+
   const cerrarSesion = async () => {
     try {
       await authService.signOut()
@@ -109,7 +148,7 @@ export const MyProfile = () => {
     <ScrollView
       contentContainerStyle={[
         styles.container,
-        { paddingTop: insets.top, paddingBottom: insets.bottom },
+        { paddingTop: insets.top, paddingBottom: 90, backgroundColor: colors.background},
       ]}
       showsVerticalScrollIndicator={false}
     >
@@ -120,7 +159,10 @@ export const MyProfile = () => {
       {/* FOTO */}
 
       <View style={styles.profileSection}>
-        <ProfileAvatar image={Patronato} onEdit={() => { }} />
+        <ProfileAvatar
+          image={avatar ? { uri: avatar } : require('@assets/default-avatar.png')}
+          onEdit={cambiarFoto}
+        />
 
         <Text style={styles.name}>{userName || 'Invitado'}</Text>
 
