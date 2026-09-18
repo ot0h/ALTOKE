@@ -306,10 +306,7 @@ export const ReportDetail = ({ route }: Props): JSX.Element => {
                           hitSlop={8}
                           onPress={() => eliminarNota(note.id)}
                         >
-                          <Trash2
-                            size={15}
-                            color={colors.textSecondary}
-                          />
+                          <Trash2 size={15} color={colors.textSecondary} />
                         </Pressable>
                       )}
                     </View>
@@ -329,10 +326,7 @@ export const ReportDetail = ({ route }: Props): JSX.Element => {
 
       {canManage && notesAvailable && (
         <View
-          style={[
-            styles.noteInputRow,
-            { paddingBottom: insets.bottom + 8 },
-          ]}
+          style={[styles.noteInputRow, { paddingBottom: insets.bottom + 8 }]}
         >
           <TextInput
             style={styles.noteInput}
@@ -445,6 +439,7 @@ const createStyles = (colors: ThemeColors) =>
 
     foto: {
       width: '48%',
+      height: '48%',
       aspectRatio: 4 / 3,
       borderRadius: 18,
       backgroundColor: colors.surface,
