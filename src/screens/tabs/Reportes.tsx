@@ -13,13 +13,16 @@ export const Reportes = () => {
   const styles = createStyles(colors)
   const insets = useSafeAreaInsets()
   const reports = useAppSelector((state) => state.report.reports)
+  const userId = useAppSelector((state) => state.userProfile.id)
 
   const dispatch = useAppDispatch()
 
   useEffect(() => {
+    if (!userId) return
+
     const loadReports = async () => {
       try {
-        const remoteReports = await reportService.fetchReports()
+        const remoteReports = await reportService.fetchReports(userId)
 
         dispatch(setReports(mergeById(reports, remoteReports)))
       } catch (error) {
@@ -31,7 +34,7 @@ export const Reportes = () => {
     }
 
     loadReports()
-  }, [])
+  }, [userId])
 
   return (
     <View

@@ -1,4 +1,4 @@
-import { JSX, useEffect, useState } from 'react'
+import { JSX } from 'react'
 import {
   ScrollView,
   StyleSheet,
@@ -7,48 +7,32 @@ import {
   Pressable,
   Image,
 } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
 
 import NoticiaImage from '@assets/noticia.svg'
 import FIXYICON from '@assets/FIXYLOGIN.svg'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { MaterialIcons, Octicons } from '@expo/vector-icons'
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '../navigation/StackNavigator'
-import { postService } from '../services'
-import { Post } from '../types'
+import { useAppSelector } from '../store/hook'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
-type NoticiaRouteProp = RouteProp<RootStackParamList, 'Noticia'>
+type Props = NativeStackScreenProps<RootStackParamList, 'Noticia'>
 
-export const Noticia = (): JSX.Element => {
+export const Noticia = ({ route, navigation }: Props): JSX.Element => {
   const { colors } = useTheme()
   const styles = createStyles(colors)
 
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+  const { noticeId } = route.params
 
-  const route = useRoute<NoticiaRouteProp>()
+  const user = useAppSelector((state) => state.userProfile)
 
-  const { postId } = route.params
+  const notice = useAppSelector((state) =>
+    state.news.news.find((news) => news.id === noticeId),
+  )
 
-  const [post, setPost] = useState<Post | null>(null)
-
-  useEffect(() => {
-    const loadPost = async () => {
-      try {
-        const fetchedPost = await postService.fetchPost(postId)
-        setPost(fetchedPost)
-      } catch (error) {
-        console.error('[Noticia] Error al cargar la noticia:', error)
-      }
-    }
-
-    loadPost()
-  }, [postId])
-
-  const paragraphs = (post?.content ?? '').split(/\n+/).filter(Boolean)
+  const paragraphs = (notice?.content ?? '').split(/\n+/).filter(Boolean)
 
   return (
     <SafeAreaView style={styles.container}>
@@ -70,10 +54,10 @@ export const Noticia = (): JSX.Element => {
 
         {/* IMAGEN */}
         <View style={styles.imageContainer}>
-          {post?.image ? (
+          {notice?.image ? (
             <Image
               style={styles.image}
-              source={{ uri: post.image }}
+              source={{ uri: notice.image }}
               resizeMode="cover"
             />
           ) : (
@@ -89,7 +73,7 @@ export const Noticia = (): JSX.Element => {
         <View style={styles.content}>
           {/* TITULO */}
           <Text style={styles.title}>
-            {post?.title || 'Noticia'}
+            {notice?.title || 'Noticia'}
           </Text>
 
           {/* AUTOR */}
@@ -98,13 +82,15 @@ export const Noticia = (): JSX.Element => {
               <FIXYICON width={34} height={34} />
 
               <View style={styles.authorInfo}>
-                <Text style={styles.textAuthor}>Administración Al Toke</Text>
+                <Text style={styles.textAuthor}>
+                  {user.name || 'Administración Al Toke'}
+                </Text>
 
                 <View style={styles.detailsRow}>
                   <Text style={styles.textDetails}>
-                    {post?.createdAt
+                    {notice?.createdAt
                       ? `Publicado el ${new Date(
-                          post.createdAt,
+                          notice.createdAt,
                         ).toLocaleDateString()}`
                       : 'Publicado recientemente'}
                   </Text>
@@ -112,7 +98,7 @@ export const Noticia = (): JSX.Element => {
                   <Octicons name="dot-fill" size={8} color={colors.textSecondary} />
 
                   <Text style={styles.textDetails}>
-                    Lectura: {Math.max(1, Math.ceil((post?.content ?? '').length / 700))} min
+                    Lectura: {Math.max(1, Math.ceil((notice?.content ?? '').length / 700))} min
                   </Text>
                 </View>
               </View>

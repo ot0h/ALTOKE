@@ -40,11 +40,15 @@ export type CreateReportInput = {
 }
 
 export const reportService = {
-  async fetchReports(communityId?: string): Promise<Report[]> {
+  async fetchReports(userId?: string, communityId?: string): Promise<Report[]> {
     let query = supabase
       .from('reports')
       .select('*')
       .order('created_at', { ascending: false })
+
+    if (userId) {
+      query = query.eq('user_id', userId)
+    }
 
     if (communityId) {
       query = query.eq('community_id', communityId)

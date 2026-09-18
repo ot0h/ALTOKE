@@ -5,6 +5,7 @@ import memberShipReducers from './slices/memberShipSlice'
 import reportReducers from './slices/reportSlice'
 import postReducers from './slices/postSlice'
 import categoryReducers from './slices/categorySlice'
+import newsReducers from './slices/newsSlice'
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     report: reportReducers,
     post: postReducers,
     category: categoryReducers,
+    news: newsReducers,
   },
 })
 

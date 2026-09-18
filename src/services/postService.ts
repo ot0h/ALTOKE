@@ -55,7 +55,10 @@ export type CreatePostInput = {
 }
 
 export const postService = {
-  async fetchPosts(communityId?: string): Promise<Post[]> {
+  async fetchPosts(
+    communityId?: string,
+    forumOnly = true,
+  ): Promise<Post[]> {
     let query = supabase
       .from('posts')
       .select('*, likes:post_likes(count)')
@@ -63,6 +66,10 @@ export const postService = {
 
     if (communityId) {
       query = query.eq('community_id', communityId)
+    }
+
+    if (forumOnly) {
+      query = query.is('category', null)
     }
 
     const { data, error } = await query

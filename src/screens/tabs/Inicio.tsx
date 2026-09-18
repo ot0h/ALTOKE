@@ -34,7 +34,7 @@ export const Inicio = (): JSX.Element => {
       try {
         const [comms, reps] = await Promise.all([
           communityService.fetchCommunitiesByUser(userId),
-          reportService.fetchReports(),
+          reportService.fetchReports(userId),
         ])
         dispatch(setCommunities(comms))
         dispatch(setReports(reps))
@@ -99,16 +99,24 @@ export const Inicio = (): JSX.Element => {
         <Text style={styles.sectionTitle}>Reportes Recientes</Text>
       </View>
 
-      {reports.map((item) => (
-        <ReportCard
-          key={item.id}
-          title={item.title}
-          status={item.status}
-          report={item.id}
-          category={item.category}
-          onPress={() => {}}
-        />
-      ))}
+      {reports
+        .filter((report) => report.status !== 'resuelto')
+        .map((item) => (
+          <ReportCard
+            key={item.id}
+            title={item.title}
+            status={item.status}
+            report={item.id}
+            category={item.category}
+            onPress={() => {}}
+          />
+        ))}
+
+      {reports.every((report) => report.status === 'resuelto') && reports.length > 0 && (
+        <Text style={styles.noActiveText}>
+          No tienes reportes activos.
+        </Text>
+      )}
 
       <JoinCommunityModal
         visible={joinModalVisible}
@@ -182,5 +190,11 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: 14,
       color: colors.primary,
       fontWeight: '600',
+    },
+    noActiveText: {
+      fontSize: 14,
+      color: colors.textSecondary,
+      textAlign: 'center',
+      paddingVertical: 12,
     },
   })

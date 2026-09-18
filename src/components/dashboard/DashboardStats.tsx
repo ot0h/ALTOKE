@@ -45,7 +45,7 @@ export const DashboardStats = ({ communityId }: Props): JSX.Element => {
       try {
         const [fetchedMembers, fetchedReports] = await Promise.all([
           membershipService.fetchCommunityMembers(communityId),
-          reportService.fetchReports(communityId),
+          reportService.fetchReports(undefined, communityId),
         ])
 
         setMembers(fetchedMembers)

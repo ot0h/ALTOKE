@@ -68,8 +68,8 @@ export const CommunityHome = ({
                 }
 
                 const [fetchedPosts, fetchedReports] = await Promise.all([
-                    postService.fetchPosts(communityId),
-                    reportService.fetchReports(communityId),
+                    postService.fetchPosts(communityId, true),
+                    reportService.fetchReports(undefined, communityId),
                 ])
 
                 const mergedPosts = mergeById(

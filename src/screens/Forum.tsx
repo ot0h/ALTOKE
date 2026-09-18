@@ -59,7 +59,7 @@ export const Forum = (): JSX.Element => {
   useEffect(() => {
     const loadPosts = async () => {
       try {
-        const remotePosts = await postService.fetchPosts()
+        const remotePosts = await postService.fetchPosts(undefined, true)
 
         dispatch(
           setPosts(mergeById(posts, remotePosts)),

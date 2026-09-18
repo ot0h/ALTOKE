@@ -28,7 +28,7 @@ export type RootStackParamList = {
   ManageNotices: {communityId: string}
   ManageDashboard: {communityId: string}
   Members: {communityId: string}
-  Noticia: {postId: string}
+  Noticia: {noticeId: string}
   Forum: {communityId: string}
   NuevaPublicacion: {communityId: string}
 }

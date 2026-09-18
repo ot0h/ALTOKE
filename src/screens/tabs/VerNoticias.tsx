@@ -1,23 +1,28 @@
-import { useEffect, useState } from 'react'
+import { JSX, useEffect, useState } from 'react'
 import { FlatList, Image, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useNavigation } from '@react-navigation/native'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import CommunityCard from '../../components/CommunityCard'
 import { CategoryTag } from '../../components/CategoryTag'
 
 import Patronato from '@assets/patronato.png'
 import SearchBar from '../../components/SearchBar'
 import { useAppDispatch, useAppSelector } from '../../store/hook'
-import { setPosts } from '../../store/slices/postSlice'
-import { postService } from '../../services'
+import { setNews } from '../../store/slices/newsSlice'
+import { setCommunities } from '../../store/slices/communitySlice'
+import { newsService, communityService } from '../../services'
+import { store } from '../../store'
 import { mergeById } from '../../utils/mergeById'
-import { RootStackParamList } from '../../navigation/StackNavigator'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { RootStackParamList } from '../../navigation/StackNavigator'
 
 type Category = 'todos' | 'avisos' | 'eventos' | 'mantenimiento'
 
-export const VerNoticias = () => {
+type Props = {
+  navigation: NativeStackNavigationProp<RootStackParamList>
+}
+
+export const VerNoticias = ({ navigation }: Props): JSX.Element => {
   const { colors } = useTheme()
   const styles = createStyles(colors)
   const insets = useSafeAreaInsets()
@@ -25,18 +30,31 @@ export const VerNoticias = () => {
   const [selectedCategory, setSelectedCategory] = useState<Category>('todos')
   const [search, setSearch] = useState('')
 
-  const notices = useAppSelector((state) => state.post.posts)
-
   const dispatch = useAppDispatch()
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>()
+  const userId = useAppSelector((state) => state.userProfile.id)
+  const communities = useAppSelector((state) => state.community.communities)
+  const allNews = useAppSelector((state) => state.news.news)
 
   useEffect(() => {
-    const loadPosts = async () => {
-      try {
-        const remotePosts = await postService.fetchPosts()
+    if (!userId) return
 
-        dispatch(setPosts(mergeById(notices, remotePosts)))
+    const loadNews = async () => {
+      try {
+        let communityIds = communities.map((community) => community.id)
+
+        if (communityIds.length === 0) {
+          const comms = await communityService.fetchCommunitiesByUser(userId)
+          dispatch(setCommunities(comms))
+          communityIds = comms.map((community) => community.id)
+        }
+
+        const remoteNews = await newsService.fetchNews(communityIds)
+
+        dispatch(
+          setNews(
+            mergeById(store.getState().news.news, remoteNews),
+          ),
+        )
       } catch (error) {
         console.error(
           '[VerNoticias] Error al cargar noticias:',
@@ -45,32 +63,36 @@ export const VerNoticias = () => {
       }
     }
 
-    loadPosts()
-  }, [])
+    loadNews()
+  }, [dispatch, userId])
 
   const categories: {
     text: string
     value: Category
   }[] = [
-    {
-      text: 'Todos',
-      value: 'todos',
-    },
-    {
-      text: 'Avisos',
-      value: 'avisos',
-    },
-    {
-      text: 'Eventos',
-      value: 'eventos',
-    },
-    {
-      text: 'Mantenimiento',
-      value: 'mantenimiento',
-    },
-  ]
-  //FILTRADO POR ETIQUETA
-  const filteredNotices = notices.filter((notice) => {
+      {
+        text: 'Todos',
+        value: 'todos',
+      },
+      {
+        text: 'Avisos',
+        value: 'avisos',
+      },
+      {
+        text: 'Eventos',
+        value: 'eventos',
+      },
+      {
+        text: 'Mantenimiento',
+        value: 'mantenimiento',
+      },
+    ]
+
+  //SOLO NOTICIAS PUBLICADAS DE LAS COMUNIDADES DEL USUARIO
+  const filteredNotices = allNews.filter((notice) => {
+    const matchesStatus = notice.status === 'publicada'
+
+    //FILTRADO POR ETIQUETA
     const matchesCategory =
       selectedCategory === 'todos' || notice.category === selectedCategory
 
@@ -79,7 +101,7 @@ export const VerNoticias = () => {
       notice.title.toLowerCase().includes(search.toLowerCase()) ||
       (notice.content ?? '').toLowerCase().includes(search.toLowerCase())
 
-    return matchesCategory && matchesSearch
+    return matchesStatus && matchesCategory && matchesSearch
   })
 
   return (
@@ -116,10 +138,10 @@ export const VerNoticias = () => {
       </View>
 
       {/* NOTICIAS */}
-      {notices.length === 0 ? (
+      {filteredNotices.length === 0 ? (
         <View style={styles.empty}>
           <Text style={styles.emptyText}>
-            Aún no hay noticias. Publica la primera desde «Nueva Noticia».
+            Aún no hay noticias en tus comunidades.
           </Text>
         </View>
       ) : (
@@ -138,11 +160,9 @@ export const VerNoticias = () => {
               }
               category={item.category}
               variant="notices"
-              onPress={() =>
-                navigation
-                  .getParent<NativeStackNavigationProp<RootStackParamList>>()
-                  ?.navigate('Noticia', { postId: item.id })
-              }
+              onPress={() => navigation.getParent()?.navigate('Noticia', {
+                noticeId: item.id,
+              })}
             />
           )}
           contentContainerStyle={styles.list}

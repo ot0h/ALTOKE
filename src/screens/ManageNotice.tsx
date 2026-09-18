@@ -1,57 +1,63 @@
-import { JSX, useEffect, useMemo, useState } from 'react'
-import { Alert, FlatList, StyleSheet, Text, View } from 'react-native'
+import { JSX, useEffect, useMemo } from 'react'
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
 import { CustomButton } from '@components'
 import ManageNoticeCard from '../components/ManageNoticeCard'
 import Patronato from '@assets/patronato.png'
-import { ArrowLeft } from 'lucide-react-native'
-import { Pressable } from 'react-native'
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { RootStackParamList } from '../navigation/StackNavigator'
+import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import { store } from '../store'
 import { useAppDispatch, useAppSelector } from '../store/hook'
-import { removePost, setPosts } from '../store/slices/postSlice'
-import { postService } from '../services'
+import { removeNews, setNews } from '../store/slices/newsSlice'
+import { newsService } from '../services'
 import { mergeById } from '../utils/mergeById'
-import { ThemeColors, useTheme } from '@contexts/ThemeContext'
+import { RootStackParamList } from '../navigation/StackNavigator'
 
-type Props = NativeStackScreenProps<RootStackParamList, 'ManageNotices'>
+type Props = NativeStackScreenProps<
+  RootStackParamList,
+  'ManageNotices'
+>
 
-export const ManageNotices = ({ navigation, route }: Props): JSX.Element => {
+export const ManageNotices = ({ route, navigation }: Props): JSX.Element => {
+  const { communityId } = route.params
+
   const { colors } = useTheme()
   const styles = createStyles(colors)
   const insets = useSafeAreaInsets()
+
   const dispatch = useAppDispatch()
 
-  const { communityId } = route.params
+  const allNews = useAppSelector((state) => state.news.news)
 
-  const allPosts = useAppSelector((state) => state.post.posts)
-
-  const notices = useMemo(
-    () => allPosts.filter((post) => post.communityId === communityId),
-    [allPosts, communityId],
+  const news = useMemo(
+    () =>
+      allNews.filter((notice) => notice.communityId === communityId),
+    [allNews, communityId],
   )
 
   useEffect(() => {
     const loadNotices = async () => {
       try {
-        const remotePosts = await postService.fetchPosts(communityId)
+        const remoteNews = await newsService.fetchNewsByCommunity(communityId)
 
         dispatch(
-          setPosts(
-            mergeById(store.getState().post.posts, remotePosts),
+          setNews(
+            mergeById(store.getState().news.news, remoteNews),
           ),
         )
       } catch (error) {
-        console.error('[ManageNotices] Error al cargar noticias:', error)
+        console.error(
+          '[ManageNotices] Error al cargar noticias:',
+          error,
+        )
       }
     }
 
     loadNotices()
-  }, [communityId])
+  }, [dispatch, communityId])
 
-  const eliminarNoticia = (postId: string) => {
+  const eliminarNoticia = (noticeId: string) => {
     Alert.alert(
       'Eliminar noticia',
       '¿Seguro que deseas eliminar esta noticia?',
@@ -62,10 +68,13 @@ export const ManageNotices = ({ navigation, route }: Props): JSX.Element => {
           style: 'destructive',
           onPress: async () => {
             try {
-              await postService.deletePost(postId)
-              dispatch(removePost(postId))
+              await newsService.deleteNews(noticeId)
+              dispatch(removeNews(noticeId))
             } catch (error) {
-              console.error('[ManageNotices] Error al eliminar:', error)
+              console.error(
+                '[ManageNotices] Error al eliminar:',
+                error,
+              )
             }
           },
         },
@@ -84,57 +93,59 @@ export const ManageNotices = ({ navigation, route }: Props): JSX.Element => {
       ]}
     >
       <View style={styles.header}>
-        <Pressable
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <ArrowLeft size={22} color={colors.text} />
-        </Pressable>
-
         <Text style={styles.title}>Gestión noticias</Text>
 
         <View style={styles.createButton}>
           <CustomButton
             text="+  Crear"
             variant="secondary"
-            onPress={() => navigation.navigate('NuevaNoticia', { communityId })}
+            onPress={() =>
+              navigation.navigate('NuevaNoticia', {
+                communityId,
+              })
+            }
           />
         </View>
       </View>
 
-      <FlatList
-        data={notices}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.list}
+      >
+        {news.map((notice) => (
           <ManageNoticeCard
-            title={item.title}
+            key={notice.id}
+            title={notice.title}
             time={
-              item.createdAt
-                ? new Date(item.createdAt).toLocaleDateString()
+              notice.createdAt
+                ? new Date(notice.createdAt).toLocaleDateString()
                 : 'Reciente'
             }
-            status="publicada"
+            status={notice.status}
             image={
-              item.image
-                ? { uri: item.image }
+              notice.image
+                ? { uri: notice.image }
                 : Patronato
             }
             onEdit={() =>
-              navigation.navigate('NuevaNoticia', { communityId })
+              navigation.navigate('NuevaNoticia', {
+                communityId,
+              })
             }
-            onDelete={() => eliminarNoticia(item.id)}
+            onDelete={() => {
+              eliminarNoticia(notice.id)
+            }}
           />
-        )}
-        contentContainerStyle={styles.list}
-        showsVerticalScrollIndicator={false}
-        ListEmptyComponent={
+        ))}
+
+        {news.length === 0 && (
           <View style={styles.empty}>
             <Text style={styles.emptyText}>
               Aún no hay noticias para esta comunidad.
             </Text>
           </View>
-        }
-      />
+        )}
+      </ScrollView>
     </View>
   )
 }
@@ -151,24 +162,10 @@ const createStyles = (colors: ThemeColors) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      gap: 12,
       marginBottom: 20,
-      marginHorizontal: 7,
-    },
-
-    backButton: {
-      width: 38,
-      height: 38,
-      borderRadius: 19,
-      backgroundColor: colors.surface,
-      borderWidth: 1,
-      borderColor: colors.border,
-      alignItems: 'center',
-      justifyContent: 'center',
     },
 
     title: {
-      flex: 1,
       fontFamily: 'Inter_600SemiBold',
       fontSize: 28,
       color: colors.text,
