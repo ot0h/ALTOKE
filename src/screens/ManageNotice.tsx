@@ -1,5 +1,12 @@
 import { JSX, useEffect, useMemo } from 'react'
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native'
+import {
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
@@ -13,11 +20,9 @@ import { removeNews, setNews } from '../store/slices/newsSlice'
 import { newsService } from '../services'
 import { mergeById } from '../utils/mergeById'
 import { RootStackParamList } from '../navigation/StackNavigator'
+import { ArrowLeft } from 'lucide-react-native'
 
-type Props = NativeStackScreenProps<
-  RootStackParamList,
-  'ManageNotices'
->
+type Props = NativeStackScreenProps<RootStackParamList, 'ManageNotices'>
 
 export const ManageNotices = ({ route, navigation }: Props): JSX.Element => {
   const { communityId } = route.params
@@ -31,8 +36,7 @@ export const ManageNotices = ({ route, navigation }: Props): JSX.Element => {
   const allNews = useAppSelector((state) => state.news.news)
 
   const news = useMemo(
-    () =>
-      allNews.filter((notice) => notice.communityId === communityId),
+    () => allNews.filter((notice) => notice.communityId === communityId),
     [allNews, communityId],
   )
 
@@ -41,16 +45,9 @@ export const ManageNotices = ({ route, navigation }: Props): JSX.Element => {
       try {
         const remoteNews = await newsService.fetchNewsByCommunity(communityId)
 
-        dispatch(
-          setNews(
-            mergeById(store.getState().news.news, remoteNews),
-          ),
-        )
+        dispatch(setNews(mergeById(store.getState().news.news, remoteNews)))
       } catch (error) {
-        console.error(
-          '[ManageNotices] Error al cargar noticias:',
-          error,
-        )
+        console.error('[ManageNotices] Error al cargar noticias:', error)
       }
     }
 
@@ -71,10 +68,7 @@ export const ManageNotices = ({ route, navigation }: Props): JSX.Element => {
               await newsService.deleteNews(noticeId)
               dispatch(removeNews(noticeId))
             } catch (error) {
-              console.error(
-                '[ManageNotices] Error al eliminar:',
-                error,
-              )
+              console.error('[ManageNotices] Error al eliminar:', error)
             }
           },
         },
@@ -93,6 +87,12 @@ export const ManageNotices = ({ route, navigation }: Props): JSX.Element => {
       ]}
     >
       <View style={styles.header}>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <ArrowLeft size={20} color={colors.text} />
+        </Pressable>
         <Text style={styles.title}>Gestión noticias</Text>
 
         <View style={styles.createButton}>
@@ -122,11 +122,7 @@ export const ManageNotices = ({ route, navigation }: Props): JSX.Element => {
                 : 'Reciente'
             }
             status={notice.status}
-            image={
-              notice.image
-                ? { uri: notice.image }
-                : Patronato
-            }
+            image={notice.image ? { uri: notice.image } : Patronato}
             onEdit={() =>
               navigation.navigate('NuevaNoticia', {
                 communityId,
@@ -190,5 +186,16 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: 14,
       color: colors.textSecondary,
       textAlign: 'center',
+    },
+
+    backButton: {
+      width: 38,
+      height: 38,
+      borderRadius: 19,
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
   })
