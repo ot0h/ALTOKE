@@ -5,15 +5,21 @@ type Props = {
   text: string
   onPress: () => void
   visible: boolean
+  onCancel?: () => void
 }
 
-export default function Alert({ text, onPress, visible = false }: Props) {
+export default function Alert({
+  text,
+  onPress,
+  visible = false,
+  onCancel,
+}: Props) {
   const { colors } = useTheme()
   const styles = createStyles(colors)
 
   return (
     <Modal
-      visible = {visible}
+      visible={visible}
       transparent
       animationType="fade"
     >
@@ -23,12 +29,23 @@ export default function Alert({ text, onPress, visible = false }: Props) {
             {text}
           </Text>
 
+          {onCancel && (
+            <Pressable
+              style={styles.cancelButton}
+              onPress={onCancel}
+            >
+              <Text style={styles.cancelText}>
+                Cancelar
+              </Text>
+            </Pressable>
+          )}
+
           <Pressable
             style={styles.button}
             onPress={onPress}
           >
             <Text style={styles.buttonText}>
-              Aceptar
+              {onCancel ? 'Eliminar' : 'Aceptar'}
             </Text>
           </Pressable>
         </View>
@@ -75,4 +92,18 @@ const createStyles = (colors: ThemeColors) =>
       fontSize: 14,
       color: colors.surface,
     },
+    cancelButton: {
+  paddingHorizontal: 28,
+  paddingVertical: 10,
+  borderRadius: 10,
+  borderWidth: 1,
+  borderColor: colors.border,
+  alignItems: 'center',
+},
+
+cancelText: {
+  fontFamily: 'Inter_600SemiBold',
+  fontSize: 14,
+  color: colors.text,
+},
   })

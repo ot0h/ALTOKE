@@ -47,13 +47,13 @@ export default function ReportCard({
 
         {isContract ? (
           <Text style={styles.subtitle}>
-            #{report} • {time}
+            #{report.slice(0,8)} • {time ? new Date(time).toLocaleString('es-HN') : ''}
           </Text>
         ) : (
           //SECCION EXPANDIDA
           <>
             <Text style={styles.subtitle}>
-              #{report} • {time}
+              #{report.slice(0,8)} • {time}
             </Text>
 
             <View style={styles.details}>
@@ -122,7 +122,7 @@ const createStyles = (colors: ThemeColors) =>
       fontFamily: 'Inter_400Regular',
       fontSize: 13,
       color: colors.textSecondary,
-      flexShrink: 1,
+      
     },
 
     details: {

@@ -1,5 +1,5 @@
-import { JSX } from 'react'
-import { Pressable, ScrollView,   StyleSheet, Text, View,} from 'react-native'
+import { JSX, useState } from 'react'
+import { Alert, Pressable, ScrollView,   StyleSheet, Text, View,} from 'react-native'
 import {  ArrowLeft,BarChart3,FileText, MessageCircle,Users,Flag,} from 'lucide-react-native'
 import {SafeAreaView,useSafeAreaInsets,} from 'react-native-safe-area-context'
 import { RouteProp, useNavigation,useRoute,} from '@react-navigation/native'
@@ -7,8 +7,12 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
 import { ManageOptionCard } from '../components/ManageOptionCard'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
-import { useAppSelector } from '../store/hook'
+import { useAppDispatch, useAppSelector } from '../store/hook'
 import { RootStackParamList } from '@navigation/StackNavigator'
+import { CustomButton } from '@components'
+import { communityService } from '../services'
+import ConfirmAlert from './modals/Alert'
+import { removeCommunity } from '../store/slices/communitySlice'
 
 type ManageCommunityRouteProp = RouteProp<
   RootStackParamList,
@@ -30,6 +34,24 @@ export const ManageCommunity = (): JSX.Element => {
   const route = useRoute<ManageCommunityRouteProp>()
 
   const { communityId } = route.params
+  const [confirmModalVisible, setConfirmModalVisible] = useState(false)
+  const dispatch = useAppDispatch()
+
+  const deleteCommunity = async () => {
+    setConfirmModalVisible(false)
+
+    try {
+      await communityService.deleteCommunity(communityId)
+      dispatch(removeCommunity(communityId))
+      navigation.goBack()
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'No se pudo eliminar la comunidad'
+      Alert.alert('Error', message)
+    }
+  }
 
   const community = useAppSelector((state) =>
     state.community.communities.find(
@@ -157,8 +179,17 @@ export const ManageCommunity = (): JSX.Element => {
                 />
               ))}
             </View>
+            <CustomButton
+            text='Eliminar comunidad'
+            onPress={()=>{setConfirmModalVisible(true)}}
+            variant='secondary'
+            />
           </View>
-
+              <ConfirmAlert
+              text='Estas por eliminar la comunidad'
+              visible= {confirmModalVisible}
+              onPress={deleteCommunity}
+              onCancel={()=>{setConfirmModalVisible(false)}}/>
         </View>
       </ScrollView>
     </SafeAreaView>

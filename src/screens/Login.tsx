@@ -26,6 +26,7 @@ export const Login = ({ navigation }: Props): JSX.Element => {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const dispatch = useAppDispatch()
+  const [errorMessage, setErrorMessage] = useState('')
 
   const handleLogin = async () => {
     if (loading) return
@@ -43,9 +44,12 @@ export const Login = ({ navigation }: Props): JSX.Element => {
         routes: [{ name: 'MainTabs', params: { email: profile.email } }],
       })
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'Error al iniciar sesión'
-      Alert.alert('Error', message)
+
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : 'Ocurrió un error'
+      )
     } finally {
       setLoading(false)
     }
@@ -86,12 +90,14 @@ export const Login = ({ navigation }: Props): JSX.Element => {
                 onChangeText={setPassword}
                 variant="password"
               />
+              <Text style= {styles.errorText}>{errorMessage}</Text>
             </View>
             <View style={{ width: 272 }}>
               <CustomButton
                 text="Iniciar Sesión"
                 onPress={handleLogin}
                 variant="primary"
+                loading= {loading}
               />
             </View>
 
@@ -147,20 +153,26 @@ const createStyles = (colors: ThemeColors) =>
       marginBottom: '25%',
     },
 
-  containerInputs: {
-    display: 'flex',
-    gap: 25,
-  },
+    containerInputs: {
+      display: 'flex',
+      gap: 25,
+    },
 
-  textFont: {
-    fontFamily: 'MontserratAlternates_600SemiBold',
-  },
+    textFont: {
+      fontFamily: 'MontserratAlternates_600SemiBold',
+    },
 
-  fixy: {
-    position: 'relative',
-    top: 32,
-    alignSelf: 'center',
-    zIndex: 20,
-    margin: 0,
-  },
-})
+    fixy: {
+      position: 'relative',
+      top: 32,
+      alignSelf: 'center',
+      zIndex: 20,
+      margin: 0,
+    },
+    errorText: {
+  color: colors.error,
+  fontSize: 14,
+  textAlign: 'center',
+  marginTop: 8,
+},
+  })
