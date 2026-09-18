@@ -81,7 +81,7 @@ export default function ForumPostCard({
           </Text>
 
           <Text style={styles.time}>
-            {createdAt}
+            {createdAt ? new Date(createdAt).toLocaleString('es-HN') : ''}
           </Text>
         </View>
       </View>

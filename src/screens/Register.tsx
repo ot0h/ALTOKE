@@ -24,6 +24,7 @@ export const Register = ({ navigation }: Props): JSX.Element => {
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
   const [loading, setLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
   const handleRegister = async () => {
     if (loading) return
@@ -36,9 +37,11 @@ export const Register = ({ navigation }: Props): JSX.Element => {
       Alert.alert('Éxito', 'Cuenta creada. Ahora inicia sesión.')
       navigation.reset({ index: 0, routes: [{ name: 'Login' }] })
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : 'Error al registrarse'
-      Alert.alert('Error', message)
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : 'Ocurrió un error'
+      )
     } finally {
       setLoading(false)
     }
@@ -85,6 +88,7 @@ export const Register = ({ navigation }: Props): JSX.Element => {
                 onChangeText={setPassword}
                 variant="password"
               />
+            <Text style={styles.errorText}>{errorMessage}</Text>
             </View>
 
             <View style={{ width: 272 }}>
@@ -92,6 +96,7 @@ export const Register = ({ navigation }: Props): JSX.Element => {
                 text="Registrarse"
                 onPress={handleRegister}
                 variant="primary"
+                loading = {loading}
               />
             </View>
 
@@ -161,4 +166,10 @@ const createStyles = (colors: ThemeColors) =>
     zIndex: 20,
     margin: 0,
   },
+      errorText: {
+  color: colors.error,
+  fontSize: 14,
+  textAlign: 'center',
+  marginTop: 8,
+},
 })
