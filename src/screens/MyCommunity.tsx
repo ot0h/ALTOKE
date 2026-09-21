@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native'
-import CommunityCard from '../components/CommunityCard'
+import { CommunityCard } from '@components'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import { MaterialIcons } from '@expo/vector-icons'
@@ -17,8 +17,15 @@ export const MyCommunity = ({ navigation }: Props) => {
   return (
     <SafeAreaView style={styles.safearea}>
       <ScrollView>
-        <Pressable style={styles.backButton} onPress={() => navigation.goBack()}>
-          <MaterialIcons size={25} name="arrow-back" color={colors.textSecondary} />
+        <Pressable
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <MaterialIcons
+            size={25}
+            name="arrow-back"
+            color={colors.textSecondary}
+          />
         </Pressable>
         <View style={styles.container}>
           <View>

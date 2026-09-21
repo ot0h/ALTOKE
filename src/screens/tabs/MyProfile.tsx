@@ -1,4 +1,11 @@
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import {
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 import { CustomButton } from '@components'
 import ProfileAvatar from '../../components/ProfileAvatar'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -8,7 +15,13 @@ import { setCommunities } from '../../store/slices/communitySlice'
 import { setReports } from '../../store/slices/reportSlice'
 import { setPosts } from '../../store/slices/postSlice'
 import { updateMemberShip } from '../../store/slices/memberShipSlice'
-import { authService, avatarService, communityService, membershipService, userProfileService } from '../../services'
+import {
+  authService,
+  avatarService,
+  communityService,
+  membershipService,
+  userProfileService,
+} from '../../services'
 import { updateAvatar } from '../../store/slices/userProfileSlice'
 import * as ImagePicker from 'expo-image-picker'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
@@ -61,9 +74,7 @@ export const MyProfile = () => {
 
         const byId = new Map<string, 'Administrador' | 'Miembro'>()
 
-        owned.forEach((community) =>
-          byId.set(community.id, 'Administrador'),
-        )
+        owned.forEach((community) => byId.set(community.id, 'Administrador'))
 
         memberships.forEach((membership: MemberShip) =>
           byId.set(
@@ -89,8 +100,7 @@ export const MyProfile = () => {
 
   const cambiarFoto = async () => {
     try {
-      const permission =
-        await ImagePicker.requestMediaLibraryPermissionsAsync()
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync()
 
       if (!permission.granted) {
         Alert.alert(
@@ -137,9 +147,7 @@ export const MyProfile = () => {
       navigation.reset({ index: 0, routes: [{ name: 'Login' }] })
     } catch (error) {
       const message =
-        error instanceof Error
-          ? error.message
-          : 'No se pudo cerrar la sesión'
+        error instanceof Error ? error.message : 'No se pudo cerrar la sesión'
       Alert.alert('Error', message)
     }
   }
@@ -148,7 +156,11 @@ export const MyProfile = () => {
     <ScrollView
       contentContainerStyle={[
         styles.container,
-        { paddingTop: insets.top, paddingBottom: 90, backgroundColor: colors.background},
+        {
+          paddingTop: insets.top,
+          paddingBottom: 90,
+          backgroundColor: colors.background,
+        },
       ]}
       showsVerticalScrollIndicator={false}
     >
@@ -160,7 +172,9 @@ export const MyProfile = () => {
 
       <View style={styles.profileSection}>
         <ProfileAvatar
-          image={avatar ? { uri: avatar } : require('@assets/default-avatar.png')}
+          image={
+            avatar ? { uri: avatar } : require('@assets/default-avatar.png')
+          }
           onEdit={cambiarFoto}
         />
 
@@ -196,14 +210,22 @@ export const MyProfile = () => {
               {community.role === 'Administrador' ? (
                 <Pressable
                   style={styles.manageButton}
-                  onPress={() => navigation.navigate('ManageCommunity', { communityId: community.id })}
+                  onPress={() =>
+                    navigation.navigate('ManageCommunity', {
+                      communityId: community.id,
+                    })
+                  }
                 >
                   <Text style={styles.manageButtonText}>Administrar</Text>
                 </Pressable>
               ) : (
                 <Pressable
                   style={styles.viewButton}
-                  onPress={() => navigation.navigate('CommunityHome', { communityId: community.id })}
+                  onPress={() =>
+                    navigation.navigate('CommunityHome', {
+                      communityId: community.id,
+                    })
+                  }
                 >
                   <Text style={styles.viewButtonText}>Ver</Text>
                 </Pressable>
@@ -217,7 +239,7 @@ export const MyProfile = () => {
 
       <CustomButton
         text="Crear Comunidad"
-        onPress={() => navigation.navigate('NuevaComunidad') }
+        onPress={() => navigation.navigate('NuevaComunidad')}
         variant="secondary"
       />
 
@@ -370,9 +392,9 @@ const createStyles = (colors: ThemeColors) =>
       paddingVertical: 8,
       borderColor: colors.border,
       borderWidth: 1,
-      padding:15,
+      padding: 15,
       backgroundColor: colors.surface,
-      borderRadius: 60
+      borderRadius: 60,
     },
 
     settingsText: {

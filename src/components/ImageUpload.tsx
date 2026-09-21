@@ -1,5 +1,5 @@
 import { JSX } from 'react'
-import {Image,Pressable, StyleSheet, Text, View,} from 'react-native'
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import { Camera } from 'lucide-react-native'
 
@@ -37,29 +37,16 @@ export const ImageUpload = ({
   }
 
   return (
-    <Pressable
-      style={styles.photoBox}
-      onPress={elegirDeGaleria}
-    >
+    <Pressable style={styles.photoBox} onPress={elegirDeGaleria}>
       {value ? (
-        <Image
-          source={{ uri: value }}
-          style={styles.photoPreview}
-        />
+        <Image source={{ uri: value }} style={styles.photoPreview} />
       ) : (
         <>
-          <Camera
-            size={20}
-            color={colors.primary}
-          />
+          <Camera size={20} color={colors.primary} />
 
-          <Text style={styles.photoTitle}>
-            {title}
-          </Text>
+          <Text style={styles.photoTitle}>{title}</Text>
 
-          <Text style={styles.photoDetail}>
-            {detail}
-          </Text>
+          <Text style={styles.photoDetail}>{detail}</Text>
         </>
       )}
     </Pressable>

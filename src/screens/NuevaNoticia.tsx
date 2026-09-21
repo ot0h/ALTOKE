@@ -11,29 +11,19 @@ import {
   View,
 } from 'react-native'
 import { ArrowLeft } from 'lucide-react-native'
-import { CustomButton, CustomSwitch } from '@components'
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context'
+import { CustomButton, CustomSwitch, ImageUpload } from '@components'
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAppDispatch, useAppSelector } from '../store/hook'
 import { addNews } from '../store/slices/newsSlice'
-import { newsService, makeImagePath, storageService } from '../services'
+import { newsService, makeImagePath, storageService } from '@services'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
-import { ImageUpload } from '../components/ImageUpload'
-import Alert from './modals/Alert'
+import { Alert } from './modals'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '@navigation/StackNavigator'
 
-type Props = NativeStackScreenProps<
-  RootStackParamList,
-  'NuevaNoticia'
->
+type Props = NativeStackScreenProps<RootStackParamList, 'NuevaNoticia'>
 
-export const NuevaNoticia = ({
-  navigation,
-  route,
-}: Props): JSX.Element => {
+export const NuevaNoticia = ({ navigation, route }: Props): JSX.Element => {
   const { colors } = useTheme()
   const styles = createStyles(colors)
   const insets = useSafeAreaInsets()
@@ -48,19 +38,15 @@ export const NuevaNoticia = ({
     'avisos' | 'eventos' | 'mantenimiento'
   >('avisos')
 
-  const [modalVisible, setModalVisible] =
-    useState<boolean>(false)
+  const [modalVisible, setModalVisible] = useState<boolean>(false)
 
-  const [alertText, setAlertText] =
-    useState<string>('')
+  const [alertText, setAlertText] = useState<string>('')
 
   const [publishing, setPublishing] = useState(false)
 
   const dispatch = useAppDispatch()
 
-  const userId = useAppSelector(
-    (state) => state.userProfile.id,
-  )
+  const userId = useAppSelector((state) => state.userProfile.id)
 
   const { communityId } = route.params
 
@@ -125,11 +111,7 @@ export const NuevaNoticia = ({
   return (
     <KeyboardAvoidingView
       style={styles.screen}
-      behavior={
-        Platform.OS === 'ios'
-          ? 'padding'
-          : 'height'
-      }
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <SafeAreaView style={styles.safeArea}>
         <View
@@ -142,45 +124,30 @@ export const NuevaNoticia = ({
         >
           <ScrollView
             style={styles.scrollContent}
-            contentContainerStyle={
-              styles.scrollContainer
-            }
+            contentContainerStyle={styles.scrollContainer}
             showsVerticalScrollIndicator={false}
           >
             <View style={styles.container}>
-
               {/* HEADER */}
 
               <View style={styles.header}>
                 <Pressable
                   style={styles.backButton}
-                  onPress={() =>
-                    navigation.goBack()
-                  }
+                  onPress={() => navigation.goBack()}
                 >
-                  <ArrowLeft
-                    size={20}
-                    color={colors.text}
-                  />
+                  <ArrowLeft size={20} color={colors.text} />
                 </Pressable>
 
-                <Text
-                  style={styles.headerTitle}
-                >
-                  Nueva Noticia
-                </Text>
+                <Text style={styles.headerTitle}>Nueva Noticia</Text>
               </View>
 
               {/* CARD */}
 
               <View style={styles.card}>
-
                 {/* TITLE */}
 
                 <View style={styles.field}>
-                  <Text style={styles.label}>
-                    Título de la noticia
-                  </Text>
+                  <Text style={styles.label}>Título de la noticia</Text>
 
                   <TextInput
                     style={[
@@ -195,18 +162,14 @@ export const NuevaNoticia = ({
                     value={title}
                     onChangeText={setTitle}
                     placeholder="Escribe un título descriptivo"
-                    placeholderTextColor={
-                      colors.textSecondary
-                    }
+                    placeholderTextColor={colors.textSecondary}
                   />
                 </View>
 
                 {/* IMAGE */}
 
                 <View style={styles.field}>
-                  <Text style={styles.label}>
-                    Imagen de portada
-                  </Text>
+                  <Text style={styles.label}>Imagen de portada</Text>
 
                   <ImageUpload
                     value={foto}
@@ -218,9 +181,7 @@ export const NuevaNoticia = ({
                 {/* DETAIL */}
 
                 <View style={styles.field}>
-                  <Text style={styles.label}>
-                    Contenido de la publicación
-                  </Text>
+                  <Text style={styles.label}>Contenido de la publicación</Text>
 
                   <TextInput
                     style={[
@@ -236,9 +197,7 @@ export const NuevaNoticia = ({
                     value={detail}
                     onChangeText={setDetail}
                     placeholder="Redacta el mensaje o anuncio aquí de forma clara para toda la comunidad..."
-                    placeholderTextColor={
-                      colors.textSecondary
-                    }
+                    placeholderTextColor={colors.textSecondary}
                     multiline
                     textAlignVertical="top"
                   />
@@ -247,63 +206,43 @@ export const NuevaNoticia = ({
                 {/* CATEGORIA */}
 
                 <View style={styles.field}>
-                  <Text style={styles.label}>
-                    Categoría
-                  </Text>
+                  <Text style={styles.label}>Categoría</Text>
 
                   <View style={styles.categoryRow}>
-                    {(
-                      [
-                        'avisos',
-                        'eventos',
-                        'mantenimiento',
-                      ] as const
-                    ).map((item) => (
-                      <Pressable
-                        key={item}
-                        onPress={() =>
-                          setCategory(item)
-                        }
-                        style={[
-                          styles.categoryButton,
-                          category === item &&
-                          styles.categoryButtonActive,
-                        ]}
-                      >
-                        <Text
+                    {(['avisos', 'eventos', 'mantenimiento'] as const).map(
+                      (item) => (
+                        <Pressable
+                          key={item}
+                          onPress={() => setCategory(item)}
                           style={[
-                            styles.categoryText,
-                            category === item &&
-                            styles.categoryTextActive,
+                            styles.categoryButton,
+                            category === item && styles.categoryButtonActive,
                           ]}
                         >
-                          {item
-                            .charAt(0)
-                            .toUpperCase() +
-                            item.slice(1)}
-                        </Text>
-                      </Pressable>
-                    ))}
+                          <Text
+                            style={[
+                              styles.categoryText,
+                              category === item && styles.categoryTextActive,
+                            ]}
+                          >
+                            {item.charAt(0).toUpperCase() + item.slice(1)}
+                          </Text>
+                        </Pressable>
+                      ),
+                    )}
                   </View>
                 </View>
 
                 {/* PUBLICACION TOGGLE */}
 
                 <View style={styles.toggleRow}>
-                  <View
-                    style={styles.toggleTextWrap}
-                  >
-                    <Text
-                      style={styles.toggleTitle}
-                    >
+                  <View style={styles.toggleTextWrap}>
+                    <Text style={styles.toggleTitle}>
                       Publicar inmediatamente
                     </Text>
 
-                    <Text
-                      style={styles.toggleSubtitle}
-                    >
-                      Si se desactiva, se guardará
-                      como borrador
+                    <Text style={styles.toggleSubtitle}>
+                      Si se desactiva, se guardará como borrador
                     </Text>
                   </View>
 
@@ -318,14 +257,9 @@ export const NuevaNoticia = ({
 
               <CustomButton
                 variant="secondary"
-                text={
-                  isPublish
-                    ? 'Publicar Noticia'
-                    : 'Guardar Borrador'
-                }
+                text={isPublish ? 'Publicar Noticia' : 'Guardar Borrador'}
                 onPress={publicarNoticia}
               />
-
             </View>
 
             {/* ALERT */}
@@ -335,7 +269,6 @@ export const NuevaNoticia = ({
               onPress={closeAlert}
               visible={modalVisible}
             />
-
           </ScrollView>
         </View>
       </SafeAreaView>
@@ -345,7 +278,6 @@ export const NuevaNoticia = ({
 
 const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
-
     screen: {
       flex: 1,
       backgroundColor: colors.background,
@@ -396,8 +328,7 @@ const createStyles = (colors: ThemeColors) =>
     },
 
     headerTitle: {
-      fontFamily:
-        'MontserratAlternates_700Bold',
+      fontFamily: 'MontserratAlternates_700Bold',
       fontSize: 24,
       color: colors.text,
     },

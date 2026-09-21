@@ -21,14 +21,14 @@ export async function loadProfilesByUserId(
   if (error) return new Map()
 
   return new Map(
-    ((data ?? []) as { id: string; name: string; avatar?: string | null }[]).map(
-      (profile) => [
-        profile.id,
-        {
-          name: profile.name,
-          avatar: profile.avatar ?? undefined,
-        },
-      ],
-    ),
+    (
+      (data ?? []) as { id: string; name: string; avatar?: string | null }[]
+    ).map((profile) => [
+      profile.id,
+      {
+        name: profile.name,
+        avatar: profile.avatar ?? undefined,
+      },
+    ]),
   )
 }

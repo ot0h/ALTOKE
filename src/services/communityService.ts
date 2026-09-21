@@ -37,10 +37,7 @@ function generateJoinCode(length = 6): string {
   return result
 }
 
-export type CreateCommunityInput = Omit<
-  Community,
-  'id' | 'createdAt' | 'code'
->
+export type CreateCommunityInput = Omit<Community, 'id' | 'createdAt' | 'code'>
 export type UpdateCommunityInput = Partial<CreateCommunityInput>
 
 export const communityService = {
@@ -75,14 +72,8 @@ export const communityService = {
 
   async fetchCommunitiesByUser(userId: string): Promise<Community[]> {
     const [owned, memberships] = await Promise.all([
-      supabase
-        .from('communities')
-        .select('*')
-        .eq('owner_id', userId),
-      supabase
-        .from('memberships')
-        .select('community_id')
-        .eq('user_id', userId),
+      supabase.from('communities').select('*').eq('owner_id', userId),
+      supabase.from('memberships').select('community_id').eq('user_id', userId),
     ])
 
     if (owned.error) {

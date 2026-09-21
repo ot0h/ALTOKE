@@ -10,10 +10,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useIsFocused, useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
-import CustomLabel from '../components/CustomLabel'
+import { CustomLabel } from '@components'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import { ReportStatus } from '../types'
-import { reportService } from '../services'
+import { reportService } from '@services'
 import { RootStackParamList } from '../navigation/StackNavigator'
 
 type Props = {
@@ -77,10 +77,7 @@ export const ManageReports = ({ route }: Props): JSX.Element => {
     loadReports()
   }, [isFocused, loadReports])
 
-  const cambiarStatus = async (
-    reportId: string,
-    status: ReportStatus,
-  ) => {
+  const cambiarStatus = async (reportId: string, status: ReportStatus) => {
     setReports((current) =>
       current.map((report) =>
         report.id === reportId ? { ...report, status } : report,
@@ -149,9 +146,8 @@ export const ManageReports = ({ route }: Props): JSX.Element => {
                     <Text style={styles.cardTitle}>{report.title}</Text>
 
                     <Text style={styles.cardMeta}>
-                      #{report.id.slice(0, 8).toUpperCase()} •{' '}
-                      {report.category} •{' '}
-                      {new Date(report.createdAt).toLocaleDateString()}
+                      #{report.id.slice(0, 8).toUpperCase()} • {report.category}{' '}
+                      • {new Date(report.createdAt).toLocaleDateString()}
                     </Text>
                   </View>
                 </View>

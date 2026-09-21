@@ -1,11 +1,5 @@
 import { JSX, useEffect, useRef } from 'react'
-import {
-  Animated,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+import { Animated, Pressable, StyleSheet, Text, View } from 'react-native'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 type Variants = 'default' | 'primary' | 'secondary'
@@ -49,8 +43,8 @@ export const CustomButton = ({
             duration: 250,
             useNativeDriver: true,
           }),
-        ])
-      )
+        ]),
+      ),
     )
 
     animations.forEach((animation) => animation.start())
@@ -61,11 +55,7 @@ export const CustomButton = ({
   }, [loading])
 
   return (
-    <Pressable
-      style={styles.button}
-      onPress={onPress}
-      disabled={loading}
-    >
+    <Pressable style={styles.button} onPress={onPress} disabled={loading}>
       {loading ? (
         <View style={styles.dots}>
           {dots.map((dot, index) => (
@@ -99,8 +89,7 @@ const getStyles = (variant: Variants, colors: ThemeColors) =>
             ? colors.primary
             : colors.surface,
 
-      borderColor:
-        variant === 'primary' ? colors.primaryDark : colors.primary,
+      borderColor: variant === 'primary' ? colors.primaryDark : colors.primary,
       borderWidth: 1,
       borderRadius: 17,
       width: '100%',

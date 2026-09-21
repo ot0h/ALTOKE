@@ -18,32 +18,18 @@ export default function Alert({
   const styles = createStyles(colors)
 
   return (
-    <Modal
-      visible={visible}
-      transparent
-      animationType="fade"
-    >
+    <Modal visible={visible} transparent animationType="fade">
       <View style={styles.overlay}>
         <View style={styles.modal}>
-          <Text style={styles.text}>
-            {text}
-          </Text>
+          <Text style={styles.text}>{text}</Text>
 
           {onCancel && (
-            <Pressable
-              style={styles.cancelButton}
-              onPress={onCancel}
-            >
-              <Text style={styles.cancelText}>
-                Cancelar
-              </Text>
+            <Pressable style={styles.cancelButton} onPress={onCancel}>
+              <Text style={styles.cancelText}>Cancelar</Text>
             </Pressable>
           )}
 
-          <Pressable
-            style={styles.button}
-            onPress={onPress}
-          >
+          <Pressable style={styles.button} onPress={onPress}>
             <Text style={styles.buttonText}>
               {onCancel ? 'Eliminar' : 'Aceptar'}
             </Text>
@@ -93,17 +79,17 @@ const createStyles = (colors: ThemeColors) =>
       color: colors.surface,
     },
     cancelButton: {
-  paddingHorizontal: 28,
-  paddingVertical: 10,
-  borderRadius: 10,
-  borderWidth: 1,
-  borderColor: colors.border,
-  alignItems: 'center',
-},
+      paddingHorizontal: 28,
+      paddingVertical: 10,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: colors.border,
+      alignItems: 'center',
+    },
 
-cancelText: {
-  fontFamily: 'Inter_600SemiBold',
-  fontSize: 14,
-  color: colors.text,
-},
+    cancelText: {
+      fontFamily: 'Inter_600SemiBold',
+      fontSize: 14,
+      color: colors.text,
+    },
   })

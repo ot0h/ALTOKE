@@ -78,9 +78,7 @@ export const Noticia = ({ route, navigation }: Props): JSX.Element => {
         {/* CONTENIDO */}
         <View style={styles.content}>
           {/* TITULO */}
-          <Text style={styles.title}>
-            {notice?.title}
-          </Text>
+          <Text style={styles.title}>{notice?.title}</Text>
 
           {/* AUTOR */}
           <View style={styles.authorSection}>
@@ -102,14 +100,11 @@ export const Noticia = ({ route, navigation }: Props): JSX.Element => {
                 <View style={styles.detailsRow}>
                   <Text style={styles.textDetails}>
                     {notice?.createdAt
-                      ? new Date(notice.createdAt).toLocaleDateString(
-                          'es-HN',
-                          {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric',
-                          },
-                        )
+                      ? new Date(notice.createdAt).toLocaleDateString('es-HN', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric',
+                        })
                       : ''}
                   </Text>
 
@@ -119,9 +114,7 @@ export const Noticia = ({ route, navigation }: Props): JSX.Element => {
                     color={colors.textSecondary}
                   />
 
-                  <Text style={styles.textDetails}>
-                    Lectura: 3 min
-                  </Text>
+                  <Text style={styles.textDetails}>Lectura: 3 min</Text>
                 </View>
               </View>
             </View>
@@ -132,9 +125,7 @@ export const Noticia = ({ route, navigation }: Props): JSX.Element => {
 
           {/* DESCRIPCION */}
           <View style={styles.descriptionContainer}>
-            <Text style={styles.fontDescription}>
-              {notice?.content}
-            </Text>
+            <Text style={styles.fontDescription}>{notice?.content}</Text>
           </View>
         </View>
       </ScrollView>

@@ -46,9 +46,7 @@ export const membershipService = {
     return (data ?? []).map(toMemberShip)
   },
 
-  async fetchCommunityMembers(
-    communityId: string,
-  ): Promise<CommunityMember[]> {
+  async fetchCommunityMembers(communityId: string): Promise<CommunityMember[]> {
     const { data, error } = await supabase
       .from('memberships')
       .select('*')
@@ -130,10 +128,7 @@ export const membershipService = {
     return toMemberShip(data)
   },
 
-  async leaveCommunity(
-    userId: string,
-    communityId: string,
-  ): Promise<void> {
+  async leaveCommunity(userId: string, communityId: string): Promise<void> {
     const { error } = await supabase
       .from('memberships')
       .delete()

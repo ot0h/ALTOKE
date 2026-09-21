@@ -11,10 +11,7 @@ import {
   TextInput,
   View,
 } from 'react-native'
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context'
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { ArrowLeft, Send, Trash2 } from 'lucide-react-native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
@@ -27,7 +24,7 @@ import {
   incrementComments,
   removeComment,
 } from '../store/slices/postSlice'
-import { postService } from '../services'
+import { postService } from '@services'
 import { Comment } from '../types'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Comments'>
@@ -191,9 +188,7 @@ export const Comments = ({ route, navigation }: Props): JSX.Element => {
                     </Text>
                   </View>
 
-                  <Text style={styles.commentContent}>
-                    {item.content}
-                  </Text>
+                  <Text style={styles.commentContent}>{item.content}</Text>
                 </View>
 
                 {item.userId === userId ? (
@@ -208,9 +203,7 @@ export const Comments = ({ route, navigation }: Props): JSX.Element => {
             )}
             ListEmptyComponent={
               <View style={styles.empty}>
-                <Text style={styles.emptyTitle}>
-                  Aún no hay comentarios
-                </Text>
+                <Text style={styles.emptyTitle}>Aún no hay comentarios</Text>
 
                 <Text style={styles.emptyText}>
                   Sé el primero en comentar esta publicación.

@@ -51,9 +51,7 @@ export default function AddMemberModal({
       setCandidates(profiles.filter((profile) => !memberIds.has(profile.id)))
     } catch (error) {
       setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : 'Error al buscar usuarios',
+        error instanceof Error ? error.message : 'Error al buscar usuarios',
       )
     } finally {
       setSearching(false)
@@ -137,9 +135,7 @@ export default function AddMemberModal({
               <View key={profile.id} style={styles.resultRow}>
                 <View style={styles.avatar}>
                   <Text style={styles.avatarText}>
-                    {(profile.name || profile.email)
-                      .charAt(0)
-                      .toUpperCase()}
+                    {(profile.name || profile.email).charAt(0).toUpperCase()}
                   </Text>
                 </View>
 

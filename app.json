@@ -16,7 +16,12 @@
         "backgroundColor": "#ffffff"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.ALTOKE"
+      "package": "com.anonymous.ALTOKE",
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/icon_1024x1024.png"
@@ -46,6 +51,11 @@
         }
       ],
       "expo-status-bar"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "ffd90044-624c-46b7-8638-355271f5e136"
+      }
+    }
   }
 }

@@ -214,9 +214,7 @@ export const ReportProblem = ({ navigation, route }: Props): JSX.Element => {
       setCoords(null)
     } catch (error) {
       const message =
-        error instanceof Error
-          ? error.message
-          : 'No se pudo enviar el reporte'
+        error instanceof Error ? error.message : 'No se pudo enviar el reporte'
       Alert.alert('Error', message)
     } finally {
       setSending(false)

@@ -13,7 +13,7 @@ import {
 import FixyLogin from '@assets/FIXYLOGIN.svg'
 import { useAppDispatch } from '../store/hook'
 import { updateProfile } from '../store/slices/userProfileSlice'
-import { authService, userProfileService } from '../services'
+import { authService, userProfileService } from '@services'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
@@ -44,11 +44,8 @@ export const Login = ({ navigation }: Props): JSX.Element => {
         routes: [{ name: 'MainTabs', params: { email: profile.email } }],
       })
     } catch (error) {
-
       setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : 'Ocurrió un error'
+        error instanceof Error ? error.message : 'Ocurrió un error',
       )
     } finally {
       setLoading(false)
@@ -90,14 +87,14 @@ export const Login = ({ navigation }: Props): JSX.Element => {
                 onChangeText={setPassword}
                 variant="password"
               />
-              <Text style= {styles.errorText}>{errorMessage}</Text>
+              <Text style={styles.errorText}>{errorMessage}</Text>
             </View>
             <View style={{ width: 272 }}>
               <CustomButton
                 text="Iniciar Sesión"
                 onPress={handleLogin}
                 variant="primary"
-                loading= {loading}
+                loading={loading}
               />
             </View>
 
@@ -170,9 +167,9 @@ const createStyles = (colors: ThemeColors) =>
       margin: 0,
     },
     errorText: {
-  color: colors.error,
-  fontSize: 14,
-  textAlign: 'center',
-  marginTop: 8,
-},
+      color: colors.error,
+      fontSize: 14,
+      textAlign: 'center',
+      marginTop: 8,
+    },
   })

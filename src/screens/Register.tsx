@@ -11,7 +11,7 @@ import {
   Alert,
 } from 'react-native'
 import FixyLogin from '@assets/FIXYLOGIN.svg'
-import { authService } from '../services'
+import { authService } from '@services'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
@@ -38,9 +38,7 @@ export const Register = ({ navigation }: Props): JSX.Element => {
       navigation.reset({ index: 0, routes: [{ name: 'Login' }] })
     } catch (error) {
       setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : 'Ocurrió un error'
+        error instanceof Error ? error.message : 'Ocurrió un error',
       )
     } finally {
       setLoading(false)
@@ -88,7 +86,7 @@ export const Register = ({ navigation }: Props): JSX.Element => {
                 onChangeText={setPassword}
                 variant="password"
               />
-            <Text style={styles.errorText}>{errorMessage}</Text>
+              <Text style={styles.errorText}>{errorMessage}</Text>
             </View>
 
             <View style={{ width: 272 }}>
@@ -96,7 +94,7 @@ export const Register = ({ navigation }: Props): JSX.Element => {
                 text="Registrarse"
                 onPress={handleRegister}
                 variant="primary"
-                loading = {loading}
+                loading={loading}
               />
             </View>
 
@@ -150,26 +148,26 @@ const createStyles = (colors: ThemeColors) =>
       marginBottom: '25%',
     },
 
-  containerInputs: {
-    display: 'flex',
-    gap: 25,
-  },
+    containerInputs: {
+      display: 'flex',
+      gap: 25,
+    },
 
-  textFont: {
-    fontFamily: 'MontserratAlternates_600SemiBold',
-  },
+    textFont: {
+      fontFamily: 'MontserratAlternates_600SemiBold',
+    },
 
-  fixy: {
-    position: 'relative',
-    top: 32,
-    alignSelf: 'center',
-    zIndex: 20,
-    margin: 0,
-  },
-      errorText: {
-  color: colors.error,
-  fontSize: 14,
-  textAlign: 'center',
-  marginTop: 8,
-},
-})
+    fixy: {
+      position: 'relative',
+      top: 32,
+      alignSelf: 'center',
+      zIndex: 20,
+      margin: 0,
+    },
+    errorText: {
+      color: colors.error,
+      fontSize: 14,
+      textAlign: 'center',
+      marginTop: 8,
+    },
+  })

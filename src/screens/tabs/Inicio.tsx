@@ -1,5 +1,12 @@
 import { JSX, useEffect, useState } from 'react'
-import { Image, StyleSheet, Text, View, ScrollView, Pressable } from 'react-native'
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Pressable,
+} from 'react-native'
 import { CustomButton } from '@components'
 import CommunityCard from '../../components/CommunityCard'
 import ReportCard from '../../components/ReportCard'
@@ -29,31 +36,36 @@ export const Inicio = (): JSX.Element => {
   const navigation = useNavigation()
   const isFocused = useIsFocused()
 
+  useEffect(() => {
+    if (!userId || !isFocused) return
 
- useEffect(() => {
-  if (!userId || !isFocused) return
+    const loadData = async () => {
+      try {
+        const [comms, reps] = await Promise.all([
+          communityService.fetchCommunitiesByUser(userId),
+          reportService.fetchReports(userId),
+        ])
 
-  const loadData = async () => {
-    try {
-      const [comms, reps] = await Promise.all([
-        communityService.fetchCommunitiesByUser(userId),
-        reportService.fetchReports(userId),
-      ])
-
-      dispatch(setCommunities(comms))
-      dispatch(setReports(reps))
-    } catch (e) {
-      console.error('[Inicio] Error cargando datos:', e)
+        dispatch(setCommunities(comms))
+        dispatch(setReports(reps))
+      } catch (e) {
+        console.error('[Inicio] Error cargando datos:', e)
+      }
     }
-  }
 
-  loadData()
-}, [dispatch, userId, isFocused])
-
+    loadData()
+  }, [dispatch, userId, isFocused])
 
   return (
     <ScrollView
-      style={[styles.container, { paddingTop: insets.top, paddingBottom: 20, backgroundColor: colors.background }]}
+      style={[
+        styles.container,
+        {
+          paddingTop: insets.top,
+          paddingBottom: 20,
+          backgroundColor: colors.background,
+        },
+      ]}
       contentContainerStyle={styles.content}
     >
       {/* Header */}
@@ -62,9 +74,7 @@ export const Inicio = (): JSX.Element => {
         <Image
           style={styles.avatar}
           source={
-            avatar
-              ? { uri: avatar }
-              : require('@assets/default-avatar.png')
+            avatar ? { uri: avatar } : require('@assets/default-avatar.png')
           }
         />
       </View>
@@ -85,51 +95,51 @@ export const Inicio = (): JSX.Element => {
       {/* Mis Comunidades */}
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>Mis Comunidades</Text>
-        <Pressable onPress={()=>navigation.getParent()?.navigate('MyCommunity')} >
+        <Pressable
+          onPress={() => navigation.getParent()?.navigate('MyCommunity')}
+        >
           <Text style={styles.sectionLink}>Ver todas</Text>
-          </Pressable>
+        </Pressable>
       </View>
 
       {/*SE AGREGO EL .MAP PARA RENDERIZAR LAS COMMUNITY CARDS Y LOS REPORTS, QUITE EL FLAT LIST porque no se puede usar con el scroll view*/}
-      <View style= {[{gap:20}]}>
-      {communities.map((item) => (
-        <CommunityCard
-          key={item.id}
-          title={item.name}
-          description={item.description}
-          image={item.image}
-          onPress={() =>
-            navigation
-              .getParent<NativeStackNavigationProp<RootStackParamList>>()
-              ?.navigate('CommunityHome', { communityId: item.id })
-          }
-        />
-      ))}
-
-      {/* Reportes Recientes */}
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Reportes Recientes</Text>
-      </View>
-
-    
-      {reports
-        .filter((report) => report.status !== 'resuelto')
-        .map((item) => (
-          <ReportCard
+      <View style={[{ gap: 20 }]}>
+        {communities.map((item) => (
+          <CommunityCard
             key={item.id}
-            title={item.title}
-            status={item.status}
-            report={item.id}
-            category={item.category}
-            onPress={() => {}}
+            title={item.name}
+            description={item.description}
+            image={item.image}
+            onPress={() =>
+              navigation
+                .getParent<NativeStackNavigationProp<RootStackParamList>>()
+                ?.navigate('CommunityHome', { communityId: item.id })
+            }
           />
         ))}
+
+        {/* Reportes Recientes */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Reportes Recientes</Text>
+        </View>
+
+        {reports
+          .filter((report) => report.status !== 'resuelto')
+          .map((item) => (
+            <ReportCard
+              key={item.id}
+              title={item.title}
+              status={item.status}
+              report={item.id}
+              category={item.category}
+              onPress={() => {}}
+            />
+          ))}
       </View>
-      {reports.every((report) => report.status === 'resuelto') && reports.length > 0 && (
-        <Text style={styles.noActiveText}>
-          No tienes reportes activos.
-        </Text>
-      )}
+      {reports.every((report) => report.status === 'resuelto') &&
+        reports.length > 0 && (
+          <Text style={styles.noActiveText}>No tienes reportes activos.</Text>
+        )}
 
       <JoinCommunityModal
         visible={joinModalVisible}

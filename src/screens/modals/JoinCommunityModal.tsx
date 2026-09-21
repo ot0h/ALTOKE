@@ -20,12 +20,7 @@ type Props = {
 }
 
 type JoinState =
-  | 'idle'
-  | 'searching'
-  | 'found'
-  | 'joining'
-  | 'success'
-  | 'error'
+  'idle' | 'searching' | 'found' | 'joining' | 'success' | 'error'
 
 export default function JoinCommunityModal({ visible, onClose }: Props) {
   const { colors } = useTheme()
@@ -47,14 +42,10 @@ export default function JoinCommunityModal({ visible, onClose }: Props) {
     try {
       const communities = await communityService.fetchCommunities()
       const term = code.trim().toUpperCase()
-      const found = communities.find(
-        (c) => c.code.toUpperCase() === term,
-      )
+      const found = communities.find((c) => c.code.toUpperCase() === term)
 
       if (!found) {
-        setErrorMessage(
-          'No se encontró ninguna comunidad con ese código.',
-        )
+        setErrorMessage('No se encontró ninguna comunidad con ese código.')
         setState('error')
         return
       }
@@ -63,9 +54,7 @@ export default function JoinCommunityModal({ visible, onClose }: Props) {
       setState('found')
     } catch (error) {
       setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : 'Error al buscar la comunidad',
+        error instanceof Error ? error.message : 'Error al buscar la comunidad',
       )
       setState('error')
     }

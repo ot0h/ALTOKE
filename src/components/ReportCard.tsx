@@ -47,20 +47,18 @@ export default function ReportCard({
 
         {isContract ? (
           <Text style={styles.subtitle}>
-            #{report.slice(0,8)} • {time ? new Date(time).toLocaleString('es-HN') : ''}
+            #{report.slice(0, 8)} •{' '}
+            {time ? new Date(time).toLocaleString('es-HN') : ''}
           </Text>
         ) : (
           //SECCION EXPANDIDA
           <>
             <Text style={styles.subtitle}>
-              #{report.slice(0,8)} • {time}
+              #{report.slice(0, 8)} • {time}
             </Text>
 
             <View style={styles.details}>
-              <Text
-                style={styles.category}
-                numberOfLines={1}
-              >
+              <Text style={styles.category} numberOfLines={1}>
                 {category}
               </Text>
               <LocationIcon width={12} height={12} />
@@ -122,7 +120,6 @@ const createStyles = (colors: ThemeColors) =>
       fontFamily: 'Inter_400Regular',
       fontSize: 13,
       color: colors.textSecondary,
-      
     },
 
     details: {

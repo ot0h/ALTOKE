@@ -24,31 +24,18 @@ export const ManageOptionCard = ({
   const styles = createStyles(colors)
 
   return (
-    <Pressable
-      style={styles.card}
-      onPress={onPress}
-    >
+    <Pressable style={styles.card} onPress={onPress}>
       <View style={styles.iconContainer}>
-        <Icon
-          size={22}
-          color={colors.primary}
-        />
+        <Icon size={22} color={colors.primary} />
       </View>
 
       <View style={styles.info}>
-        <Text style={styles.title}>
-          {title}
-        </Text>
+        <Text style={styles.title}>{title}</Text>
 
-        <Text style={styles.description}>
-          {description}
-        </Text>
+        <Text style={styles.description}>{description}</Text>
       </View>
 
-      <ChevronRight
-        size={20}
-        color={colors.textSecondary}
-      />
+      <ChevronRight size={20} color={colors.textSecondary} />
     </Pressable>
   )
 }

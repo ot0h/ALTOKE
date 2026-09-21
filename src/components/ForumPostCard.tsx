@@ -14,7 +14,7 @@ import ILikesIcon from '@assets/Ilikes.svg'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import { useAppDispatch, useAppSelector } from '../store/hook'
 import { likePost } from '../store/slices/postSlice'
-import { postService } from '../services'
+import { postService } from '@services'
 
 type Props = {
   postId: string
@@ -66,19 +66,13 @@ export default function ForumPostCard({
 
   return (
     <View style={styles.container}>
-
       {/* AUTOR */}
 
       <View style={styles.topsection}>
-        <Image
-          style={styles.profilephoto}
-          source={authorimage}
-        />
+        <Image style={styles.profilephoto} source={authorimage} />
 
         <View>
-          <Text style={styles.author}>
-            {author}
-          </Text>
+          <Text style={styles.author}>{author}</Text>
 
           <Text style={styles.time}>
             {createdAt ? new Date(createdAt).toLocaleString('es-HN') : ''}
@@ -88,26 +82,19 @@ export default function ForumPostCard({
 
       {/* TÍTULO */}
 
-      <Text
-        style={styles.title}
-        numberOfLines={1}
-      >
+      <Text style={styles.title} numberOfLines={1}>
         {title}
       </Text>
 
       {/* DESCRIPCIÓN */}
 
-      <Text
-        numberOfLines={3}
-        style={styles.description}
-      >
+      <Text numberOfLines={3} style={styles.description}>
         {description}
       </Text>
 
       {/* COMENTARIOS / LIKES */}
 
       <View style={styles.bothsection}>
-
         {/* COMENTARIOS */}
 
         <View style={styles.iconssection}>
@@ -115,27 +102,18 @@ export default function ForumPostCard({
             <CommentIcon height={16} />
           </Pressable>
 
-          <Text style={styles.commentslikes}>
-            {comment}
-          </Text>
+          <Text style={styles.commentslikes}>{comment}</Text>
         </View>
 
         {/* LIKES */}
 
         <View style={styles.iconssection}>
           <Pressable onPress={handleLike}>
-            {iLike ? (
-              <ILikesIcon height={16} />
-            ) : (
-              <LikesIcon height={16} />
-            )}
+            {iLike ? <ILikesIcon height={16} /> : <LikesIcon height={16} />}
           </Pressable>
 
-          <Text style={styles.commentslikes}>
-            {likes}
-          </Text>
+          <Text style={styles.commentslikes}>{likes}</Text>
         </View>
-
       </View>
     </View>
   )

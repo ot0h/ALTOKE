@@ -15,14 +15,10 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { useIsFocused } from '@react-navigation/native'
 
 import { RootStackParamList } from '../navigation/StackNavigator'
-import {
-  membershipService,
-  CommunityMember,
-  communityService,
-} from '../services'
+import { membershipService, CommunityMember, communityService } from '@services'
 import { useAppSelector } from '../store/hook'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
-import AddMemberModal from './modals/AddMemberModal'
+import { AddMemberModal } from './modals'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Members'>
 
@@ -78,10 +74,7 @@ export const Members = ({ navigation, route }: Props): JSX.Element => {
           onPress: async () => {
             setRemovingId(member.userId)
             try {
-              await membershipService.leaveCommunity(
-                member.userId,
-                communityId,
-              )
+              await membershipService.leaveCommunity(member.userId, communityId)
               loadMembers()
             } catch (error) {
               const message =
@@ -184,10 +177,7 @@ export const Members = ({ navigation, route }: Props): JSX.Element => {
                     disabled={removingId !== null}
                   >
                     {removingId === item.userId ? (
-                      <ActivityIndicator
-                        size="small"
-                        color={colors.error}
-                      />
+                      <ActivityIndicator size="small" color={colors.error} />
                     ) : (
                       <Trash2 size={18} color={colors.error} />
                     )}

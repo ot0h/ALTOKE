@@ -64,9 +64,7 @@ const postsSlice = createSlice({
       }
     },
     unlikePost: (state, action: PayloadAction<string>) => {
-      const post = state.posts.find(
-        (post) => post.id === action.payload
-      )
+      const post = state.posts.find((post) => post.id === action.payload)
 
       if (post && post.likes > 0) {
         post.likes -= 1

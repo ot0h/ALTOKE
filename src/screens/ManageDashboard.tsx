@@ -5,7 +5,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
 import { RootStackParamList } from '../navigation/StackNavigator'
-import { DashboardStats } from '../components/dashboard/DashboardStats'
+import { DashboardStats } from '@components'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ManageDashboard'>
@@ -38,9 +38,7 @@ export const ManageDashboard = ({ navigation, route }: Props): JSX.Element => {
           <View style={styles.headerText}>
             <Text style={styles.title}>Dashboard</Text>
 
-            <Text style={styles.subtitle}>
-              Estadísticas de tu comunidad
-            </Text>
+            <Text style={styles.subtitle}>Estadísticas de tu comunidad</Text>
           </View>
         </View>
 

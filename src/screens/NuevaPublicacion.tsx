@@ -10,22 +10,15 @@ import {
   View,
 } from 'react-native'
 import { ArrowLeft } from 'lucide-react-native'
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context'
-import {
-  RouteProp,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native'
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
 import { CustomButton } from '@components'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import { useAppDispatch, useAppSelector } from '../store/hook'
 import { addPost } from '../store/slices/postSlice'
-import { postService } from '../services'
+import { postService } from '@services'
 import { RootStackParamList } from '@navigation/StackNavigator'
 import { Alert } from 'react-native'
 
@@ -43,8 +36,7 @@ export const NuevaPublicacion = (): JSX.Element => {
 
   const insets = useSafeAreaInsets()
 
-  const navigation =
-    useNavigation<NuevaPublicacionNavigationProp>()
+  const navigation = useNavigation<NuevaPublicacionNavigationProp>()
 
   const route = useRoute<NuevaPublicacionRouteProp>()
 
@@ -52,9 +44,7 @@ export const NuevaPublicacion = (): JSX.Element => {
 
   const dispatch = useAppDispatch()
 
-  const userId = useAppSelector(
-    (state) => state.userProfile.id
-  )
+  const userId = useAppSelector((state) => state.userProfile.id)
 
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
@@ -82,9 +72,7 @@ export const NuevaPublicacion = (): JSX.Element => {
       navigation.goBack()
     } catch (error) {
       const message =
-        error instanceof Error
-          ? error.message
-          : 'No se pudo publicar'
+        error instanceof Error ? error.message : 'No se pudo publicar'
       Alert.alert('Error', message)
     } finally {
       setPublishing(false)
@@ -115,7 +103,6 @@ export const NuevaPublicacion = (): JSX.Element => {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.container}>
-
             {/* HEADER */}
 
             <View style={styles.header}>
@@ -123,16 +110,11 @@ export const NuevaPublicacion = (): JSX.Element => {
                 style={styles.backButton}
                 onPress={() => navigation.goBack()}
               >
-                <ArrowLeft
-                  size={20}
-                  color={colors.text}
-                />
+                <ArrowLeft size={20} color={colors.text} />
               </Pressable>
 
               <View style={styles.headerText}>
-                <Text style={styles.title}>
-                  Nueva publicación
-                </Text>
+                <Text style={styles.title}>Nueva publicación</Text>
 
                 <Text style={styles.subtitle}>
                   Comparte algo con tu comunidad
@@ -143,13 +125,10 @@ export const NuevaPublicacion = (): JSX.Element => {
             {/* FORM */}
 
             <View style={styles.card}>
-
               {/* TÍTULO */}
 
               <View style={styles.field}>
-                <Text style={styles.label}>
-                  Título de la publicación
-                </Text>
+                <Text style={styles.label}>Título de la publicación</Text>
 
                 <TextInput
                   style={styles.input}
@@ -163,9 +142,7 @@ export const NuevaPublicacion = (): JSX.Element => {
               {/* CONTENIDO */}
 
               <View style={styles.field}>
-                <Text style={styles.label}>
-                  Contenido
-                </Text>
+                <Text style={styles.label}>Contenido</Text>
 
                 <TextInput
                   style={[styles.input, styles.textArea]}
@@ -177,7 +154,6 @@ export const NuevaPublicacion = (): JSX.Element => {
                   textAlignVertical="top"
                 />
               </View>
-
             </View>
 
             {/* BOTÓN */}
@@ -187,7 +163,6 @@ export const NuevaPublicacion = (): JSX.Element => {
               text="Publicar"
               onPress={publicar}
             />
-
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

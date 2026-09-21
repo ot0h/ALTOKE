@@ -187,10 +187,12 @@ export const postService = {
   },
 
   async likePost(postId: string, userId: string): Promise<void> {
-    const { error } = await supabase.from('post_likes').upsert(
-      { post_id: postId, user_id: userId },
-      { onConflict: 'post_id,user_id' },
-    )
+    const { error } = await supabase
+      .from('post_likes')
+      .upsert(
+        { post_id: postId, user_id: userId },
+        { onConflict: 'post_id,user_id' },
+      )
     logRequest('likePost', error, { postId, userId })
     if (error) throw error
   },

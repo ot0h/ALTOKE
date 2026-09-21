@@ -104,10 +104,7 @@ export const newsService = {
     if (error) throw error
   },
 
-  async updateNewsStatus(
-    id: string,
-    status: NewsStatus,
-  ): Promise<News> {
+  async updateNewsStatus(id: string, status: NewsStatus): Promise<News> {
     const { data, error } = await supabase
       .from('news')
       .update({ status })

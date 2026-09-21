@@ -1,23 +1,33 @@
 import { JSX, useState } from 'react'
-import { Alert, Pressable, ScrollView,   StyleSheet, Text, View,} from 'react-native'
-import {  ArrowLeft,BarChart3,FileText, MessageCircle,Users,Flag,} from 'lucide-react-native'
-import {SafeAreaView,useSafeAreaInsets,} from 'react-native-safe-area-context'
-import { RouteProp, useNavigation,useRoute,} from '@react-navigation/native'
+import {
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
+import {
+  ArrowLeft,
+  BarChart3,
+  FileText,
+  MessageCircle,
+  Users,
+  Flag,
+} from 'lucide-react-native'
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
-import { ManageOptionCard } from '../components/ManageOptionCard'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import { useAppDispatch, useAppSelector } from '../store/hook'
 import { RootStackParamList } from '@navigation/StackNavigator'
-import { CustomButton } from '@components'
-import { communityService } from '../services'
-import ConfirmAlert from './modals/Alert'
+import { CustomButton, ManageOptionCard } from '@components'
+import { communityService } from '@services'
+import { Alert as ConfirmAlert } from './modals'
 import { removeCommunity } from '../store/slices/communitySlice'
 
-type ManageCommunityRouteProp = RouteProp<
-  RootStackParamList,
-  'ManageCommunity'
->
+type ManageCommunityRouteProp = RouteProp<RootStackParamList, 'ManageCommunity'>
 
 type ManageCommunityNavigationProp =
   NativeStackNavigationProp<RootStackParamList>
@@ -28,8 +38,7 @@ export const ManageCommunity = (): JSX.Element => {
 
   const insets = useSafeAreaInsets()
 
-  const navigation =
-    useNavigation<ManageCommunityNavigationProp>()
+  const navigation = useNavigation<ManageCommunityNavigationProp>()
 
   const route = useRoute<ManageCommunityRouteProp>()
 
@@ -55,8 +64,8 @@ export const ManageCommunity = (): JSX.Element => {
 
   const community = useAppSelector((state) =>
     state.community.communities.find(
-      (community) => community.id === communityId
-    )
+      (community) => community.id === communityId,
+    ),
   )
 
   const options = [
@@ -64,15 +73,13 @@ export const ManageCommunity = (): JSX.Element => {
       title: 'Dashboard',
       description: 'Consulta las estadísticas de tu comunidad',
       icon: BarChart3,
-      onPress: () =>
-        navigation.navigate('ManageDashboard', { communityId }),
+      onPress: () => navigation.navigate('ManageDashboard', { communityId }),
     },
     {
       title: 'Gestionar noticias',
       description: 'Crea, edita y administra las noticias',
       icon: FileText,
-      onPress: () =>
-        navigation.navigate('ManageNotices', { communityId }),
+      onPress: () => navigation.navigate('ManageNotices', { communityId }),
     },
     {
       title: 'Ver miembros',
@@ -84,15 +91,13 @@ export const ManageCommunity = (): JSX.Element => {
       title: 'Ver foro',
       description: 'Consulta y administra las conversaciones',
       icon: MessageCircle,
-      onPress: () =>
-        navigation.navigate('Forum', { communityId }),
+      onPress: () => navigation.navigate('Forum', { communityId }),
     },
     {
       title: 'Gestionar reportes',
       description: 'Revisa los reportes y cambia su estado',
       icon: Flag,
-      onPress: () =>
-        navigation.navigate('ManageReports', { communityId }),
+      onPress: () => navigation.navigate('ManageReports', { communityId }),
     },
   ]
 
@@ -115,7 +120,6 @@ export const ManageCommunity = (): JSX.Element => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.container}>
-
           {/* HEADER */}
 
           <View style={styles.header}>
@@ -123,16 +127,11 @@ export const ManageCommunity = (): JSX.Element => {
               style={styles.backButton}
               onPress={() => navigation.goBack()}
             >
-              <ArrowLeft
-                size={20}
-                color={colors.text}
-              />
+              <ArrowLeft size={20} color={colors.text} />
             </Pressable>
 
             <View style={styles.headerText}>
-              <Text style={styles.title}>
-                Administrar comunidad
-              </Text>
+              <Text style={styles.title}>Administrar comunidad</Text>
 
               <Text style={styles.subtitle}>
                 Gestiona los diferentes aspectos de tu comunidad
@@ -155,8 +154,7 @@ export const ManageCommunity = (): JSX.Element => {
               </Text>
 
               <Text style={styles.communityDescription}>
-                {community?.description ||
-                  'Administración de comunidad'}
+                {community?.description || 'Administración de comunidad'}
               </Text>
             </View>
           </View>
@@ -164,9 +162,7 @@ export const ManageCommunity = (): JSX.Element => {
           {/* OPTIONS */}
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
-              Administración
-            </Text>
+            <Text style={styles.sectionTitle}>Administración</Text>
 
             <View style={styles.options}>
               {options.map((option) => (
@@ -180,16 +176,21 @@ export const ManageCommunity = (): JSX.Element => {
               ))}
             </View>
             <CustomButton
-            text='Eliminar comunidad'
-            onPress={()=>{setConfirmModalVisible(true)}}
-            variant='secondary'
+              text="Eliminar comunidad"
+              onPress={() => {
+                setConfirmModalVisible(true)
+              }}
+              variant="secondary"
             />
           </View>
-              <ConfirmAlert
-              text='Estas por eliminar la comunidad'
-              visible= {confirmModalVisible}
-              onPress={deleteCommunity}
-              onCancel={()=>{setConfirmModalVisible(false)}}/>
+          <ConfirmAlert
+            text="Estas por eliminar la comunidad"
+            visible={confirmModalVisible}
+            onPress={deleteCommunity}
+            onCancel={() => {
+              setConfirmModalVisible(false)
+            }}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

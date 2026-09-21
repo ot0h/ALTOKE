@@ -24,11 +24,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useIsFocused, useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
-import CustomLabel from '../components/CustomLabel'
+import { CustomLabel } from '@components'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import { useAppSelector } from '../store/hook'
 import { Report, ReportNote, ReportStatus } from '../types'
-import { reportService } from '../services'
+import { reportService } from '@services'
 import { RootStackParamList } from '../navigation/StackNavigator'
 
 type Props = {

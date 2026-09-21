@@ -199,10 +199,7 @@ export const reportService = {
     return toReport(data)
   },
 
-  async updateReportStatus(
-    id: string,
-    status: ReportStatus,
-  ): Promise<Report> {
+  async updateReportStatus(id: string, status: ReportStatus): Promise<Report> {
     const { data, error } = await supabase
       .from('reports')
       .update({ status })

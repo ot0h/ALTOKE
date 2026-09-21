@@ -2,9 +2,14 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { useRoute, RouteProp } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import { RootStackParamList } from './StackNavigator'
-import { Inicio, Notificaciones, Perfil, Reportes } from '@tabs'
-import { MyProfile } from '../screens/tabs/MyProfile'
-import { VerNoticias } from '../screens/tabs/VerNoticias'
+import {
+  Inicio,
+  MyProfile,
+  Notificaciones,
+  Perfil,
+  Reportes,
+  VerNoticias,
+} from '@tabs'
 import { useTheme } from '@contexts/ThemeContext'
 
 export type TabsParamList = {

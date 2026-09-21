@@ -1,18 +1,28 @@
 import { JSX, useState } from 'react'
-import { Alert, Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, } from 'react-native'
+import {
+  Alert,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import { Camera, MapPin } from 'lucide-react-native'
-import { CustomButton } from '@components'
+import { CustomButton, ImageUpload } from '@components'
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAppDispatch, useAppSelector } from '../store/hook'
 import { addCommunity } from '../store/slices/communitySlice'
-import { communityService, membershipService } from '../services'
+import { communityService, membershipService } from '@services'
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
-import AlertModal from './modals/Alert'
+import { Alert as AlertModal } from './modals'
 import { Community } from '../types'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { RootStackParamList } from '@navigation/StackNavigator'
-import { ImageUpload } from '../components/ImageUpload'
 
 type Props = NativeStackScreenProps<RootStackParamList, 'NuevaComunidad'>
 
@@ -60,9 +70,7 @@ export const NuevaComunidad = ({ navigation }: Props): JSX.Element => {
       setFoto('')
     } catch (error) {
       const message =
-        error instanceof Error
-          ? error.message
-          : 'No se pudo crear la comunidad'
+        error instanceof Error ? error.message : 'No se pudo crear la comunidad'
       Alert.alert('Error', message)
     } finally {
       setCreating(false)
@@ -70,13 +78,19 @@ export const NuevaComunidad = ({ navigation }: Props): JSX.Element => {
   }
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <View style={{ flex: 1, paddingTop: insets.top, paddingBottom: 50, backgroundColor: colors.background }}>
-        <ScrollView
-          style={styles.scrollContent}
-        >
-
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <View
+        style={{
+          flex: 1,
+          paddingTop: insets.top,
+          paddingBottom: 50,
+          backgroundColor: colors.background,
+        }}
+      >
+        <ScrollView style={styles.scrollContent}>
           <View style={styles.container}>
             {/* HEADER */}
             <View style={styles.header}>
@@ -183,9 +197,9 @@ export const NuevaComunidad = ({ navigation }: Props): JSX.Element => {
                     communityId: createdCommunity.id,
                   })
                 : navigation.goBack()
-            } 
-            visible={visibleAlert} />
-
+            }
+            visible={visibleAlert}
+          />
         </ScrollView>
       </View>
     </KeyboardAvoidingView>

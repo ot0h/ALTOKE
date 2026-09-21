@@ -32,11 +32,7 @@ export const storageService = {
     uri: string,
     options: UploadImageOptions = {},
   ): Promise<string> {
-    const {
-      upsert = false,
-      maxWidth = 1280,
-      cacheControl = '3600',
-    } = options
+    const { upsert = false, maxWidth = 1280, cacheControl = '3600' } = options
 
     // Redimensiona y comprime antes de subir: archivos ligeros y subida rápida.
     const resized = await manipulateAsync(

@@ -1,38 +1,21 @@
 import { JSX, useEffect, useMemo } from 'react'
-import {
-  FlatList,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native'
 import { Plus, ArrowLeft } from 'lucide-react-native'
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context'
-import {
-  RouteProp,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native'
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
 import { ThemeColors, useTheme } from '@contexts/ThemeContext'
 import { useAppDispatch, useAppSelector } from '../store/hook'
 import { setPosts } from '../store/slices/postSlice'
-import { postService } from '../services'
+import { postService } from '@services'
 import { mergeById } from '../utils/mergeById'
 import { RootStackParamList } from '@navigation/StackNavigator'
-import ForumPostCard from '../components/ForumPostCard'
+import { ForumPostCard } from '@components'
 
-type ForumRouteProp = RouteProp<
-  RootStackParamList,
-  'Forum'
->
+type ForumRouteProp = RouteProp<RootStackParamList, 'Forum'>
 
-type ForumNavigationProp =
-  NativeStackNavigationProp<RootStackParamList>
+type ForumNavigationProp = NativeStackNavigationProp<RootStackParamList>
 
 export const Forum = (): JSX.Element => {
   const { colors } = useTheme()
@@ -40,8 +23,7 @@ export const Forum = (): JSX.Element => {
 
   const insets = useSafeAreaInsets()
 
-  const navigation =
-    useNavigation<ForumNavigationProp>()
+  const navigation = useNavigation<ForumNavigationProp>()
 
   const route = useRoute<ForumRouteProp>()
 
@@ -61,16 +43,15 @@ export const Forum = (): JSX.Element => {
   useEffect(() => {
     const loadPosts = async () => {
       try {
-        const remotePosts = await postService.fetchPosts(undefined, true, userId)
+        const remotePosts = await postService.fetchPosts(
+          undefined,
+          true,
+          userId,
+        )
 
-        dispatch(
-          setPosts(mergeById(posts, remotePosts)),
-        )
+        dispatch(setPosts(mergeById(posts, remotePosts)))
       } catch (error) {
-        console.error(
-          '[Forum] Error al cargar publicaciones:',
-          error,
-        )
+        console.error('[Forum] Error al cargar publicaciones:', error)
       }
     }
 
@@ -96,9 +77,7 @@ export const Forum = (): JSX.Element => {
           <ArrowLeft size={20} color={colors.text} />
         </Pressable>
 
-        <Text style={styles.title}>
-          Foro Comunitario
-        </Text>
+        <Text style={styles.title}>Foro Comunitario</Text>
 
         <Pressable
           style={styles.publishButton}
@@ -108,14 +87,9 @@ export const Forum = (): JSX.Element => {
             })
           }
         >
-          <Plus
-            size={18}
-            color="#FFFFFF"
-          />
+          <Plus size={18} color="#FFFFFF" />
 
-          <Text style={styles.publishText}>
-            Publicar
-          </Text>
+          <Text style={styles.publishText}>Publicar</Text>
         </Pressable>
       </View>
 
@@ -155,9 +129,7 @@ export const Forum = (): JSX.Element => {
         )}
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Text style={styles.emptyTitle}>
-              Aún no hay publicaciones
-            </Text>
+            <Text style={styles.emptyTitle}>Aún no hay publicaciones</Text>
 
             <Text style={styles.emptyText}>
               Sé el primero en compartir algo con tu comunidad.

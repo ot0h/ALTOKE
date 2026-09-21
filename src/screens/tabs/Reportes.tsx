@@ -34,10 +34,7 @@ export const Reportes = () => {
 
         setReports(remoteReports)
       } catch (error) {
-        console.error(
-          '[Reportes] Error al cargar reportes:',
-          error,
-        )
+        console.error('[Reportes] Error al cargar reportes:', error)
       }
     }
 
@@ -56,7 +53,8 @@ export const Reportes = () => {
       {reports.length === 0 ? (
         <View style={styles.empty}>
           <Text style={styles.emptyText}>
-            Aún no hay reportes tuyos. Ve a «Reportar problema» para agregar uno.
+            Aún no hay reportes tuyos. Ve a «Reportar problema» para agregar
+            uno.
           </Text>
         </View>
       ) : (

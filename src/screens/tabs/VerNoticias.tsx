@@ -52,16 +52,9 @@ export const VerNoticias = ({ navigation }: Props): JSX.Element => {
 
         const remoteNews = await newsService.fetchNews(communityIds)
 
-        dispatch(
-          setNews(
-            mergeById(store.getState().news.news, remoteNews),
-          ),
-        )
+        dispatch(setNews(mergeById(store.getState().news.news, remoteNews)))
       } catch (error) {
-        console.error(
-          '[VerNoticias] Error al cargar noticias:',
-          error,
-        )
+        console.error('[VerNoticias] Error al cargar noticias:', error)
       }
     }
 
@@ -72,23 +65,23 @@ export const VerNoticias = ({ navigation }: Props): JSX.Element => {
     text: string
     value: Category
   }[] = [
-      {
-        text: 'Todos',
-        value: 'todos',
-      },
-      {
-        text: 'Avisos',
-        value: 'avisos',
-      },
-      {
-        text: 'Eventos',
-        value: 'eventos',
-      },
-      {
-        text: 'Mantenimiento',
-        value: 'mantenimiento',
-      },
-    ]
+    {
+      text: 'Todos',
+      value: 'todos',
+    },
+    {
+      text: 'Avisos',
+      value: 'avisos',
+    },
+    {
+      text: 'Eventos',
+      value: 'eventos',
+    },
+    {
+      text: 'Mantenimiento',
+      value: 'mantenimiento',
+    },
+  ]
 
   //SOLO NOTICIAS PUBLICADAS DE LAS COMUNIDADES DEL USUARIO
   const filteredNotices = allNews.filter((notice) => {
@@ -162,9 +155,11 @@ export const VerNoticias = ({ navigation }: Props): JSX.Element => {
               }
               category={item.category}
               variant="notices"
-              onPress={() => navigation.getParent()?.navigate('Noticia', {
-                noticeId: item.id,
-              })}
+              onPress={() =>
+                navigation.getParent()?.navigate('Noticia', {
+                  noticeId: item.id,
+                })
+              }
             />
           )}
           contentContainerStyle={styles.list}
